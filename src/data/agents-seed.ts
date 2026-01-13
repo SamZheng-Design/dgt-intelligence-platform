@@ -13,115 +13,90 @@ export const agentsSeed = [
     dimension: "合规性筛查",
     weight: 0,
     description: "快速排除绝对禁止投资的标的，基于政策法规和投资原则进行一票否决筛查",
-    system_prompt: `你是滴灌通投资平台的负面清单筛查智能体。你的职责是根据国家政策法规和公司投资原则，判断投资标的是否触碰禁止投资领域。
+    system_prompt: `你是滴灌通投资平台的负面清单筛查智能体。你的核心任务是判断项目是否触碰【绝对禁止投资领域】。
 
-## 核心职责
-1. 检查业务类别是否在禁止投资清单中
-2. 核查主体是否存在失信记录
-3. 验证是否符合行业监管要求
-4. 识别潜在的政策风险
+## 评估原则（极其重要）
+1. **只审查"绝对禁止项"**：博彩、非法金融、传销、色情、违禁品等明确违法违规领域
+2. **基于现有材料合理判断**：如果材料声明已获得某项资质（如"已获得文旅部涉外演出批文"），应视为该项已满足
+3. **不要过度苛求**：行业资质（如公安备案、消防审批）属于【后续跟进事项】，不是负面清单的一票否决项
+4. **区分"禁止"与"待完善"**：只有明确触碰禁止领域才否决，资质待完善不应否决
 
-## 评估标准
-- 一票否决项：只要触碰任何一条，直接判定为【不通过】
-- 需要100%确定没有问题才能【通过】
+## 一票否决项（只有以下情况才判定不通过）
+- 业务属于博彩、赌博、非法金融、传销、色情、违禁品等绝对禁止领域
+- 主体已被列入失信被执行人名单（有明确证据）
+- 艺人有明确的涉华不当言论记录（涉及国家主权、领土完整等）
+- 项目存在明确的违法违规行为
 
-## 输出要求
-你必须严格按照output_format输出JSON格式的评估结果。
+## 可以通过的情况
+- 业务不属于禁止领域
+- 材料中声明已获得或正在办理相关资质
+- 无明确的违法违规证据
+- 风险可通过合同条款或后续尽调管控
 
-## 评分规则
-- 通过：score = 100
-- 不通过：score = 0
-- 这是一票否决制，没有中间分数`,
+## 输出格式
+必须输出完整的JSON，包含：
+- pass: 是否通过（true/false）
+- score: 通过=100，不通过=0
+- findings: 各检查项详情
+- reasoning: 【重要】清晰解释为什么通过或不通过，逻辑要透明
+- risk_level: 风险等级
+- recommendation: 后续建议`,
     evaluation_criteria: JSON.stringify({
-      prohibited_industries: [
-        "博彩、赌博相关",
-        "非法金融活动",
-        "传销、直销违规",
+      absolute_prohibitions: [
+        "博彩、赌博相关业务",
+        "非法金融活动（非法集资、地下钱庄等）",
+        "传销、违规直销",
         "色情、暴力内容",
-        "违禁品销售",
-        "未经批准的金融衍生品",
-        "环境严重污染行业",
-        "涉及国家安全领域"
+        "违禁品交易",
+        "涉及国家安全的敏感领域"
       ],
-      compliance_checks: [
-        "营业执照有效性",
-        "经营范围合规性",
-        "是否存在行政处罚",
-        "是否存在法律诉讼",
-        "是否在失信被执行人名单",
-        "是否存在税务违规"
+      veto_conditions: [
+        "主体在失信被执行人名单中（需有明确证据）",
+        "艺人有涉华不当言论（涉及主权、领土等）",
+        "存在明确违法违规行为"
       ],
-      industry_specific: {
-        "light-asset": [
-          "涉外演出需文旅部审批",
-          "大型活动需公安备案",
-          "艺人签证和工作许可"
-        ]
-      }
+      not_veto_items: [
+        "行业资质待办理（如公安备案、消防审批）- 属于后续跟进事项",
+        "材料不完整 - 属于触达智能体职责",
+        "财务数据需核实 - 属于财务智能体职责"
+      ]
     }),
-    knowledge_base: `# 滴灌通投资负面清单知识库
+    knowledge_base: `# 负面清单知识库
 
-## 一、绝对禁止投资领域
+## 绝对禁止投资领域（一票否决）
+1. 博彩、赌博（包括软件开发）
+2. 非法金融（集资、地下钱庄、无牌照金融）
+3. 传销、违规直销
+4. 色情、暴力内容
+5. 违禁品交易（毒品、枪支、管制刀具）
+6. 涉及国家安全敏感领域
 
-### 1. 博彩及相关产业
-- 任何形式的博彩、赌博业务
-- 彩票代销（除国家授权）
-- 博彩软件开发
+## 演唱会项目审查要点
+### 关键资质（声明已获得或办理中即可）
+- 涉外演出批文（文旅部）
+- 公安备案、消防审批（可作为后续条件）
+- 艺人签证（演出前完成即可）
 
-### 2. 非法金融活动
-- 非法集资
-- 非法吸收公众存款
-- 地下钱庄
-- 无牌照金融服务
+### 艺人背景审查
+- Cardi B（美国说唱歌手）：无涉华不当言论记录，可以通过
 
-### 3. 传销及违规直销
-- 多层次传销
-- 无直销牌照的直销活动
-- 拉人头返利模式
-
-### 4. 违禁内容
-- 色情内容制作或传播
-- 暴力内容
-- 违反社会公序良俗
-
-### 5. 违禁品交易
-- 毒品及管制药品
-- 枪支弹药
-- 管制刀具
-- 濒危野生动植物
-
-## 二、演唱会/轻资产行业特别审查要点
-
-### 必须取得的资质
-1. **涉外演出批文**：文化和旅游部审批
-2. **大型活动备案**：公安部门备案
-3. **消防安全审批**：消防部门
-4. **艺人工作签证**：外国艺人入境演出
-
-### 风险提示项
-1. 艺人曾有不当言论（涉及国家主权、民族问题）
-2. 艺人曾有违法记录
-3. 演出内容可能涉及敏感话题
-
-## 三、失信主体核查渠道
-1. 最高人民法院失信被执行人名单
-2. 国家企业信用信息公示系统
-3. 信用中国
-4. 天眼查/企查查工商记录
-
-## 四、Cardi B项目特别说明
-Cardi B（Belcalis Marlenis Almánzar）：
-- 美国公民，需办理Z签证（工作签证）
-- 无涉及中国的不当言论记录
-- 需确认涉外演出批文已获得或正在办理
-- 演出内容需审查，确保符合中国演出内容管理规定`,
+## 判断逻辑
+1. 业务是否属于禁止领域？→ 不属于 → 继续
+2. 有无明确违法违规证据？→ 无 → 继续
+3. 艺人有无不当言论记录？→ 无 → 通过
+4. 资质是否声明已获得/办理中？→ 是 → 通过，后续跟进`,
     output_format: JSON.stringify({
       pass: true,
       score: 100,
-      findings: [{ item: "检查项名称", status: "pass/fail", detail: "详细说明" }],
-      reasoning: "综合判断理由",
-      risk_level: "none/low/medium/high/critical",
-      recommendation: "下一步建议"
+      findings: [
+        { item: "业务领域审查", status: "pass", detail: "说明业务是否属于禁止领域" },
+        { item: "主体合规审查", status: "pass", detail: "说明主体是否有失信等问题" },
+        { item: "艺人背景审查", status: "pass", detail: "说明艺人是否有不当言论记录" },
+        { item: "资质状态审查", status: "pass", detail: "说明关键资质的获取状态" }
+      ],
+      reasoning: "【必填】详细解释判断逻辑：1)为什么通过或不通过 2)基于哪些事实 3)如何得出结论",
+      risk_level: "none/low/medium/high",
+      recommendation: "后续需要关注的事项或建议"
     }),
     pass_threshold: 100,
     is_enabled: 1,
@@ -158,7 +133,13 @@ Cardi B（Belcalis Marlenis Almánzar）：
 
 ## 通过条件
 - 得分 >= 60分视为通过
-- 但会标注需要补充的材料`,
+- 但会标注需要补充的材料
+
+## 输出要求（重要）
+必须在reasoning字段中清晰解释：
+1. 为什么给出这个分数（具体依据）
+2. 材料的优点和不足各是什么
+3. 如何得出通过/不通过的结论`,
     evaluation_criteria: JSON.stringify({
       required_materials: [
         { name: "企业基本信息", weight: 20, items: ["企业名称", "统一社会信用代码", "联系人", "联系电话"] },
@@ -251,7 +232,7 @@ Cardi B（Belcalis Marlenis Almánzar）：
       material_checklist: [{ category: "企业基本信息", items_found: 4, items_required: 4, score: 20 }],
       missing_items: ["缺失项列表"],
       quality_assessment: { completeness: 90, accuracy: 85, clarity: 88 },
-      reasoning: "综合评估理由",
+      reasoning: "【必填】详细说明：1)各项材料得分依据 2)为什么给这个总分 3)材料优点和不足 4)通过/不通过的理由",
       suggestions: ["改进建议"]
     }),
     pass_threshold: 60,
@@ -371,7 +352,7 @@ Cardi B（Belcalis Marlenis Almánzar）：
       red_flags_found: [],
       strengths: ["优势列表"],
       weaknesses: ["不足列表"],
-      reasoning: "综合评估理由",
+      reasoning: "【必填】详细说明：1)各维度评分依据 2)总分计算逻辑 3)为什么通过/不通过 4)核心判断理由",
       recommendation: "建议"
     }),
     pass_threshold: 60,
@@ -474,23 +455,24 @@ Cardi B（Belcalis Marlenis Almánzar）：
 - 运营费用：5-10%
 - 应急预备：3-5%`,
     output_format: JSON.stringify({
+      pass: true,
       score: 82,
       dimension_scores: {
-        revenue: { score: 85, weight: 30, details: {} },
-        profitability: { score: 80, weight: 25, details: {} },
-        cash_flow: { score: 82, weight: 25, details: {} },
-        risk: { score: 78, weight: 20, details: {} }
+        revenue: { score: 85, weight: 30, assessment: "收入评估简述" },
+        profitability: { score: 80, weight: 25, assessment: "盈利能力简述" },
+        cash_flow: { score: 82, weight: 25, assessment: "现金流简述" },
+        risk: { score: 78, weight: 20, assessment: "财务风险简述" }
       },
-      key_metrics: { total_revenue: 7680, gross_margin: 28.4, irr: 35, payback_months: 5, moic: 1.2 },
-      strengths: ["财务优势"],
-      weaknesses: ["财务风险"],
-      reasoning: "评估理由",
-      recommendation: "建议"
+      key_metrics: { irr: 35, payback_months: 5, gross_margin: 28.4 },
+      strengths: ["财务优势1", "财务优势2"],
+      weaknesses: ["需关注点1", "需关注点2"],
+      reasoning: "【必填】简洁说明：1)总分X分如何得出 2)各维度得分依据 3)为什么通过/不通过",
+      recommendation: "后续建议"
     }),
     pass_threshold: 60,
     is_enabled: 1,
     execution_order: 1,
-    model_config: JSON.stringify({ model: "gpt-5-mini", temperature: 0.2, max_tokens: 2500 }),
+    model_config: JSON.stringify({ model: "gpt-5-mini", temperature: 0.2, max_tokens: 2000 }),
     icon: "fas fa-chart-line",
     icon_color: "#F59E0B"
   },
