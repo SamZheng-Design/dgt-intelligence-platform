@@ -1221,14 +1221,73 @@ export const demoPageContent = `
       titleHtml = '<i class="fas fa-file-circle-plus mr-2 text-amber-500"></i><span class="text-amber-800">待补充材料清单</span>';
       contentHtml = \`
         <p class="text-sm text-gray-500 mb-4">以下材料需要补充完善，以便进行更准确的评估：</p>
+        
+        <!-- 上传区域 -->
+        <div class="mb-6 p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border-2 border-dashed border-amber-300">
+          <div class="text-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-3">
+              <i class="fas fa-cloud-upload-alt text-2xl text-amber-500"></i>
+            </div>
+            <h4 class="font-semibold text-amber-800 mb-1">上传补充材料</h4>
+            <p class="text-xs text-amber-600">支持文本描述方式上传材料内容</p>
+          </div>
+          
+          <!-- 上传表单 -->
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">材料名称 *</label>
+              <input type="text" id="material-name" placeholder="例如：艺人合同补充条款" 
+                class="w-full px-3 py-2 text-sm border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">材料分类</label>
+              <select id="material-category" 
+                class="w-full px-3 py-2 text-sm border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent">
+                <option value="合同文件">合同文件</option>
+                <option value="审批文件">审批文件</option>
+                <option value="财务文件">财务文件</option>
+                <option value="保险文件">保险文件</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">材料内容 *</label>
+              <textarea id="material-content" rows="4" placeholder="请粘贴或输入材料的具体内容..."
+                class="w-full px-3 py-2 text-sm border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent resize-none"></textarea>
+            </div>
+            <div class="flex space-x-3">
+              <button onclick="uploadMaterial()" id="btn-upload" 
+                class="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2 px-4 rounded-lg font-medium text-sm hover:opacity-90 transition flex items-center justify-center">
+                <i class="fas fa-upload mr-2"></i>上传材料
+              </button>
+              <button onclick="uploadAndRerun()" id="btn-upload-rerun"
+                class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 px-4 rounded-lg font-medium text-sm hover:opacity-90 transition flex items-center justify-center">
+                <i class="fas fa-play mr-2"></i>上传并重新评估
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 已上传材料列表 -->
+        <div id="uploaded-materials-section" class="mb-4 hidden">
+          <h5 class="font-medium text-sm text-green-700 mb-2 flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>已上传材料
+          </h5>
+          <div id="uploaded-materials-list" class="space-y-2"></div>
+        </div>
+        
+        <!-- 待补充材料清单 -->
+        <h5 class="font-medium text-sm text-amber-700 mb-3 flex items-center">
+          <i class="fas fa-list-check mr-2"></i>待补充清单
+        </h5>
         <div class="space-y-3">
           \${improvementData.missing.map((m, i) => \`
-            <div class="flex items-start space-x-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
+            <div class="flex items-start space-x-3 p-3 bg-amber-50 rounded-lg border border-amber-100 group hover:bg-amber-100 transition cursor-pointer" onclick="quickFillMaterial('\${escapeQuotes(m)}')">
               <span class="w-6 h-6 rounded-full bg-amber-200 text-amber-700 flex items-center justify-center text-xs font-bold flex-shrink-0">\${i + 1}</span>
               <div class="flex-1">
                 <p class="text-sm text-gray-800">\${m}</p>
               </div>
-              <span class="text-xs bg-amber-100 text-amber-600 px-2 py-0.5 rounded">待提交</span>
+              <span class="text-xs bg-amber-100 text-amber-600 px-2 py-0.5 rounded group-hover:bg-amber-200 transition">点击填写</span>
             </div>
           \`).join('')}
         </div>
@@ -1574,7 +1633,225 @@ export const demoPageContent = `
     }
   });
 
+  // ============================================
+  // 材料上传功能
+  // ============================================
+  
+  let uploadedMaterials = []; // 存储已上传的材料
+  
+  // 转义引号用于HTML属性
+  function escapeQuotes(str) {
+    return str.replace(/'/g, "\\\\'").replace(/"/g, '\\\\"');
+  }
+  
+  // 快速填充材料名称
+  function quickFillMaterial(materialName) {
+    const nameInput = document.getElementById('material-name');
+    if (nameInput) {
+      nameInput.value = materialName;
+      nameInput.focus();
+      // 滚动到上传区域
+      nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+  
+  // 上传单个材料
+  async function uploadMaterial() {
+    const name = document.getElementById('material-name')?.value?.trim();
+    const category = document.getElementById('material-category')?.value || '其他';
+    const content = document.getElementById('material-content')?.value?.trim();
+    
+    if (!name) {
+      showToast('请输入材料名称', 'error');
+      return false;
+    }
+    if (!content) {
+      showToast('请输入材料内容', 'error');
+      return false;
+    }
+    
+    const btn = document.getElementById('btn-upload');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>上传中...';
+    btn.disabled = true;
+    
+    try {
+      const response = await apiCall('/api/deals/DGT-2026-CARDIB/materials', {
+        method: 'POST',
+        body: JSON.stringify({
+          materials: [{
+            name: name,
+            category: category,
+            content: content,
+            uploadedAt: new Date().toISOString()
+          }]
+        })
+      });
+      
+      if (response.success) {
+        uploadedMaterials = response.data || [];
+        showToast('材料上传成功！', 'success');
+        
+        // 清空输入框
+        document.getElementById('material-name').value = '';
+        document.getElementById('material-content').value = '';
+        
+        // 更新已上传材料显示
+        updateUploadedMaterialsList();
+        
+        return true;
+      } else {
+        showToast('上传失败: ' + (response.error || '未知错误'), 'error');
+        return false;
+      }
+    } catch (error) {
+      showToast('上传出错: ' + error.message, 'error');
+      return false;
+    } finally {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  }
+  
+  // 上传并重新评估
+  async function uploadAndRerun() {
+    const name = document.getElementById('material-name')?.value?.trim();
+    const content = document.getElementById('material-content')?.value?.trim();
+    
+    // 如果有内容则先上传
+    if (name && content) {
+      const uploaded = await uploadMaterial();
+      if (!uploaded) return;
+    }
+    
+    // 关闭浮窗
+    closeImprovementPopup();
+    
+    // 显示提示
+    showToast('开始重新评估...', 'info');
+    
+    // 滚动到顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // 延迟一点再开始评估，让用户看到提示
+    setTimeout(() => {
+      // 重置评估状态
+      resetDemoForRerun();
+      // 开始评估
+      startDemo();
+    }, 500);
+  }
+  
+  // 重置演示状态（不刷新页面）
+  function resetDemoForRerun() {
+    evaluationResults = {};
+    
+    // 重置步骤指示器
+    for (let i = 2; i <= 4; i++) {
+      const stepEl = document.getElementById(\`step-\${i}\`);
+      if (stepEl) {
+        stepEl.classList.add('opacity-50');
+        stepEl.querySelector('div').className = 'w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold';
+        stepEl.querySelector('div').textContent = i;
+      }
+    }
+    
+    // 重置区域状态
+    document.getElementById('outer-section')?.classList.add('opacity-50');
+    document.getElementById('inner-section')?.classList.add('opacity-50');
+    document.getElementById('final-section')?.classList.add('opacity-50');
+    
+    document.getElementById('outer-status').textContent = '等待开始';
+    document.getElementById('outer-status').className = 'text-sm text-gray-500';
+    document.getElementById('inner-status').textContent = '等待外环完成';
+    document.getElementById('inner-status').className = 'text-sm text-gray-500';
+    document.getElementById('final-status').textContent = '等待评估完成';
+    document.getElementById('final-status').className = 'text-sm text-gray-500';
+    
+    // 隐藏结果区域
+    document.getElementById('recommendation-section')?.classList.add('hidden');
+    document.getElementById('improvement-section')?.classList.add('hidden');
+    
+    // 重置智能体卡片
+    demoAgents.forEach(agent => {
+      const statusEl = document.getElementById(\`status-\${agent.id}\`);
+      const scoreEl = document.getElementById(\`score-\${agent.id}\`);
+      const cardEl = document.getElementById(\`agent-\${agent.id}\`);
+      const detailEl = document.getElementById(\`detail-\${agent.id}\`);
+      const expandIcon = document.getElementById(\`expand-icon-\${agent.id}\`);
+      
+      if (statusEl) {
+        statusEl.innerHTML = '<i class="fas fa-minus text-gray-400 text-xs"></i>';
+        statusEl.className = 'w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center';
+      }
+      if (scoreEl) {
+        scoreEl.textContent = '--';
+        scoreEl.className = 'font-mono text-lg font-bold text-gray-400';
+      }
+      if (cardEl) {
+        cardEl.classList.remove('ring-2', 'ring-primary-300', 'border-green-300', 'border-red-300');
+      }
+      if (detailEl) {
+        detailEl.classList.add('hidden');
+        detailEl.querySelector(\`#steps-\${agent.id}\`).innerHTML = '<div class="flex items-center space-x-2 text-gray-400 text-sm"><i class="fas fa-hourglass-start"></i><span>等待执行...</span></div>';
+      }
+      if (expandIcon) {
+        expandIcon.classList.remove('rotate-180');
+      }
+    });
+    
+    // 重置雷达图
+    if (radarChart) {
+      radarChart.destroy();
+      radarChart = null;
+    }
+    
+    document.getElementById('final-details').innerHTML = '<div class="text-center py-8 text-gray-400"><i class="fas fa-chart-pie text-4xl mb-2"></i><p>评估完成后显示结果</p></div>';
+    document.getElementById('overall-status').textContent = '准备就绪';
+  }
+  
+  // 更新已上传材料列表显示
+  function updateUploadedMaterialsList() {
+    const section = document.getElementById('uploaded-materials-section');
+    const list = document.getElementById('uploaded-materials-list');
+    
+    if (!section || !list) return;
+    
+    if (uploadedMaterials.length > 0) {
+      section.classList.remove('hidden');
+      list.innerHTML = uploadedMaterials.map(m => \`
+        <div class="flex items-center justify-between p-2 bg-green-50 rounded-lg border border-green-100">
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-file-check text-green-500"></i>
+            <div>
+              <span class="text-sm font-medium text-green-800">\${m.name}</span>
+              <span class="text-xs text-green-600 ml-2">[\${m.category}]</span>
+            </div>
+          </div>
+          <span class="text-xs text-green-600">\${new Date(m.uploadedAt).toLocaleString('zh-CN')}</span>
+        </div>
+      \`).join('');
+    } else {
+      section.classList.add('hidden');
+    }
+  }
+  
+  // 加载已上传的材料
+  async function loadUploadedMaterials() {
+    try {
+      const response = await apiCall('/api/deals/DGT-2026-CARDIB/materials');
+      if (response.success) {
+        uploadedMaterials = response.data || [];
+      }
+    } catch (e) {
+      console.log('加载已上传材料失败', e);
+    }
+  }
+
   // 初始化
-  document.addEventListener('DOMContentLoaded', () => setTimeout(loadDemoAgents, 500));
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(loadDemoAgents, 500);
+    setTimeout(loadUploadedMaterials, 600);
+  });
 </script>
 `

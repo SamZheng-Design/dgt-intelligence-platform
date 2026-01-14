@@ -383,6 +383,145 @@ api.patch('/deals/:id', async (c) => {
 })
 
 // ============================================
+// 材料上传 API
+// ============================================
+
+// 获取标的的补充材料列表
+api.get('/deals/:id/materials', async (c) => {
+  const db = c.env.DB
+  const id = c.req.param('id')
+  
+  try {
+    const deal = await db.prepare('SELECT supplementary_materials FROM deals WHERE id = ?').bind(id).first<any>()
+    if (!deal) {
+      return c.json({ success: false, error: '标的不存在' }, 404)
+    }
+    
+    let materials = []
+    if (deal.supplementary_materials) {
+      try {
+        materials = JSON.parse(deal.supplementary_materials)
+      } catch (e) {
+        materials = []
+      }
+    }
+    
+    return c.json({ success: true, data: materials })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// 上传补充材料（文件信息）
+api.post('/deals/:id/materials', async (c) => {
+  const db = c.env.DB
+  const id = c.req.param('id')
+  
+  try {
+    // 获取上传的材料信息
+    const { materials } = await c.req.json()
+    // materials格式: [{ name: '材料名称', category: '分类', content: '内容/描述', uploadedAt: 'ISO时间' }]
+    
+    if (!materials || !Array.isArray(materials)) {
+      return c.json({ success: false, error: '材料格式不正确' }, 400)
+    }
+    
+    // 获取现有材料
+    const deal = await db.prepare('SELECT supplementary_materials, project_documents FROM deals WHERE id = ?').bind(id).first<any>()
+    if (!deal) {
+      return c.json({ success: false, error: '标的不存在' }, 404)
+    }
+    
+    let existingMaterials = []
+    if (deal.supplementary_materials) {
+      try {
+        existingMaterials = JSON.parse(deal.supplementary_materials)
+      } catch (e) {
+        existingMaterials = []
+      }
+    }
+    
+    // 合并新材料
+    const newMaterials = materials.map((m: any) => ({
+      id: `MAT-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+      name: m.name,
+      category: m.category || '其他',
+      content: m.content || '',
+      uploadedAt: m.uploadedAt || new Date().toISOString(),
+      status: 'uploaded'
+    }))
+    
+    const allMaterials = [...existingMaterials, ...newMaterials]
+    
+    // 将材料内容追加到项目文档中
+    let projectDocs = deal.project_documents || ''
+    const materialsSummary = newMaterials.map((m: any) => 
+      `\n\n【补充材料：${m.name}】\n分类：${m.category}\n上传时间：${m.uploadedAt}\n内容：\n${m.content}`
+    ).join('')
+    
+    projectDocs += `\n\n=====================================\n【补充材料上传记录 - ${new Date().toLocaleString('zh-CN')}】\n=====================================` + materialsSummary
+    
+    // 更新数据库
+    await db.prepare(`
+      UPDATE deals 
+      SET supplementary_materials = ?, project_documents = ?, updated_at = ?
+      WHERE id = ?
+    `).bind(
+      JSON.stringify(allMaterials),
+      projectDocs,
+      new Date().toISOString(),
+      id
+    ).run()
+    
+    return c.json({ 
+      success: true, 
+      data: allMaterials,
+      message: `成功上传 ${newMaterials.length} 份材料`
+    })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// 删除补充材料
+api.delete('/deals/:id/materials/:materialId', async (c) => {
+  const db = c.env.DB
+  const id = c.req.param('id')
+  const materialId = c.req.param('materialId')
+  
+  try {
+    const deal = await db.prepare('SELECT supplementary_materials FROM deals WHERE id = ?').bind(id).first<any>()
+    if (!deal) {
+      return c.json({ success: false, error: '标的不存在' }, 404)
+    }
+    
+    let materials = []
+    if (deal.supplementary_materials) {
+      try {
+        materials = JSON.parse(deal.supplementary_materials)
+      } catch (e) {
+        materials = []
+      }
+    }
+    
+    // 过滤掉要删除的材料
+    const filteredMaterials = materials.filter((m: any) => m.id !== materialId)
+    
+    await db.prepare(`
+      UPDATE deals SET supplementary_materials = ?, updated_at = ? WHERE id = ?
+    `).bind(
+      JSON.stringify(filteredMaterials),
+      new Date().toISOString(),
+      id
+    ).run()
+    
+    return c.json({ success: true, data: filteredMaterials, message: '材料已删除' })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// ============================================
 // 工作流 API
 // ============================================
 
