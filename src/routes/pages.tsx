@@ -13,7 +13,7 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} - 滴灌通智能评估系统</title>
+  <title>${title} - MIFC智能评估系统</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -110,15 +110,35 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
   </script>
 </head>
 <body class="mc-bg min-h-screen">
-  <!-- 导航栏 - 滴灌通风格 -->
+  <!-- 导航栏 - MIFC风格 -->
   <nav class="gradient-bg text-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-8">
-          <!-- 滴灌通Logo -->
-          <a href="/" class="flex items-center space-x-3">
-            <img src="https://www.genspark.ai/api/files/s/rrqrjPA0" alt="滴灌通" class="h-8 w-auto brightness-0 invert">
-            <span class="font-semibold text-sm hidden sm:inline border-l border-white/30 pl-3">智能评估</span>
+          <!-- MIFC Logo -->
+          <a href="/" class="flex items-center space-x-3 group">
+            <div class="relative">
+              <!-- Logo主体 - 现代几何设计 -->
+              <svg width="42" height="36" viewBox="0 0 42 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-sm">
+                <!-- 背景圆角矩形 -->
+                <rect x="1" y="1" width="40" height="34" rx="6" fill="white" fill-opacity="0.15"/>
+                <rect x="1" y="1" width="40" height="34" rx="6" stroke="white" stroke-opacity="0.3" stroke-width="1"/>
+                <!-- M -->
+                <path d="M6 28V8H9L13 18L17 8H20V28H17V14L13 24L9 14V28H6Z" fill="white"/>
+                <!-- I -->
+                <path d="M22 28V8H25V28H22Z" fill="white"/>
+                <!-- F -->
+                <path d="M28 28V8H37V11H31V16H36V19H31V28H28Z" fill="white"/>
+                <!-- C -->
+                <path d="M42 14C42 10.5 40 8 37 8H36V11H37C38.5 11 39 12 39 14V22C39 24 38.5 25 37 25H36V28H37C40 28 42 25.5 42 22V14Z" fill="white"/>
+                <!-- 装饰点 -->
+                <circle cx="38" cy="5" r="2" fill="#F3EED9"/>
+              </svg>
+            </div>
+            <div class="hidden sm:flex flex-col border-l border-white/30 pl-3">
+              <span class="font-bold text-sm tracking-wide">智能评估</span>
+              <span class="text-[10px] opacity-70 tracking-widest">INTELLIGENT</span>
+            </div>
           </a>
           <div class="hidden md:flex space-x-1">
             <a href="/" class="px-4 py-2 rounded-lg hover:bg-white/10 transition text-sm font-medium ${activeNav === 'dashboard' ? 'nav-active' : ''}">
@@ -225,15 +245,19 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
 // ============================================
 pages.get('/', (c) => {
   const content = `
-    <!-- 欢迎横幅 - 滴灌通风格 -->
+    <!-- 欢迎横幅 - MIFC风格 -->
     <div class="bg-gradient-to-r from-[#00D29E] to-[#629C85] rounded-2xl p-6 mb-8 text-white">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold mb-2">欢迎使用滴灌通智能评估系统</h1>
+          <h1 class="text-2xl font-bold mb-2">欢迎使用 MIFC 智能评估系统</h1>
           <p class="opacity-90">AI驱动的投资标的全流程风险评估解决方案</p>
         </div>
-        <div class="hidden md:block">
-          <img src="https://www.genspark.ai/api/files/s/rrqrjPA0" alt="滴灌通" class="h-12 brightness-0 invert opacity-80">
+        <div class="hidden md:flex items-center space-x-2">
+          <!-- MIFC大Logo -->
+          <svg width="80" height="48" viewBox="0 0 80 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-90">
+            <text x="0" y="36" font-family="Inter, sans-serif" font-size="32" font-weight="800" fill="white" letter-spacing="2">MIFC</text>
+            <rect x="0" y="42" width="80" height="3" rx="1.5" fill="white" fill-opacity="0.5"/>
+          </svg>
         </div>
       </div>
     </div>
