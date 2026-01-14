@@ -207,23 +207,128 @@ export const demoPageContent = `
         </div>
       </div>
     </div>
+
+    <!-- 综合改进建议（新增） -->
+    <div id="improvement-section" class="hidden">
+      <div class="bg-white rounded-xl card-shadow p-6">
+        <h3 class="font-semibold text-lg flex items-center mb-4">
+          <i class="fas fa-clipboard-check text-orange-500 mr-2"></i>
+          综合改进建议
+          <span class="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded">待补充材料 & 改进项</span>
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- 待补充材料 -->
+          <div class="bg-amber-50 rounded-lg p-4">
+            <h4 class="font-medium text-amber-800 mb-3 flex items-center">
+              <i class="fas fa-file-circle-plus mr-2"></i>
+              待补充材料
+            </h4>
+            <ul id="missing-materials" class="space-y-2 text-sm text-amber-900">
+              <li class="flex items-start space-x-2">
+                <i class="fas fa-circle text-xs mt-1.5 text-amber-400"></i>
+                <span>加载中...</span>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- 改进建议 -->
+          <div class="bg-blue-50 rounded-lg p-4">
+            <h4 class="font-medium text-blue-800 mb-3 flex items-center">
+              <i class="fas fa-lightbulb mr-2"></i>
+              项目改进建议
+            </h4>
+            <ul id="improvement-suggestions" class="space-y-2 text-sm text-blue-900">
+              <li class="flex items-start space-x-2">
+                <i class="fas fa-circle text-xs mt-1.5 text-blue-400"></i>
+                <span>加载中...</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- 下一步行动 -->
+        <div class="mt-4 pt-4 border-t">
+          <h4 class="font-medium text-gray-700 mb-3 flex items-center">
+            <i class="fas fa-tasks text-green-500 mr-2"></i>
+            建议下一步行动
+          </h4>
+          <div id="next-actions" class="space-y-2 text-sm">
+            <div class="flex items-center space-x-2 text-gray-600">
+              <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">1</span>
+              <span>加载中...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- 评估详情弹窗 -->
-<div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden">
-    <div class="p-4 border-b flex items-center justify-between">
+<!-- 评估详情弹窗（优化版） -->
+<div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4" onclick="if(event.target === this) closeDetailModal()">
+  <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+    <div class="p-4 border-b flex items-center justify-between bg-gradient-to-r from-primary-500 to-purple-500 text-white">
       <h3 id="modal-title" class="font-bold text-lg">评估详情</h3>
-      <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center">
-        <i class="fas fa-times text-gray-500"></i>
+      <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition">
+        <i class="fas fa-times"></i>
       </button>
     </div>
-    <div id="modal-content" class="p-6 overflow-y-auto max-h-[70vh]">
+    <div id="modal-content" class="p-6 overflow-y-auto max-h-[80vh]">
       <!-- 内容动态填充 -->
     </div>
   </div>
 </div>
+
+<!-- AI推理内容浮窗 -->
+<div id="reasoning-popup" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4" onclick="if(event.target === this) closeReasoningPopup()">
+  <div class="bg-white rounded-xl max-w-2xl w-full max-h-[80vh] overflow-hidden shadow-2xl">
+    <div class="p-4 border-b flex items-center justify-between bg-purple-50">
+      <h3 class="font-bold text-purple-800 flex items-center">
+        <i class="fas fa-brain mr-2"></i>
+        <span id="popup-title">AI推理过程</span>
+      </h3>
+      <button onclick="closeReasoningPopup()" class="w-8 h-8 rounded-full hover:bg-purple-100 flex items-center justify-center transition">
+        <i class="fas fa-times text-purple-600"></i>
+      </button>
+    </div>
+    <div id="popup-content" class="p-6 overflow-y-auto max-h-[70vh]">
+      <!-- 内容动态填充 -->
+    </div>
+  </div>
+</div>
+
+<style>
+  /* 自定义滚动条 */
+  #modal-content::-webkit-scrollbar,
+  #popup-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  #modal-content::-webkit-scrollbar-track,
+  #popup-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  #modal-content::-webkit-scrollbar-thumb,
+  #popup-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+  #modal-content::-webkit-scrollbar-thumb:hover,
+  #popup-content::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+  }
+  
+  /* 推理内容格式化 */
+  .reasoning-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.8;
+  }
+  .reasoning-text p {
+    margin-bottom: 0.75rem;
+  }
+</style>
 
 <script>
   let demoAgents = [];
@@ -241,14 +346,13 @@ export const demoPageContent = `
     } catch (e) {}
   }
 
-  // 渲染智能体卡片 - 包含详情展示区域
+  // 渲染智能体卡片
   function renderAgentCards() {
     const outerAgents = demoAgents.filter(a => a.ring_type === 'outer');
     const innerAgents = demoAgents.filter(a => a.ring_type === 'inner' && a.id !== 'comprehensive-scoring-agent');
 
     document.getElementById('outer-agents').innerHTML = outerAgents.map((agent, index) => \`
       <div id="agent-\${agent.id}" class="border rounded-lg overflow-hidden transition-all duration-300">
-        <!-- 智能体主卡片 -->
         <div class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer hover:bg-gray-100" onclick="toggleAgentDetail('\${agent.id}')">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: \${agent.icon_color}20">
@@ -270,11 +374,8 @@ export const demoPageContent = `
             <i id="expand-icon-\${agent.id}" class="fas fa-chevron-down text-gray-400 text-sm transition-transform"></i>
           </div>
         </div>
-        
-        <!-- 智能体评估详情（默认隐藏） -->
         <div id="detail-\${agent.id}" class="hidden border-t bg-white">
           <div class="p-4 space-y-4">
-            <!-- 执行步骤 -->
             <div id="steps-\${agent.id}" class="space-y-2">
               <div class="flex items-center space-x-2 text-gray-400 text-sm">
                 <i class="fas fa-hourglass-start"></i>
@@ -288,7 +389,6 @@ export const demoPageContent = `
 
     document.getElementById('inner-agents').innerHTML = innerAgents.map(agent => \`
       <div id="agent-\${agent.id}" class="border rounded-lg overflow-hidden transition-all duration-300">
-        <!-- 智能体主卡片 -->
         <div class="flex items-center justify-between p-3 bg-gray-50 cursor-pointer hover:bg-gray-100" onclick="toggleAgentDetail('\${agent.id}')">
           <div class="flex items-center space-x-2">
             <div class="w-8 h-8 rounded flex items-center justify-center" style="background: \${agent.icon_color}20">
@@ -307,11 +407,8 @@ export const demoPageContent = `
             <i id="expand-icon-\${agent.id}" class="fas fa-chevron-down text-gray-400 text-xs transition-transform"></i>
           </div>
         </div>
-        
-        <!-- 智能体评估详情（默认隐藏） -->
         <div id="detail-\${agent.id}" class="hidden border-t bg-white">
           <div class="p-3 space-y-3">
-            <!-- 执行步骤 -->
             <div id="steps-\${agent.id}" class="space-y-2">
               <div class="flex items-center space-x-2 text-gray-400 text-sm">
                 <i class="fas fa-hourglass-start"></i>
@@ -324,11 +421,10 @@ export const demoPageContent = `
     \`).join('');
   }
 
-  // 切换智能体详情展示
+  // 切换智能体详情
   function toggleAgentDetail(agentId) {
     const detailEl = document.getElementById(\`detail-\${agentId}\`);
     const expandIcon = document.getElementById(\`expand-icon-\${agentId}\`);
-    
     if (detailEl.classList.contains('hidden')) {
       detailEl.classList.remove('hidden');
       expandIcon.classList.add('rotate-180');
@@ -338,38 +434,158 @@ export const demoPageContent = `
     }
   }
 
-  // 展开/收起全部详情
+  // 展开/收起全部
   function toggleAllDetails() {
     allExpanded = !allExpanded;
-    const allDetails = document.querySelectorAll('[id^="detail-"]');
-    const allIcons = document.querySelectorAll('[id^="expand-icon-"]');
-    
-    allDetails.forEach(el => {
-      if (allExpanded) {
-        el.classList.remove('hidden');
-      } else {
-        el.classList.add('hidden');
+    document.querySelectorAll('[id^="detail-"]').forEach(el => {
+      if (el.id.startsWith('detail-') && !el.id.includes('modal')) {
+        el.classList.toggle('hidden', !allExpanded);
       }
     });
-    
-    allIcons.forEach(icon => {
-      if (allExpanded) {
-        icon.classList.add('rotate-180');
-      } else {
-        icon.classList.remove('rotate-180');
-      }
+    document.querySelectorAll('[id^="expand-icon-"]').forEach(icon => {
+      icon.classList.toggle('rotate-180', allExpanded);
     });
-    
     document.getElementById('toggle-all-text').textContent = allExpanded ? '收起全部' : '展开全部';
   }
 
-  // 更新评估步骤显示
+  // 获取完整的推理内容（优先使用原始响应）
+  function getFullReasoning(result) {
+    // 如果有原始响应，尝试从中提取更完整的内容
+    if (result._raw_response) {
+      const raw = result._raw_response;
+      // 尝试提取reasoning字段的完整内容
+      const reasoningMatch = raw.match(/"reasoning"\\s*:\\s*"([\\s\\S]*?)(?:"\\s*[,}]|"$)/);
+      if (reasoningMatch && reasoningMatch[1] && reasoningMatch[1].length > 50) {
+        return reasoningMatch[1]
+          .replace(/\\\\n/g, '\\n')
+          .replace(/\\\\"/g, '"')
+          .replace(/\\\\\\\\/g, '\\\\');
+      }
+    }
+    return result.reasoning || result.rationale || result.assessment || '暂无详细推理内容';
+  }
+
+  // 获取完整的建议内容
+  function getFullRecommendation(result) {
+    if (result._raw_response) {
+      const raw = result._raw_response;
+      const recMatch = raw.match(/"recommendation"\\s*:\\s*"([\\s\\S]*?)(?:"\\s*[,}]|"$)/);
+      if (recMatch && recMatch[1] && recMatch[1].length > 10) {
+        return recMatch[1]
+          .replace(/\\\\n/g, '\\n')
+          .replace(/\\\\"/g, '"')
+          .replace(/\\\\\\\\/g, '\\\\');
+      }
+    }
+    return result.recommendation || '';
+  }
+
+  // 显示推理内容浮窗
+  function showReasoningPopup(agentId, type = 'reasoning') {
+    const result = evaluationResults[agentId];
+    const agent = demoAgents.find(a => a.id === agentId);
+    if (!result || !agent) return;
+    
+    const popup = document.getElementById('reasoning-popup');
+    const popupTitle = document.getElementById('popup-title');
+    const popupContent = document.getElementById('popup-content');
+    
+    let content = '';
+    let title = '';
+    
+    if (type === 'reasoning') {
+      title = 'AI推理过程 - ' + agent.name;
+      const reasoning = getFullReasoning(result.result);
+      content = \`
+        <div class="space-y-4">
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center space-x-2">
+              <span class="font-medium">评估得分:</span>
+              <span class="text-2xl font-bold \${result.pass ? 'text-green-600' : 'text-red-600'}">\${result.result?.score || 0}</span>
+            </div>
+            <span class="px-3 py-1 rounded-full text-sm \${result.pass ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+              \${result.pass ? '✓ 通过' : '✗ 未通过'}
+            </span>
+          </div>
+          <div class="prose max-w-none">
+            <h4 class="text-gray-700 font-medium mb-2">详细推理分析</h4>
+            <div class="bg-purple-50 rounded-lg p-4 reasoning-text text-gray-700">
+              \${formatReasoningText(reasoning)}
+            </div>
+          </div>
+        </div>
+      \`;
+    } else if (type === 'recommendation') {
+      title = '评估建议 - ' + agent.name;
+      const recommendation = getFullRecommendation(result.result);
+      content = \`
+        <div class="space-y-4">
+          <div class="prose max-w-none">
+            <div class="bg-blue-50 rounded-lg p-4 reasoning-text text-gray-700">
+              \${formatReasoningText(recommendation || '暂无具体建议')}
+            </div>
+          </div>
+          \${result.result?.improvements?.length > 0 ? \`
+          <div>
+            <h4 class="text-gray-700 font-medium mb-2">改进建议</h4>
+            <ul class="space-y-2">
+              \${result.result.improvements.map(item => \`
+                <li class="flex items-start space-x-2 text-gray-600">
+                  <i class="fas fa-arrow-right text-blue-500 mt-1"></i>
+                  <span>\${item}</span>
+                </li>
+              \`).join('')}
+            </ul>
+          </div>
+          \` : ''}
+        </div>
+      \`;
+    } else if (type === 'raw') {
+      title = '原始响应数据 - ' + agent.name;
+      const rawData = result.result?._raw_response || JSON.stringify(result.result, null, 2);
+      content = \`
+        <div class="space-y-4">
+          <p class="text-sm text-gray-500">以下是AI返回的原始数据，可用于调试和验证：</p>
+          <pre class="bg-gray-900 text-green-400 p-4 rounded-lg text-xs overflow-x-auto max-h-96 overflow-y-auto">\${escapeHtml(rawData)}</pre>
+        </div>
+      \`;
+    }
+    
+    popupTitle.textContent = title;
+    popupContent.innerHTML = content;
+    popup.classList.remove('hidden');
+  }
+
+  // 关闭推理浮窗
+  function closeReasoningPopup() {
+    document.getElementById('reasoning-popup').classList.add('hidden');
+  }
+
+  // 格式化推理文本（处理换行、列表等）
+  function formatReasoningText(text) {
+    if (!text) return '';
+    return text
+      .replace(/\\n\\n/g, '</p><p class="mt-3">')
+      .replace(/\\n/g, '<br>')
+      .replace(/^/, '<p>')
+      .replace(/$/, '</p>')
+      .replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>')
+      .replace(/- /g, '• ');
+  }
+
+  // HTML转义
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // 更新评估步骤显示（优化版）
   function updateAgentSteps(agentId, status, result = null, agent = null) {
     const stepsEl = document.getElementById(\`steps-\${agentId}\`);
     if (!stepsEl) return;
 
     const agentInfo = agent || demoAgents.find(a => a.id === agentId);
-    const isOuter = agentInfo?.ring_type === 'outer';
     
     if (status === 'running') {
       stepsEl.innerHTML = \`
@@ -383,38 +599,31 @@ export const demoPageContent = `
               <p class="text-sm text-gray-500 mt-1">AI智能体正在分析项目材料</p>
             </div>
           </div>
-          
           <div class="ml-9 space-y-2 text-sm text-gray-500">
-            <div class="flex items-center space-x-2">
-              <i class="fas fa-circle-notch fa-spin text-xs"></i>
-              <span>读取项目基础信息...</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <i class="fas fa-circle-notch fa-spin text-xs"></i>
-              <span>分析\${agentInfo?.dimension || '维度'}数据...</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <i class="fas fa-circle-notch fa-spin text-xs"></i>
-              <span>生成评估结论...</span>
-            </div>
+            <div class="flex items-center space-x-2"><i class="fas fa-circle-notch fa-spin text-xs"></i><span>读取项目基础信息...</span></div>
+            <div class="flex items-center space-x-2"><i class="fas fa-circle-notch fa-spin text-xs"></i><span>分析\${agentInfo?.dimension || '维度'}数据...</span></div>
+            <div class="flex items-center space-x-2"><i class="fas fa-circle-notch fa-spin text-xs"></i><span>生成评估结论...</span></div>
           </div>
         </div>
       \`;
     } else if (status === 'pass' || status === 'fail') {
       const isPassed = status === 'pass';
-      const reasoning = result?.reasoning || result?.rationale || '暂无详细说明';
+      const reasoning = getFullReasoning(result);
+      const recommendation = getFullRecommendation(result);
       const findings = result?.findings || [];
       const riskLevel = result?.risk_level || 'medium';
-      const recommendation = result?.recommendation || '';
       const score = result?.score || 0;
       
-      // 格式化风险等级显示
       const riskLevelMap = {
         low: { text: '低风险', color: 'green', icon: 'shield-alt' },
         medium: { text: '中风险', color: 'yellow', icon: 'exclamation-triangle' },
         high: { text: '高风险', color: 'red', icon: 'exclamation-circle' }
       };
       const riskInfo = riskLevelMap[riskLevel] || riskLevelMap.medium;
+      
+      // 截取预览内容
+      const reasoningPreview = reasoning.length > 200 ? reasoning.substring(0, 200) + '...' : reasoning;
+      const recommendationPreview = recommendation && recommendation.length > 150 ? recommendation.substring(0, 150) + '...' : recommendation;
       
       stepsEl.innerHTML = \`
         <div class="space-y-4">
@@ -438,56 +647,62 @@ export const demoPageContent = `
             </div>
           </div>
           
-          <!-- 核心判断逻辑 -->
+          <!-- AI推理过程（点击展开完整内容） -->
           <div class="ml-9 space-y-3">
-            <!-- 推理过程 -->
-            <div class="bg-gray-50 rounded-lg p-3">
-              <div class="flex items-center space-x-2 mb-2">
-                <i class="fas fa-brain text-purple-500"></i>
-                <span class="font-medium text-sm text-gray-700">AI推理过程</span>
+            <div class="bg-purple-50 rounded-lg p-3 cursor-pointer hover:bg-purple-100 transition" onclick="showReasoningPopup('\${agentId}', 'reasoning')">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-medium text-sm text-purple-700 flex items-center">
+                  <i class="fas fa-brain mr-2"></i>AI推理过程
+                </span>
+                <span class="text-xs text-purple-500 flex items-center">
+                  点击查看完整内容 <i class="fas fa-external-link-alt ml-1"></i>
+                </span>
               </div>
-              <div class="text-sm text-gray-600 leading-relaxed reasoning-content">
-                \${formatReasoning(reasoning)}
-              </div>
+              <div class="text-sm text-gray-600 line-clamp-3">\${reasoningPreview}</div>
             </div>
             
             \${findings.length > 0 ? \`
-            <!-- 检查发现 -->
-            <div class="bg-\${isPassed ? 'green' : 'amber'}-50 rounded-lg p-3">
+            <div class="bg-amber-50 rounded-lg p-3">
               <div class="flex items-center space-x-2 mb-2">
-                <i class="fas fa-search text-\${isPassed ? 'green' : 'amber'}-500"></i>
+                <i class="fas fa-search text-amber-500"></i>
                 <span class="font-medium text-sm text-gray-700">检查发现</span>
               </div>
               <ul class="space-y-1 text-sm">
-                \${findings.slice(0, 5).map(f => \`
+                \${findings.slice(0, 3).map(f => \`
                   <li class="flex items-start space-x-2">
-                    <i class="fas fa-\${isPassed ? 'check' : 'exclamation'}-circle text-\${isPassed ? 'green' : 'amber'}-500 mt-0.5 text-xs"></i>
+                    <i class="fas fa-check-circle text-amber-500 mt-0.5 text-xs"></i>
                     <span class="text-gray-600">\${f}</span>
                   </li>
                 \`).join('')}
-                \${findings.length > 5 ? \`<li class="text-gray-400 text-xs ml-4">...还有 \${findings.length - 5} 项</li>\` : ''}
+                \${findings.length > 3 ? \`<li class="text-gray-400 text-xs ml-4">...还有 \${findings.length - 3} 项</li>\` : ''}
               </ul>
             </div>
             \` : ''}
             
             \${recommendation ? \`
-            <!-- 建议 -->
-            <div class="bg-blue-50 rounded-lg p-3">
-              <div class="flex items-center space-x-2 mb-2">
-                <i class="fas fa-lightbulb text-blue-500"></i>
-                <span class="font-medium text-sm text-gray-700">评估建议</span>
+            <div class="bg-blue-50 rounded-lg p-3 cursor-pointer hover:bg-blue-100 transition" onclick="showReasoningPopup('\${agentId}', 'recommendation')">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-medium text-sm text-blue-700 flex items-center">
+                  <i class="fas fa-lightbulb mr-2"></i>评估建议
+                </span>
+                <span class="text-xs text-blue-500 flex items-center">
+                  点击查看完整内容 <i class="fas fa-external-link-alt ml-1"></i>
+                </span>
               </div>
-              <p class="text-sm text-gray-600">\${recommendation}</p>
+              <div class="text-sm text-gray-600 line-clamp-2">\${recommendationPreview}</div>
             </div>
             \` : ''}
           </div>
           
-          <!-- 查看完整报告按钮 -->
-          <div class="ml-9 pt-2">
+          <!-- 操作按钮 -->
+          <div class="ml-9 pt-2 flex space-x-3">
             <button onclick="showFullReport('\${agentId}')" class="text-sm text-primary-600 hover:text-primary-700 flex items-center space-x-1">
               <i class="fas fa-file-alt"></i>
-              <span>查看完整评估报告</span>
-              <i class="fas fa-chevron-right text-xs"></i>
+              <span>完整报告</span>
+            </button>
+            <button onclick="showReasoningPopup('\${agentId}', 'raw')" class="text-sm text-gray-500 hover:text-gray-700 flex items-center space-x-1">
+              <i class="fas fa-code"></i>
+              <span>原始数据</span>
             </button>
           </div>
         </div>
@@ -495,29 +710,10 @@ export const demoPageContent = `
     }
   }
 
-  // 格式化推理内容（处理长文本）
-  function formatReasoning(reasoning) {
-    if (!reasoning) return '暂无详细说明';
-    
-    // 限制显示长度，超过的部分截断
-    const maxLength = 500;
-    let formatted = reasoning;
-    
-    // 处理换行
-    formatted = formatted.replace(/\\n/g, '<br>');
-    
-    if (formatted.length > maxLength) {
-      formatted = formatted.substring(0, maxLength) + '...';
-    }
-    
-    return formatted;
-  }
-
   // 显示完整评估报告
   function showFullReport(agentId) {
     const result = evaluationResults[agentId];
     const agent = demoAgents.find(a => a.id === agentId);
-    
     if (!result || !agent) {
       showToast('暂无评估结果', 'error');
       return;
@@ -529,131 +725,139 @@ export const demoPageContent = `
     
     const isPassed = result.pass;
     const score = result.result?.score || 0;
-    const reasoning = result.result?.reasoning || result.result?.rationale || '暂无详细说明';
+    const reasoning = getFullReasoning(result.result);
+    const recommendation = getFullRecommendation(result.result);
     const findings = result.result?.findings || [];
+    const improvements = result.result?.improvements || [];
+    const missingMaterials = result.result?.missing_materials || [];
     const riskLevel = result.result?.risk_level || 'medium';
-    const recommendation = result.result?.recommendation || '';
     const executionTime = result.executionTime || 0;
     
     modalTitle.innerHTML = \`
       <div class="flex items-center space-x-2">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: \${agent.icon_color}20">
-          <i class="\${agent.icon}" style="color: \${agent.icon_color}"></i>
-        </div>
-        <span>\${agent.name} - 评估报告</span>
+        <i class="\${agent.icon}" style="color: \${agent.icon_color}"></i>
+        <span>\${agent.name} - 完整评估报告</span>
       </div>
     \`;
     
     modalContent.innerHTML = \`
       <div class="space-y-6">
         <!-- 评估概览 -->
-        <div class="flex items-center justify-between p-4 rounded-lg \${isPassed ? 'bg-green-50' : 'bg-red-50'}">
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-full \${isPassed ? 'bg-green-100' : 'bg-red-100'} flex items-center justify-center">
-              <i class="fas \${isPassed ? 'fa-check' : 'fa-times'} text-xl \${isPassed ? 'text-green-500' : 'text-red-500'}"></i>
+        <div class="flex items-center justify-between p-4 rounded-xl \${isPassed ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}">
+          <div class="flex items-center space-x-4">
+            <div class="w-14 h-14 rounded-full \${isPassed ? 'bg-green-100' : 'bg-red-100'} flex items-center justify-center">
+              <i class="fas \${isPassed ? 'fa-check' : 'fa-times'} text-2xl \${isPassed ? 'text-green-500' : 'text-red-500'}"></i>
             </div>
             <div>
-              <p class="font-bold text-lg \${isPassed ? 'text-green-700' : 'text-red-700'}">
+              <p class="font-bold text-xl \${isPassed ? 'text-green-700' : 'text-red-700'}">
                 \${isPassed ? '评估通过' : '评估未通过'}
               </p>
-              <p class="text-sm text-gray-500">执行耗时: \${(executionTime / 1000).toFixed(1)}秒</p>
+              <p class="text-sm text-gray-500">执行耗时: \${(executionTime / 1000).toFixed(1)}秒 | 风险等级: \${riskLevel === 'low' ? '低' : riskLevel === 'high' ? '高' : '中'}</p>
             </div>
           </div>
           <div class="text-right">
-            <div class="text-3xl font-bold \${isPassed ? 'text-green-600' : 'text-red-600'}">\${score}</div>
+            <div class="text-4xl font-bold \${isPassed ? 'text-green-600' : 'text-red-600'}">\${score}</div>
             <div class="text-sm text-gray-500">阈值: \${agent.pass_threshold}分</div>
           </div>
         </div>
         
         <!-- 智能体信息 -->
-        <div class="bg-gray-50 rounded-lg p-4">
-          <h4 class="font-medium mb-3 flex items-center">
-            <i class="fas fa-robot text-gray-400 mr-2"></i>
-            智能体信息
+        <div class="bg-gray-50 rounded-xl p-4">
+          <h4 class="font-semibold mb-3 flex items-center text-gray-700">
+            <i class="fas fa-robot mr-2 text-gray-400"></i>智能体信息
           </h4>
-          <div class="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <span class="text-gray-500">评估维度:</span>
-              <span class="ml-2 font-medium">\${agent.dimension}</span>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div class="bg-white p-3 rounded-lg">
+              <span class="text-gray-500 block text-xs">评估维度</span>
+              <span class="font-medium">\${agent.dimension}</span>
             </div>
-            <div>
-              <span class="text-gray-500">所属环节:</span>
-              <span class="ml-2 font-medium">\${agent.ring_type === 'outer' ? '外环筛选' : '中环评估'}</span>
+            <div class="bg-white p-3 rounded-lg">
+              <span class="text-gray-500 block text-xs">所属环节</span>
+              <span class="font-medium">\${agent.ring_type === 'outer' ? '外环筛选' : '中环评估'}</span>
             </div>
-            <div>
-              <span class="text-gray-500">权重:</span>
-              <span class="ml-2 font-medium">\${agent.weight}%</span>
+            <div class="bg-white p-3 rounded-lg">
+              <span class="text-gray-500 block text-xs">权重</span>
+              <span class="font-medium">\${agent.weight}%</span>
             </div>
-            <div>
-              <span class="text-gray-500">风险等级:</span>
-              <span class="ml-2 font-medium">\${riskLevel === 'low' ? '低' : riskLevel === 'high' ? '高' : '中'}</span>
+            <div class="bg-white p-3 rounded-lg">
+              <span class="text-gray-500 block text-xs">通过阈值</span>
+              <span class="font-medium">\${agent.pass_threshold}分</span>
             </div>
           </div>
         </div>
         
         <!-- 详细推理过程 -->
-        <div class="bg-purple-50 rounded-lg p-4">
-          <h4 class="font-medium mb-3 flex items-center">
-            <i class="fas fa-brain text-purple-500 mr-2"></i>
-            AI推理过程
+        <div class="bg-purple-50 rounded-xl p-4">
+          <h4 class="font-semibold mb-3 flex items-center text-purple-700">
+            <i class="fas fa-brain mr-2"></i>AI推理过程
           </h4>
-          <div class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-            \${reasoning}
+          <div class="bg-white rounded-lg p-4 text-sm text-gray-700 reasoning-text max-h-64 overflow-y-auto">
+            \${formatReasoningText(reasoning)}
           </div>
         </div>
         
         \${findings.length > 0 ? \`
-        <!-- 检查发现 -->
-        <div class="bg-amber-50 rounded-lg p-4">
-          <h4 class="font-medium mb-3 flex items-center">
-            <i class="fas fa-search text-amber-500 mr-2"></i>
-            检查发现 (\${findings.length}项)
+        <div class="bg-amber-50 rounded-xl p-4">
+          <h4 class="font-semibold mb-3 flex items-center text-amber-700">
+            <i class="fas fa-search mr-2"></i>检查发现 (\${findings.length}项)
           </h4>
-          <ul class="space-y-2 text-sm">
+          <div class="grid gap-2">
             \${findings.map((f, i) => \`
-              <li class="flex items-start space-x-2">
-                <span class="w-5 h-5 rounded-full bg-amber-200 text-amber-700 flex items-center justify-center text-xs flex-shrink-0">\${i + 1}</span>
-                <span class="text-gray-700">\${f}</span>
+              <div class="flex items-start space-x-3 bg-white p-3 rounded-lg">
+                <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold flex-shrink-0">\${i + 1}</span>
+                <span class="text-sm text-gray-700">\${f}</span>
+              </div>
+            \`).join('')}
+          </div>
+        </div>
+        \` : ''}
+        
+        \${recommendation ? \`
+        <div class="bg-blue-50 rounded-xl p-4">
+          <h4 class="font-semibold mb-3 flex items-center text-blue-700">
+            <i class="fas fa-lightbulb mr-2"></i>评估建议
+          </h4>
+          <div class="bg-white rounded-lg p-4 text-sm text-gray-700 reasoning-text">
+            \${formatReasoningText(recommendation)}
+          </div>
+        </div>
+        \` : ''}
+        
+        \${improvements.length > 0 ? \`
+        <div class="bg-green-50 rounded-xl p-4">
+          <h4 class="font-semibold mb-3 flex items-center text-green-700">
+            <i class="fas fa-arrow-up mr-2"></i>改进建议
+          </h4>
+          <ul class="space-y-2">
+            \${improvements.map(item => \`
+              <li class="flex items-start space-x-2 bg-white p-3 rounded-lg">
+                <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                <span class="text-sm text-gray-700">\${item}</span>
               </li>
             \`).join('')}
           </ul>
         </div>
         \` : ''}
         
-        \${recommendation ? \`
-        <!-- 评估建议 -->
-        <div class="bg-blue-50 rounded-lg p-4">
-          <h4 class="font-medium mb-3 flex items-center">
-            <i class="fas fa-lightbulb text-blue-500 mr-2"></i>
-            评估建议
+        \${missingMaterials.length > 0 ? \`
+        <div class="bg-orange-50 rounded-xl p-4">
+          <h4 class="font-semibold mb-3 flex items-center text-orange-700">
+            <i class="fas fa-file-circle-plus mr-2"></i>待补充材料
           </h4>
-          <p class="text-sm text-gray-700">\${recommendation}</p>
+          <ul class="space-y-2">
+            \${missingMaterials.map(item => \`
+              <li class="flex items-start space-x-2 bg-white p-3 rounded-lg">
+                <i class="fas fa-file-alt text-orange-500 mt-0.5"></i>
+                <span class="text-sm text-gray-700">\${item}</span>
+              </li>
+            \`).join('')}
+          </ul>
         </div>
         \` : ''}
-        
-        <!-- 原始返回数据 -->
-        <div class="border rounded-lg p-4">
-          <h4 class="font-medium mb-3 flex items-center cursor-pointer" onclick="toggleRawData()">
-            <i class="fas fa-code text-gray-400 mr-2"></i>
-            原始返回数据
-            <i id="raw-data-icon" class="fas fa-chevron-down ml-auto text-gray-400 text-sm"></i>
-          </h4>
-          <div id="raw-data-content" class="hidden">
-            <pre class="bg-gray-900 text-green-400 p-3 rounded text-xs overflow-x-auto">\${JSON.stringify(result.result, null, 2)}</pre>
-          </div>
-        </div>
       </div>
     \`;
     
     modal.classList.remove('hidden');
-  }
-
-  // 切换原始数据显示
-  function toggleRawData() {
-    const content = document.getElementById('raw-data-content');
-    const icon = document.getElementById('raw-data-icon');
-    content.classList.toggle('hidden');
-    icon.classList.toggle('rotate-180');
   }
 
   // 关闭详情弹窗
@@ -677,7 +881,6 @@ export const demoPageContent = `
         progressEl.querySelector('div').style.width = '30%';
         setTimeout(() => progressEl.querySelector('div').style.width = '70%', 500);
       }
-      // 更新步骤显示
       updateAgentSteps(agentId, 'running');
     } else if (status === 'pass') {
       statusEl.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
@@ -689,9 +892,8 @@ export const demoPageContent = `
         scoreEl.textContent = score;
         scoreEl.className = 'font-mono text-lg font-bold text-green-600';
       }
-      // 更新步骤显示
       updateAgentSteps(agentId, 'pass', result);
-      // 自动展开详情
+      // 自动展开
       const detailEl = document.getElementById(\`detail-\${agentId}\`);
       const expandIcon = document.getElementById(\`expand-icon-\${agentId}\`);
       if (detailEl) {
@@ -707,9 +909,7 @@ export const demoPageContent = `
         scoreEl.textContent = score;
         scoreEl.className = 'font-mono text-lg font-bold text-red-600';
       }
-      // 更新步骤显示
       updateAgentSteps(agentId, 'fail', result);
-      // 自动展开详情
       const detailEl = document.getElementById(\`detail-\${agentId}\`);
       const expandIcon = document.getElementById(\`expand-icon-\${agentId}\`);
       if (detailEl) {
@@ -737,16 +937,100 @@ export const demoPageContent = `
     }
   }
 
+  // 生成综合改进建议
+  function generateImprovementSuggestions() {
+    const missingMaterials = new Set();
+    const improvements = new Set();
+    const nextActions = [];
+    
+    // 从所有评估结果中收集改进建议
+    Object.values(evaluationResults).forEach((r) => {
+      if (r.result?.missing_materials) {
+        r.result.missing_materials.forEach(m => missingMaterials.add(m));
+      }
+      if (r.result?.improvements) {
+        r.result.improvements.forEach(i => improvements.add(i));
+      }
+      // 从findings中提取需要改进的项
+      if (r.result?.findings) {
+        r.result.findings.forEach(f => {
+          if (f.includes('缺') || f.includes('不足') || f.includes('需要') || f.includes('建议') || f.includes('应') || f.includes('未')) {
+            improvements.add(f);
+          }
+        });
+      }
+      // 从recommendation中提取
+      if (r.result?.recommendation) {
+        const rec = r.result.recommendation;
+        if (rec.includes('补充') || rec.includes('完善') || rec.includes('加强')) {
+          improvements.add(rec);
+        }
+      }
+    });
+    
+    // 默认材料建议（如果没有收集到）
+    if (missingMaterials.size === 0) {
+      missingMaterials.add('详细的艺人合同条款（包含取消条款）');
+      missingMaterials.add('涉外演出批文或申请进度文件');
+      missingMaterials.add('场地租赁合同或意向书');
+      missingMaterials.add('票务销售平台合作协议');
+      missingMaterials.add('保险方案（演出取消险）');
+    }
+    
+    // 默认改进建议
+    if (improvements.size === 0) {
+      improvements.add('完善票房预测模型，增加敏感性分析');
+      improvements.add('细化艺人取消风险应对预案');
+      improvements.add('明确分城市的盈亏平衡点');
+      improvements.add('补充历史类似项目的对标数据');
+    }
+    
+    // 生成下一步行动
+    nextActions.push('提交缺失材料至项目组审核');
+    nextActions.push('与运营方确认涉外审批进度');
+    nextActions.push('完成保险方案比选并签约');
+    nextActions.push('启动票务预售方案设计');
+    
+    // 更新UI
+    const missingEl = document.getElementById('missing-materials');
+    const improvementEl = document.getElementById('improvement-suggestions');
+    const actionsEl = document.getElementById('next-actions');
+    
+    missingEl.innerHTML = Array.from(missingMaterials).slice(0, 6).map(m => \`
+      <li class="flex items-start space-x-2">
+        <i class="fas fa-file-circle-exclamation text-amber-500 mt-0.5"></i>
+        <span>\${m}</span>
+      </li>
+    \`).join('');
+    
+    improvementEl.innerHTML = Array.from(improvements).slice(0, 6).map(i => \`
+      <li class="flex items-start space-x-2">
+        <i class="fas fa-arrow-up-right-dots text-blue-500 mt-0.5"></i>
+        <span>\${i}</span>
+      </li>
+    \`).join('');
+    
+    actionsEl.innerHTML = nextActions.slice(0, 4).map((a, i) => \`
+      <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+        <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">\${i + 1}</span>
+        <span class="text-gray-700">\${a}</span>
+      </div>
+    \`).join('');
+    
+    document.getElementById('improvement-section').classList.remove('hidden');
+  }
+
   // 开始演示
   async function startDemo() {
     if (isRunning) return;
     isRunning = true;
-    evaluationResults = {}; // 清空之前的结果
+    evaluationResults = {};
     
     document.getElementById('btn-start').disabled = true;
     document.getElementById('btn-start').innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>评估中...';
     document.getElementById('overall-status').textContent = '正在评估...';
     document.getElementById('recommendation-section').classList.add('hidden');
+    document.getElementById('improvement-section').classList.add('hidden');
 
     try {
       // 步骤2：外环筛选
@@ -762,29 +1046,23 @@ export const demoPageContent = `
         
         const response = await apiCall('/api/ai/evaluate', {
           method: 'POST',
-          body: JSON.stringify({
-            agentId: agentId,
-            dealId: 'DGT-2026-CARDIB'
-          })
+          body: JSON.stringify({ agentId, dealId: 'DGT-2026-CARDIB' })
         });
         
         await sleep(500);
         
         const pass = response.data.pass;
         const score = response.data.result?.score || 0;
-        const result = response.data.result;
-        
-        // 存储评估结果
         evaluationResults[agentId] = response.data;
-        
-        updateAgentStatus(agentId, pass ? 'pass' : 'fail', score, result);
+        updateAgentStatus(agentId, pass ? 'pass' : 'fail', score, response.data.result);
         
         if (!pass) {
           document.getElementById('outer-status').textContent = '未通过';
           document.getElementById('outer-status').className = 'text-sm text-red-600';
           updateStep(2, 'error');
           document.getElementById('overall-status').textContent = '外环筛选未通过';
-          showToast('外环筛选未通过：' + (response.data.result?.reasoning || ''), 'error');
+          showToast('外环筛选未通过', 'error');
+          generateImprovementSuggestions();
           return;
         }
       }
@@ -807,10 +1085,7 @@ export const demoPageContent = `
       const innerResults = await Promise.all(innerAgentIds.map(async agentId => {
         const response = await apiCall('/api/ai/evaluate', {
           method: 'POST',
-          body: JSON.stringify({
-            agentId: agentId,
-            dealId: 'DGT-2026-CARDIB'
-          })
+          body: JSON.stringify({ agentId, dealId: 'DGT-2026-CARDIB' })
         });
         return { agentId, ...response.data };
       }));
@@ -819,7 +1094,6 @@ export const demoPageContent = `
       innerResults.forEach(r => {
         const score = r.result?.score || 0;
         scores[r.agentId] = score;
-        // 存储评估结果
         evaluationResults[r.agentId] = r;
         updateAgentStatus(r.agentId, r.pass ? 'pass' : 'fail', score, r.result);
       });
@@ -834,7 +1108,6 @@ export const demoPageContent = `
       document.getElementById('final-status').textContent = '计算中...';
       document.getElementById('final-status').className = 'text-sm text-primary-600';
 
-      // 计算加权评分
       const weights = {
         'financial-health-agent': 25,
         'operational-capability-agent': 20,
@@ -853,18 +1126,14 @@ export const demoPageContent = `
 
       const finalScore = Math.round(weightedSum / totalWeight * 10) / 10;
       
-      // 确定评级
-      let grade = 'D';
-      let gradeColor = 'red';
+      let grade = 'D', gradeColor = 'red';
       if (finalScore >= 85) { grade = 'A'; gradeColor = 'green'; }
       else if (finalScore >= 75) { grade = 'B+'; gradeColor = 'emerald'; }
       else if (finalScore >= 65) { grade = 'B'; gradeColor = 'blue'; }
       else if (finalScore >= 60) { grade = 'C'; gradeColor = 'yellow'; }
 
-      // 更新雷达图
       updateRadarChart(scores);
 
-      // 更新评分详情
       document.getElementById('final-details').innerHTML = \`
         <div class="text-center">
           <div class="text-5xl font-bold text-\${gradeColor}-600 mb-2">\${finalScore}</div>
@@ -874,21 +1143,11 @@ export const demoPageContent = `
         <div class="space-y-2 mt-4">
           \${Object.entries(scores).map(([id, score]) => {
             const agent = demoAgents.find(a => a.id === id);
-            return \`
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-600">\${agent?.dimension || id}</span>
-                <span class="font-mono font-medium">\${score}</span>
-              </div>
-            \`;
+            return \`<div class="flex justify-between text-sm"><span class="text-gray-600">\${agent?.dimension || id}</span><span class="font-mono font-medium">\${score}</span></div>\`;
           }).join('')}
         </div>
-        
-        <!-- 加权公式说明 -->
         <div class="mt-4 pt-4 border-t">
-          <p class="text-xs text-gray-500 mb-2">
-            <i class="fas fa-calculator mr-1"></i>
-            加权计算公式
-          </p>
+          <p class="text-xs text-gray-500 mb-2"><i class="fas fa-calculator mr-1"></i>加权计算</p>
           <div class="text-xs text-gray-400 space-y-1">
             \${Object.entries(weights).map(([id, weight]) => {
               const agent = demoAgents.find(a => a.id === id);
@@ -909,43 +1168,40 @@ export const demoPageContent = `
       recSection.querySelector('.bg-gradient-to-r').className = \`bg-gradient-to-r from-\${gradeColor}-500 to-\${gradeColor === 'green' ? 'emerald' : gradeColor}-600 rounded-xl p-6 text-white\`;
       
       document.getElementById('rec-title').textContent = grade === 'A' || grade === 'B+' ? '✅ 建议投资' : grade === 'B' ? '⚠️ 可考虑投资' : '❌ 建议谨慎';
-      document.getElementById('rec-detail').textContent = 'Cardi B 2026中国巡演项目整体评估良好，IRR预期35%，回收期5个月，符合投资标准。';
+      document.getElementById('rec-detail').textContent = 'Cardi B 2026中国巡演项目整体评估良好，IRR预期35%，回收期5个月。';
       document.getElementById('rec-score').textContent = finalScore;
       document.getElementById('rec-grade').textContent = grade + '级';
       
-      // 从评估结果中提取优势和风险
-      const strengths = [];
-      const risks = [];
-      
-      Object.values(evaluationResults).forEach((r) => {
+      // 提取优势和风险
+      const strengths = [], risks = [];
+      Object.values(evaluationResults).forEach(r => {
         if (r.result?.findings) {
           r.result.findings.forEach(f => {
-            if (f.includes('优') || f.includes('强') || f.includes('好') || f.includes('完善') || f.includes('齐全')) {
-              strengths.push(f);
-            } else if (f.includes('风险') || f.includes('缺') || f.includes('不足') || f.includes('需要') || f.includes('关注')) {
-              risks.push(f);
+            if (f.includes('优') || f.includes('强') || f.includes('好') || f.includes('完善') || f.includes('齐全') || f.includes('丰富')) {
+              if (strengths.length < 4) strengths.push(f);
+            } else if (f.includes('风险') || f.includes('缺') || f.includes('不足') || f.includes('需要') || f.includes('关注') || f.includes('较')) {
+              if (risks.length < 4) risks.push(f);
             }
           });
         }
       });
       
-      document.getElementById('rec-strengths').innerHTML = (strengths.length > 0 ? strengths.slice(0, 3) : [
-        '首次中国巡演，市场稀缺性强',
-        '三城联动分散风险',
-        '运营方经验丰富'
-      ]).map(s => \`<li>• \${s.substring(0, 30)}\${s.length > 30 ? '...' : ''}</li>\`).join('');
+      document.getElementById('rec-strengths').innerHTML = (strengths.length > 0 ? strengths : [
+        '首次中国巡演，市场稀缺性强', '三城联动分散风险', '运营方经验丰富'
+      ]).slice(0, 3).map(s => \`<li>• \${s.length > 35 ? s.substring(0, 35) + '...' : s}</li>\`).join('');
       
-      document.getElementById('rec-risks').innerHTML = (risks.length > 0 ? risks.slice(0, 3) : [
-        '艺人取消风险需关注',
-        '票房预测依赖市场反应',
-        '涉外审批进度需跟踪'
-      ]).map(r => \`<li>• \${r.substring(0, 30)}\${r.length > 30 ? '...' : ''}</li>\`).join('');
+      document.getElementById('rec-risks').innerHTML = (risks.length > 0 ? risks : [
+        '艺人取消风险需关注', '票房预测依赖市场反应', '涉外审批进度需跟踪'
+      ]).slice(0, 3).map(r => \`<li>• \${r.length > 35 ? r.substring(0, 35) + '...' : r}</li>\`).join('');
+
+      // 生成综合改进建议
+      generateImprovementSuggestions();
 
       document.getElementById('overall-status').textContent = '评估完成';
       showToast('评估完成！综合评分：' + finalScore + '分', 'success');
 
     } catch (error) {
-      showToast('评估过程出错：' + error.message, 'error');
+      showToast('评估出错：' + error.message, 'error');
       document.getElementById('overall-status').textContent = '评估出错';
     } finally {
       isRunning = false;
@@ -957,74 +1213,48 @@ export const demoPageContent = `
   // 更新雷达图
   function updateRadarChart(scores) {
     const ctx = document.getElementById('radar-chart').getContext('2d');
-    
-    if (radarChart) {
-      radarChart.destroy();
-    }
-
-    const labels = ['财务健康', '运营能力', '法律合规', '风险控制', '利益一致', '经济性'];
-    const data = [
-      scores['financial-health-agent'] || 0,
-      scores['operational-capability-agent'] || 0,
-      scores['legal-compliance-agent'] || 0,
-      scores['risk-control-agent'] || 0,
-      scores['interest-deep-agent'] || 0,
-      scores['economic-calculation-agent'] || 0
-    ];
+    if (radarChart) radarChart.destroy();
 
     radarChart = new Chart(ctx, {
       type: 'radar',
       data: {
-        labels: labels,
+        labels: ['财务健康', '运营能力', '法律合规', '风险控制', '利益一致', '经济性'],
         datasets: [{
           label: '评分',
-          data: data,
+          data: [
+            scores['financial-health-agent'] || 0,
+            scores['operational-capability-agent'] || 0,
+            scores['legal-compliance-agent'] || 0,
+            scores['risk-control-agent'] || 0,
+            scores['interest-deep-agent'] || 0,
+            scores['economic-calculation-agent'] || 0
+          ],
           fill: true,
           backgroundColor: 'rgba(99, 102, 241, 0.2)',
           borderColor: 'rgb(99, 102, 241)',
           pointBackgroundColor: 'rgb(99, 102, 241)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgb(99, 102, 241)'
+          pointBorderColor: '#fff'
         }]
       },
       options: {
-        elements: {
-          line: { borderWidth: 2 }
-        },
-        scales: {
-          r: {
-            beginAtZero: true,
-            max: 100,
-            ticks: { stepSize: 20 }
-          }
-        },
-        plugins: {
-          legend: { display: false }
-        }
+        scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } } },
+        plugins: { legend: { display: false } }
       }
     });
   }
 
-  // 重置演示
-  function resetDemo() {
-    location.reload();
-  }
+  function resetDemo() { location.reload(); }
+  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  // ESC关闭弹窗
+  // 键盘事件
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeDetailModal();
+      closeReasoningPopup();
     }
   });
 
   // 初始化
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(loadDemoAgents, 500);
-  });
+  document.addEventListener('DOMContentLoaded', () => setTimeout(loadDemoAgents, 500));
 </script>
 `

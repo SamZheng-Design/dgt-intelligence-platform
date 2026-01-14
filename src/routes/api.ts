@@ -23,6 +23,126 @@ const getOpenAIClient = (env: Bindings) => {
 
 const api = new Hono<{ Bindings: Bindings }>()
 
+// ============================================
+// 辅助函数：从部分JSON或原始文本中提取字段
+// ============================================
+function extractFieldsFromPartialJSON(jsonStr: string, rawResponse: string): any {
+  const text = jsonStr || rawResponse || ''
+  
+  // 提取pass字段
+  const passMatch = text.match(/"pass"\s*:\s*(true|false)/i)
+  const pass = passMatch ? passMatch[1].toLowerCase() === 'true' : false
+  
+  // 提取score字段
+  const scoreMatch = text.match(/"score"\s*:\s*(\d+)/)
+  const score = scoreMatch ? parseInt(scoreMatch[1]) : 0
+  
+  // 提取risk_level字段
+  const riskMatch = text.match(/"risk_level"\s*:\s*"([^"]*)"/)
+  const riskLevel = riskMatch ? riskMatch[1] : 'medium'
+  
+  // 更智能地提取reasoning - 支持多行和特殊字符
+  let reasoning = ''
+  const reasoningPatterns = [
+    /"reasoning"\s*:\s*"([\s\S]*?)(?:"|$)/,
+    /"rationale"\s*:\s*"([\s\S]*?)(?:"|$)/,
+    /"assessment"\s*:\s*"([\s\S]*?)(?:"|$)/,
+    /"analysis"\s*:\s*"([\s\S]*?)(?:"|$)/,
+    /"summary"\s*:\s*"([\s\S]*?)(?:"|$)/
+  ]
+  
+  for (const pattern of reasoningPatterns) {
+    const match = text.match(pattern)
+    if (match && match[1] && match[1].length > reasoning.length) {
+      reasoning = match[1]
+        .replace(/\\n/g, '\n')
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, '\\')
+    }
+  }
+  
+  // 如果还是没有reasoning，尝试从原始响应中提取有意义的内容
+  if (!reasoning && rawResponse) {
+    // 移除JSON标记，提取纯文本内容
+    let cleanText = rawResponse
+      .replace(/```json\s*/g, '')
+      .replace(/```\s*/g, '')
+      .replace(/\{[\s\S]*?\}/g, '') // 移除JSON对象
+      .trim()
+    
+    if (cleanText.length > 20) {
+      reasoning = cleanText.substring(0, 2000)
+    } else {
+      // 如果清理后文本太短，直接使用原始响应的前2000字符
+      reasoning = rawResponse.substring(0, 2000)
+    }
+  }
+  
+  // 提取recommendation
+  let recommendation = ''
+  const recPatterns = [
+    /"recommendation"\s*:\s*"([\s\S]*?)(?:"|$)/,
+    /"suggestion"\s*:\s*"([\s\S]*?)(?:"|$)/,
+    /"advice"\s*:\s*"([\s\S]*?)(?:"|$)/
+  ]
+  
+  for (const pattern of recPatterns) {
+    const match = text.match(pattern)
+    if (match && match[1] && match[1].length > recommendation.length) {
+      recommendation = match[1]
+        .replace(/\\n/g, '\n')
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, '\\')
+    }
+  }
+  
+  // 提取findings数组
+  let findings: string[] = []
+  const findingsMatch = text.match(/"findings"\s*:\s*\[([\s\S]*?)\]/)
+  if (findingsMatch) {
+    const findingsStr = findingsMatch[1]
+    const items = findingsStr.match(/"([^"]+)"/g)
+    if (items) {
+      findings = items.map(item => item.replace(/"/g, ''))
+    }
+  }
+  
+  // 提取improvements（改进建议）
+  let improvements: string[] = []
+  const improvementsMatch = text.match(/"improvements"\s*:\s*\[([\s\S]*?)\]/)
+  if (improvementsMatch) {
+    const improvementsStr = improvementsMatch[1]
+    const items = improvementsStr.match(/"([^"]+)"/g)
+    if (items) {
+      improvements = items.map(item => item.replace(/"/g, ''))
+    }
+  }
+  
+  // 提取missing_materials（缺失材料）
+  let missingMaterials: string[] = []
+  const missingMatch = text.match(/"missing_materials"\s*:\s*\[([\s\S]*?)\]/)
+  if (missingMatch) {
+    const missingStr = missingMatch[1]
+    const items = missingStr.match(/"([^"]+)"/g)
+    if (items) {
+      missingMaterials = items.map(item => item.replace(/"/g, ''))
+    }
+  }
+  
+  return {
+    pass,
+    score,
+    reasoning: reasoning || '评估已完成，请查看完整报告获取详情',
+    risk_level: riskLevel,
+    findings,
+    recommendation: recommendation || '',
+    improvements,
+    missing_materials: missingMaterials,
+    _partial_parse: true,
+    _raw_response: rawResponse
+  }
+}
+
 // 调试端点 - 检查环境变量
 api.get('/debug-env', (c) => {
   const hasApiKey = !!c.env.OPENAI_API_KEY
@@ -402,6 +522,7 @@ ${JSON.stringify(dealData, null, 2)}
     
     // 解析AI返回的JSON
     let result
+    let rawResponse = aiResponse // 保留原始响应
     try {
       // 尝试提取JSON - 更健壮的解析
       let jsonStr = aiResponse
@@ -419,7 +540,6 @@ ${JSON.stringify(dealData, null, 2)}
           result = JSON.parse(jsonStr)
         } catch (e) {
           // 如果解析失败，尝试修复常见问题
-          // 1. 补全截断的字符串和对象
           let fixedJson = jsonStr
           
           // 统计括号，尝试闭合
@@ -432,7 +552,6 @@ ${JSON.stringify(dealData, null, 2)}
           const lastQuote = fixedJson.lastIndexOf('"')
           const colonAfterQuote = fixedJson.indexOf(':', lastQuote)
           if (colonAfterQuote === -1 && lastQuote > fixedJson.lastIndexOf(':')) {
-            // 可能在值字符串中间截断
             fixedJson = fixedJson.substring(0, lastQuote + 1)
           }
           
@@ -447,57 +566,34 @@ ${JSON.stringify(dealData, null, 2)}
           try {
             result = JSON.parse(fixedJson)
           } catch (e2) {
-            // 最后尝试：提取关键字段构建结果
-            const passMatch = jsonStr.match(/"pass"\s*:\s*(true|false)/)
-            const scoreMatch = jsonStr.match(/"score"\s*:\s*(\d+)/)
-            const riskMatch = jsonStr.match(/"risk_level"\s*:\s*"([^"]*)"/)
-            
-            // 更健壮的reasoning提取 - 支持包含引号的内容
-            let reasoning = '评估完成（JSON解析部分成功）'
-            const reasoningStart = jsonStr.indexOf('"reasoning"')
-            if (reasoningStart !== -1) {
-              // 找到reasoning后的冒号和第一个引号
-              const colonPos = jsonStr.indexOf(':', reasoningStart)
-              if (colonPos !== -1) {
-                const firstQuote = jsonStr.indexOf('"', colonPos + 1)
-                if (firstQuote !== -1) {
-                  // 找到结束引号（跳过转义的引号）
-                  let endQuote = firstQuote + 1
-                  while (endQuote < jsonStr.length) {
-                    if (jsonStr[endQuote] === '"' && jsonStr[endQuote - 1] !== '\\') {
-                      break
-                    }
-                    endQuote++
-                  }
-                  if (endQuote < jsonStr.length) {
-                    reasoning = jsonStr.substring(firstQuote + 1, endQuote)
-                  }
-                }
-              }
-            }
-            
-            result = {
-              pass: passMatch ? passMatch[1] === 'true' : false,
-              score: scoreMatch ? parseInt(scoreMatch[1]) : 0,
-              reasoning: reasoning,
-              risk_level: riskMatch ? riskMatch[1] : 'medium',
-              findings: [],
-              recommendation: '请查看原始响应获取详细信息',
-              _partial_parse: true
-            }
+            // 最后尝试：使用更智能的字段提取
+            result = extractFieldsFromPartialJSON(jsonStr, rawResponse)
           }
         }
       } else {
-        throw new Error('无法从AI响应中提取JSON')
+        // 没有找到JSON对象，尝试直接从原文提取
+        result = extractFieldsFromPartialJSON('', rawResponse)
       }
     } catch (parseError: any) {
-      return c.json({
-        success: false,
-        error: '解析AI响应失败',
-        raw_response: aiResponse,
-        parse_error: parseError.message
-      }, 500)
+      // 即使解析失败，也尝试提取有用信息
+      result = extractFieldsFromPartialJSON('', rawResponse)
     }
+    
+    // 确保result有值
+    if (!result) {
+      result = {
+        pass: false,
+        score: 0,
+        reasoning: rawResponse || '无法获取评估结果',
+        risk_level: 'medium',
+        findings: [],
+        recommendation: '请检查AI服务状态',
+        _raw_response: rawResponse
+      }
+    }
+    
+    // 始终附加原始响应，方便前端展示完整内容
+    result._raw_response = rawResponse
     
     // 非测试模式下保存评估日志
     if (!testMode && dealId) {
