@@ -281,6 +281,130 @@ api.patch('/agents/:id', async (c) => {
   }
 })
 
+// 创建新智能体
+api.post('/agents', async (c) => {
+  const db = c.env.DB
+  const agent = await c.req.json()
+  
+  try {
+    // 检查ID是否已存在
+    const existing = await db.prepare('SELECT id FROM agents WHERE id = ?').bind(agent.id).first()
+    if (existing) {
+      return c.json({ success: false, error: '智能体ID已存在' }, 400)
+    }
+    
+    // 获取最大执行顺序
+    const maxOrder = await db.prepare(
+      'SELECT MAX(execution_order) as max_order FROM agents WHERE ring_type = ?'
+    ).bind(agent.ring_type).first<{max_order: number}>()
+    const newOrder = (maxOrder?.max_order || 0) + 1
+    
+    await db.prepare(`
+      INSERT INTO agents (id, name, ring_type, industry, dimension, weight, description, 
+        system_prompt, evaluation_criteria, knowledge_base, output_format, 
+        pass_threshold, is_enabled, execution_order, model_config, icon, icon_color)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?)
+    `).bind(
+      agent.id,
+      agent.name,
+      agent.ring_type,
+      agent.industry || 'all',
+      agent.dimension || '自定义',
+      agent.weight || 0,
+      agent.description || '',
+      agent.system_prompt || '',
+      agent.evaluation_criteria || '{}',
+      agent.knowledge_base || '',
+      agent.output_format || '{}',
+      agent.pass_threshold || 60,
+      newOrder,
+      agent.model_config || JSON.stringify({ model: 'gpt-5-mini', temperature: 0.2, max_tokens: 2000 }),
+      agent.icon || 'fas fa-robot',
+      agent.icon_color || '#6366F1'
+    ).run()
+    
+    const created = await db.prepare('SELECT * FROM agents WHERE id = ?').bind(agent.id).first()
+    return c.json({ success: true, data: created, message: '智能体创建成功' })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// 删除智能体
+api.delete('/agents/:id', async (c) => {
+  const db = c.env.DB
+  const id = c.req.param('id')
+  
+  try {
+    // 检查是否为内置智能体（可选：保护内置智能体）
+    const builtInAgents = [
+      'negative-list-agent', 'touch-agent', 'interest-alignment-agent',
+      'financial-health-agent', 'operational-capability-agent', 'legal-compliance-agent',
+      'risk-control-agent', 'interest-deep-agent', 'economic-calculation-agent', 'comprehensive-scoring-agent'
+    ]
+    
+    // 如果需要保护内置智能体，取消下面的注释
+    // if (builtInAgents.includes(id)) {
+    //   return c.json({ success: false, error: '内置智能体不能删除' }, 400)
+    // }
+    
+    await db.prepare('DELETE FROM agents WHERE id = ?').bind(id).run()
+    return c.json({ success: true, message: '智能体已删除' })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// ============================================
+// 行业赛道 API
+// ============================================
+
+// 获取所有赛道
+api.get('/tracks', async (c) => {
+  const db = c.env.DB
+  
+  try {
+    // 尝试从数据库读取
+    const result = await db.prepare('SELECT * FROM industry_tracks WHERE is_active = 1 ORDER BY name').all()
+    return c.json({ success: true, data: result.results })
+  } catch (error: any) {
+    // 如果表不存在，返回默认赛道
+    const defaultTracks = [
+      { id: 'light-asset', name: '轻资产', icon: 'fas fa-feather', icon_color: '#8B5CF6' },
+      { id: 'retail', name: '零售', icon: 'fas fa-store', icon_color: '#10B981' },
+      { id: 'catering', name: '餐饮', icon: 'fas fa-utensils', icon_color: '#F59E0B' },
+      { id: 'ecommerce', name: '电商', icon: 'fas fa-shopping-cart', icon_color: '#3B82F6' },
+      { id: 'education', name: '教育培训', icon: 'fas fa-graduation-cap', icon_color: '#EC4899' },
+      { id: 'entertainment', name: '文娱', icon: 'fas fa-film', icon_color: '#6366F1' },
+      { id: 'service', name: '生活服务', icon: 'fas fa-concierge-bell', icon_color: '#14B8A6' }
+    ]
+    return c.json({ success: true, data: defaultTracks })
+  }
+})
+
+// 创建新赛道
+api.post('/tracks', async (c) => {
+  const db = c.env.DB
+  const track = await c.req.json()
+  
+  try {
+    await db.prepare(`
+      INSERT INTO industry_tracks (id, name, description, icon, icon_color)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(
+      track.id,
+      track.name,
+      track.description || '',
+      track.icon || 'fas fa-industry',
+      track.icon_color || '#6366F1'
+    ).run()
+    
+    return c.json({ success: true, message: '赛道创建成功' })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
 // ============================================
 // 标的 CRUD API
 // ============================================

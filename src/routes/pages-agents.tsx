@@ -7,6 +7,9 @@ export const agentsPageContent = `
     <p class="text-gray-500">配置和管理所有AI评估智能体</p>
   </div>
   <div class="flex space-x-2">
+    <button onclick="openAddAgentModal()" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
+      <i class="fas fa-plus mr-2"></i>添加智能体
+    </button>
     <button onclick="refreshAgents()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
       <i class="fas fa-sync-alt mr-2"></i>刷新
     </button>
@@ -17,13 +20,28 @@ export const agentsPageContent = `
 <div class="bg-white rounded-xl card-shadow overflow-hidden">
   <!-- 环类型Tab -->
   <div class="border-b">
-    <div class="flex">
-      <button id="tab-outer" onclick="switchRingTab('outer')" class="px-6 py-4 font-medium text-primary-600 border-b-2 border-primary-500 bg-primary-50">
-        <i class="fas fa-circle-notch mr-2"></i>外环智能体 <span class="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">一票否决</span>
-      </button>
-      <button id="tab-inner" onclick="switchRingTab('inner')" class="px-6 py-4 font-medium text-gray-500 hover:text-gray-700 transition">
-        <i class="fas fa-bullseye mr-2"></i>中环智能体 <span class="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">加权评分</span>
-      </button>
+    <div class="flex items-center justify-between">
+      <div class="flex">
+        <button id="tab-outer" onclick="switchRingTab('outer')" class="px-6 py-4 font-medium text-primary-600 border-b-2 border-primary-500 bg-primary-50">
+          <i class="fas fa-circle-notch mr-2"></i>外环智能体 <span class="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">一票否决</span>
+        </button>
+        <button id="tab-inner" onclick="switchRingTab('inner')" class="px-6 py-4 font-medium text-gray-500 hover:text-gray-700 transition">
+          <i class="fas fa-bullseye mr-2"></i>中环智能体 <span class="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">加权评分</span>
+        </button>
+      </div>
+      <!-- 赛道筛选（仅中环显示） -->
+      <div id="track-filter" class="hidden pr-4">
+        <select id="track-select" onchange="filterByTrack()" class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-400">
+          <option value="all">全部赛道</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- 中环赛道标签（仅中环显示） -->
+  <div id="track-tags" class="hidden px-6 py-3 bg-gray-50 border-b overflow-x-auto">
+    <div class="flex space-x-2" id="track-tags-container">
+      <!-- 动态加载赛道标签 -->
     </div>
   </div>
 
@@ -31,6 +49,111 @@ export const agentsPageContent = `
   <div class="p-6">
     <div id="agents-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- 动态加载 -->
+    </div>
+  </div>
+</div>
+
+<!-- 添加智能体模态框 -->
+<div id="add-agent-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b bg-gradient-to-r from-primary-500 to-purple-500 text-white">
+      <h2 class="text-lg font-semibold"><i class="fas fa-plus-circle mr-2"></i>添加新智能体</h2>
+      <button onclick="closeAddAgentModal()" class="hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-6">
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">智能体ID *</label>
+            <input type="text" id="new-agent-id" placeholder="例如: my-custom-agent" 
+              class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400">
+            <p class="text-xs text-gray-500 mt-1">唯一标识符，仅允许小写字母、数字和横线</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">智能体名称 *</label>
+            <input type="text" id="new-agent-name" placeholder="例如: 我的自定义智能体" 
+              class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400">
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">所属环</label>
+            <select id="new-agent-ring" onchange="updateNewAgentForm()" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400">
+              <option value="outer">外环（一票否决）</option>
+              <option value="inner" selected>中环（加权评分）</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">评估维度</label>
+            <input type="text" id="new-agent-dimension" placeholder="例如: 财务健康度" 
+              class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400">
+          </div>
+        </div>
+        
+        <div id="new-agent-track-section">
+          <label class="block text-sm font-medium text-gray-700 mb-1">适用赛道</label>
+          <select id="new-agent-track" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400">
+            <option value="all">通用（适用所有赛道）</option>
+          </select>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">权重 (%) <span id="new-weight-note" class="text-xs text-gray-400">（中环有效）</span></label>
+            <input type="number" id="new-agent-weight" value="10" min="0" max="100"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">通过阈值</label>
+            <input type="number" id="new-agent-threshold" value="60" min="0" max="100"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400">
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">描述</label>
+          <textarea id="new-agent-description" rows="2" placeholder="智能体功能描述..."
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400"></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">System Prompt *</label>
+          <textarea id="new-agent-prompt" rows="6" placeholder="你是一个专业的投资评估智能体..."
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400 font-mono text-sm"></textarea>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">图标</label>
+            <select id="new-agent-icon" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-400">
+              <option value="fas fa-robot">🤖 机器人</option>
+              <option value="fas fa-chart-line">📈 图表</option>
+              <option value="fas fa-shield-alt">🛡️ 盾牌</option>
+              <option value="fas fa-balance-scale">⚖️ 天平</option>
+              <option value="fas fa-search-dollar">💰 财务</option>
+              <option value="fas fa-handshake">🤝 合作</option>
+              <option value="fas fa-cogs">⚙️ 齿轮</option>
+              <option value="fas fa-brain">🧠 大脑</option>
+              <option value="fas fa-lightbulb">💡 灯泡</option>
+              <option value="fas fa-check-double">✅ 检查</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">图标颜色</label>
+            <input type="color" id="new-agent-color" value="#6366F1"
+              class="w-full h-10 px-1 py-1 border rounded-lg cursor-pointer">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+      <button onclick="closeAddAgentModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">取消</button>
+      <button onclick="createNewAgent()" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
+        <i class="fas fa-plus mr-2"></i>创建智能体
+      </button>
     </div>
   </div>
 </div>
@@ -246,16 +369,90 @@ export const agentsPageContent = `
   let currentRingType = 'outer';
   let currentAgent = null;
   let isKnowledgeEditing = false;
+  let currentTrackFilter = 'all';
+  let industryTracks = [];
+
+  // 加载赛道数据
+  async function loadTracks() {
+    try {
+      const { data } = await apiCall('/api/tracks');
+      industryTracks = data || [];
+      updateTrackSelects();
+    } catch (e) {
+      // 使用默认赛道
+      industryTracks = [
+        { id: 'all', name: '通用' },
+        { id: 'light-asset', name: '轻资产', icon_color: '#8B5CF6' },
+        { id: 'retail', name: '零售', icon_color: '#10B981' },
+        { id: 'catering', name: '餐饮', icon_color: '#F59E0B' },
+        { id: 'ecommerce', name: '电商', icon_color: '#3B82F6' },
+        { id: 'entertainment', name: '文娱', icon_color: '#6366F1' }
+      ];
+      updateTrackSelects();
+    }
+  }
+
+  // 更新赛道选择器
+  function updateTrackSelects() {
+    // 更新筛选下拉框
+    const trackSelect = document.getElementById('track-select');
+    trackSelect.innerHTML = '<option value="all">全部赛道</option>' + 
+      industryTracks.filter(t => t.id !== 'all').map(t => 
+        \`<option value="\${t.id}">\${t.name}</option>\`
+      ).join('');
+    
+    // 更新新建智能体的赛道选择
+    const newTrackSelect = document.getElementById('new-agent-track');
+    newTrackSelect.innerHTML = '<option value="all">通用（适用所有赛道）</option>' + 
+      industryTracks.filter(t => t.id !== 'all').map(t => 
+        \`<option value="\${t.id}">\${t.name}</option>\`
+      ).join('');
+    
+    // 更新赛道标签
+    updateTrackTags();
+  }
+
+  // 更新赛道标签显示
+  function updateTrackTags() {
+    const container = document.getElementById('track-tags-container');
+    container.innerHTML = \`
+      <button onclick="filterByTrack('all')" class="px-3 py-1.5 rounded-full text-sm font-medium transition \${currentTrackFilter === 'all' ? 'bg-primary-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}">
+        全部
+      </button>
+    \` + industryTracks.filter(t => t.id !== 'all').map(t => \`
+      <button onclick="filterByTrack('\${t.id}')" class="px-3 py-1.5 rounded-full text-sm font-medium transition \${currentTrackFilter === t.id ? 'text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}" style="\${currentTrackFilter === t.id ? 'background:' + (t.icon_color || '#6366F1') : ''}">
+        \${t.name}
+      </button>
+    \`).join('');
+  }
+
+  // 按赛道筛选
+  function filterByTrack(trackId) {
+    if (typeof trackId === 'object') {
+      trackId = document.getElementById('track-select').value;
+    }
+    currentTrackFilter = trackId;
+    document.getElementById('track-select').value = trackId;
+    updateTrackTags();
+    renderAgents();
+  }
 
   // 切换环类型Tab
   function switchRingTab(type) {
     currentRingType = type;
+    currentTrackFilter = 'all';
+    
     document.getElementById('tab-outer').className = type === 'outer' 
       ? 'px-6 py-4 font-medium text-primary-600 border-b-2 border-primary-500 bg-primary-50'
       : 'px-6 py-4 font-medium text-gray-500 hover:text-gray-700 transition';
     document.getElementById('tab-inner').className = type === 'inner'
       ? 'px-6 py-4 font-medium text-primary-600 border-b-2 border-primary-500 bg-primary-50'
       : 'px-6 py-4 font-medium text-gray-500 hover:text-gray-700 transition';
+    
+    // 显示/隐藏赛道筛选（仅中环显示）
+    document.getElementById('track-filter').classList.toggle('hidden', type !== 'inner');
+    document.getElementById('track-tags').classList.toggle('hidden', type !== 'inner');
+    
     renderAgents();
   }
 
@@ -268,14 +465,49 @@ export const agentsPageContent = `
     } catch (e) {}
   }
 
+  // 刷新智能体列表
+  function refreshAgents() {
+    loadAgents();
+    showToast('已刷新');
+  }
+
   // 渲染智能体列表
   function renderAgents() {
-    const filtered = currentAgents.filter(a => a.ring_type === currentRingType);
+    let filtered = currentAgents.filter(a => a.ring_type === currentRingType);
+    
+    // 中环按赛道筛选
+    if (currentRingType === 'inner' && currentTrackFilter !== 'all') {
+      filtered = filtered.filter(a => a.industry === currentTrackFilter || a.industry === 'all');
+    }
+    
     const container = document.getElementById('agents-list');
     
-    container.innerHTML = filtered.map(agent => \`
-      <div class="agent-card bg-gray-50 rounded-xl p-4 cursor-pointer hover:shadow-md transition" onclick="openAgentModal('\${agent.id}')">
-        <div class="flex items-start justify-between mb-3">
+    if (filtered.length === 0) {
+      container.innerHTML = \`
+        <div class="col-span-full text-center py-12 text-gray-500">
+          <i class="fas fa-robot text-4xl mb-4 opacity-30"></i>
+          <p>暂无智能体</p>
+          <button onclick="openAddAgentModal()" class="mt-4 text-primary-500 hover:text-primary-600">
+            <i class="fas fa-plus mr-1"></i>添加智能体
+          </button>
+        </div>
+      \`;
+      return;
+    }
+    
+    container.innerHTML = filtered.map(agent => {
+      const track = industryTracks.find(t => t.id === agent.industry);
+      const trackLabel = agent.industry === 'all' ? '通用' : (track?.name || agent.industry);
+      
+      return \`
+      <div class="agent-card bg-gray-50 rounded-xl p-4 cursor-pointer hover:shadow-md transition relative group" onclick="openAgentModal('\${agent.id}')">
+        <!-- 删除按钮 -->
+        <button onclick="event.stopPropagation(); confirmDeleteAgent('\${agent.id}', '\${agent.name}')" 
+          class="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-100 text-red-500 opacity-0 group-hover:opacity-100 transition flex items-center justify-center hover:bg-red-200">
+          <i class="fas fa-trash text-xs"></i>
+        </button>
+        
+        <div class="flex items-start justify-between mb-3 pr-8">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: \${agent.icon_color}20">
               <i class="\${agent.icon}" style="color: \${agent.icon_color}"></i>
@@ -291,12 +523,120 @@ export const agentsPageContent = `
           </label>
         </div>
         <p class="text-sm text-gray-600 line-clamp-2 mb-3">\${agent.description}</p>
-        <div class="flex items-center justify-between text-xs text-gray-500">
-          <span>\${agent.ring_type === 'outer' ? '一票否决' : '权重 ' + agent.weight + '%'}</span>
-          <span>阈值 \${agent.pass_threshold}</span>
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center space-x-2">
+            <span class="text-gray-500">\${agent.ring_type === 'outer' ? '一票否决' : '权重 ' + agent.weight + '%'}</span>
+            \${agent.ring_type === 'inner' ? \`<span class="px-2 py-0.5 rounded-full text-white text-xs" style="background: \${track?.icon_color || '#6366F1'}">\${trackLabel}</span>\` : ''}
+          </div>
+          <span class="text-gray-500">阈值 \${agent.pass_threshold}</span>
         </div>
       </div>
-    \`).join('');
+    \`}).join('');
+  }
+
+  // 打开添加智能体模态框
+  function openAddAgentModal() {
+    document.getElementById('add-agent-modal').classList.remove('hidden');
+    document.getElementById('new-agent-id').value = '';
+    document.getElementById('new-agent-name').value = '';
+    document.getElementById('new-agent-ring').value = 'inner';
+    document.getElementById('new-agent-dimension').value = '';
+    document.getElementById('new-agent-track').value = 'all';
+    document.getElementById('new-agent-weight').value = '10';
+    document.getElementById('new-agent-threshold').value = '60';
+    document.getElementById('new-agent-description').value = '';
+    document.getElementById('new-agent-prompt').value = '';
+    updateNewAgentForm();
+  }
+
+  function closeAddAgentModal() {
+    document.getElementById('add-agent-modal').classList.add('hidden');
+  }
+
+  // 更新新建表单状态
+  function updateNewAgentForm() {
+    const ring = document.getElementById('new-agent-ring').value;
+    const trackSection = document.getElementById('new-agent-track-section');
+    const weightNote = document.getElementById('new-weight-note');
+    
+    // 外环不需要选择赛道
+    trackSection.classList.toggle('hidden', ring === 'outer');
+    
+    // 外环权重为0
+    if (ring === 'outer') {
+      document.getElementById('new-agent-weight').value = '0';
+      document.getElementById('new-agent-threshold').value = '100';
+    } else {
+      document.getElementById('new-agent-weight').value = '10';
+      document.getElementById('new-agent-threshold').value = '60';
+    }
+  }
+
+  // 创建新智能体
+  async function createNewAgent() {
+    const id = document.getElementById('new-agent-id').value.trim();
+    const name = document.getElementById('new-agent-name').value.trim();
+    const ringType = document.getElementById('new-agent-ring').value;
+    const dimension = document.getElementById('new-agent-dimension').value.trim();
+    const industry = ringType === 'outer' ? 'all' : document.getElementById('new-agent-track').value;
+    const weight = parseInt(document.getElementById('new-agent-weight').value) || 0;
+    const threshold = parseInt(document.getElementById('new-agent-threshold').value) || 60;
+    const description = document.getElementById('new-agent-description').value.trim();
+    const prompt = document.getElementById('new-agent-prompt').value.trim();
+    const icon = document.getElementById('new-agent-icon').value;
+    const iconColor = document.getElementById('new-agent-color').value;
+
+    // 验证
+    if (!id || !/^[a-z0-9-]+$/.test(id)) {
+      showToast('ID只能包含小写字母、数字和横线', 'error');
+      return;
+    }
+    if (!name) {
+      showToast('请输入智能体名称', 'error');
+      return;
+    }
+    if (!prompt) {
+      showToast('请输入System Prompt', 'error');
+      return;
+    }
+
+    try {
+      await apiCall('/api/agents', {
+        method: 'POST',
+        body: JSON.stringify({
+          id,
+          name,
+          ring_type: ringType,
+          industry,
+          dimension: dimension || '自定义',
+          weight: ringType === 'outer' ? 0 : weight,
+          description,
+          system_prompt: prompt,
+          pass_threshold: threshold,
+          icon,
+          icon_color: iconColor
+        })
+      });
+      showToast('智能体创建成功');
+      closeAddAgentModal();
+      loadAgents();
+    } catch (e) {}
+  }
+
+  // 确认删除智能体
+  function confirmDeleteAgent(id, name) {
+    if (confirm(\`确定要删除智能体 "\${name}" 吗？此操作不可恢复。\`)) {
+      deleteAgent(id);
+    }
+  }
+
+  // 删除智能体
+  async function deleteAgent(id) {
+    try {
+      await apiCall(\`/api/agents/\${id}\`, { method: 'DELETE' });
+      showToast('智能体已删除');
+      loadAgents();
+    } catch (e) {}
   }
 
   // 切换智能体启用状态
@@ -533,7 +873,18 @@ export const agentsPageContent = `
 
   // 初始化
   document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(loadAgents, 500);
+    setTimeout(() => {
+      loadTracks();
+      loadAgents();
+    }, 500);
+  });
+  
+  // ESC关闭模态框
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeAgentModal();
+      closeAddAgentModal();
+    }
   });
 </script>
 `
