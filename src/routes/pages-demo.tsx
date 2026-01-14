@@ -138,7 +138,8 @@ export const demoPageContent = `
         <h3 class="font-semibold text-lg flex items-center">
           <i class="fas fa-funnel-dollar text-[#629C85] mr-2"></i>
           中环漏斗体系
-          <span class="ml-2 text-xs bg-[#D9EDDF] text-[#49754D] px-2 py-0.5 rounded">加权评分</span>
+          <span id="inner-track-badge" class="ml-2 text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded">文娱轻资产</span>
+          <span id="inner-agent-count" class="ml-2 text-xs bg-[#D9EDDF] text-[#49754D] px-2 py-0.5 rounded">加权评分</span>
         </h3>
         <span id="inner-status" class="text-sm text-gray-500">等待外环筛子体系完成</span>
       </div>
@@ -146,11 +147,11 @@ export const demoPageContent = `
       <!-- 中环漏斗体系说明 -->
       <div class="mb-4 p-3 bg-[#D9EDDF] rounded-lg text-sm text-[#49754D]">
         <i class="fas fa-info-circle mr-2"></i>
-        中环漏斗体系采用<strong>并行执行</strong>，多个智能体同时评估，按权重计算加权评分
+        中环漏斗体系采用<strong>并行执行</strong>，仅调用<strong>本赛道相关</strong>的智能体进行评估
       </div>
       
       <div id="inner-agents" class="space-y-4">
-        <!-- 智能体卡片将动态加载 -->
+        <!-- 智能体卡片将动态加载（仅显示与项目赛道相关的智能体） -->
       </div>
     </div>
 
@@ -445,20 +446,66 @@ export const demoPageContent = `
   let isRunning = false;
   let allExpanded = false;
   let evaluationResults = {}; // 存储所有评估结果
+  let currentDealIndustry = 'light-asset'; // 当前演示项目的赛道（Cardi B项目是文娱轻资产）
+  let filteredOuterAgents = []; // 筛选后的外环智能体
+  let filteredInnerAgents = []; // 筛选后的中环智能体
 
-  // 加载智能体
+  // 加载智能体（根据项目赛道筛选）
   async function loadDemoAgents() {
     try {
       const { data } = await apiCall('/api/agents');
       demoAgents = data;
+      
+      // 筛选外环智能体（外环不分赛道，所有项目共用）
+      filteredOuterAgents = demoAgents.filter(a => a.ring_type === 'outer');
+      
+      // 筛选中环智能体（只显示该赛道专属 + 通用智能体）
+      filteredInnerAgents = demoAgents.filter(a => 
+        a.ring_type === 'inner' && 
+        a.id !== 'comprehensive-scoring-agent' &&
+        (a.industry === currentDealIndustry || a.industry === 'all')
+      );
+      
+      console.log('当前项目赛道:', currentDealIndustry);
+      console.log('已筛选外环智能体:', filteredOuterAgents.map(a => a.name));
+      console.log('已筛选中环智能体:', filteredInnerAgents.map(a => a.name));
+      
       renderAgentCards();
-    } catch (e) {}
+    } catch (e) {
+      console.error('加载智能体失败:', e);
+    }
   }
 
-  // 渲染智能体卡片
+  // 赛道名称映射
+  const trackNameMap = {
+    'all': '通用',
+    'catering': '餐饮',
+    'retail': '零售',
+    'ecommerce': '电商',
+    'education': '教育培训',
+    'service': '生活服务',
+    'light-asset': '文娱轻资产'
+  };
+
+  // 渲染智能体卡片（仅显示与当前项目赛道相关的智能体）
   function renderAgentCards() {
-    const outerAgents = demoAgents.filter(a => a.ring_type === 'outer');
-    const innerAgents = demoAgents.filter(a => a.ring_type === 'inner' && a.id !== 'comprehensive-scoring-agent');
+    // 使用预先筛选好的智能体列表
+    const outerAgents = filteredOuterAgents;
+    const innerAgents = filteredInnerAgents;
+    
+    // 更新赛道标签
+    const trackBadge = document.getElementById('inner-track-badge');
+    if (trackBadge) {
+      trackBadge.textContent = trackNameMap[currentDealIndustry] || currentDealIndustry;
+    }
+    
+    // 更新智能体数量显示
+    const innerCountEl = document.getElementById('inner-agent-count');
+    if (innerCountEl) {
+      const generalCount = innerAgents.filter(a => a.industry === 'all').length;
+      const trackCount = innerAgents.filter(a => a.industry !== 'all').length;
+      innerCountEl.innerHTML = '<i class="fas fa-robot mr-1"></i> 通用 ' + generalCount + ' + 专属 ' + trackCount;
+    }
 
     document.getElementById('outer-agents').innerHTML = outerAgents.map((agent, index) => \`
       <div id="agent-\${agent.id}" class="border rounded-lg overflow-hidden transition-all duration-300">
@@ -496,7 +543,11 @@ export const demoPageContent = `
       </div>
     \`).join('');
 
-    document.getElementById('inner-agents').innerHTML = innerAgents.map(agent => \`
+    document.getElementById('inner-agents').innerHTML = innerAgents.map(agent => {
+      const isGeneral = agent.industry === 'all';
+      const tagClass = isGeneral ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600';
+      const tagText = isGeneral ? '通用' : '专属';
+      return \`
       <div id="agent-\${agent.id}" class="border rounded-lg overflow-hidden transition-all duration-300">
         <div class="flex items-center justify-between p-3 bg-gray-50 cursor-pointer hover:bg-gray-100" onclick="toggleAgentDetail('\${agent.id}')">
           <div class="flex items-center space-x-2">
@@ -504,7 +555,10 @@ export const demoPageContent = `
               <i class="\${agent.icon} text-sm" style="color: \${agent.icon_color}"></i>
             </div>
             <div>
-              <h4 class="font-medium text-sm">\${agent.name.replace('智能体', '')}</h4>
+              <div class="flex items-center space-x-2">
+                <h4 class="font-medium text-sm">\${agent.name.replace('智能体', '')}</h4>
+                <span class="text-xs px-1.5 py-0.5 rounded \${tagClass}">\${tagText}</span>
+              </div>
               <p class="text-xs text-gray-500">权重 \${agent.weight}%</p>
             </div>
           </div>
@@ -527,7 +581,7 @@ export const demoPageContent = `
           </div>
         </div>
       </div>
-    \`).join('');
+    \`}).join('');
   }
 
   // 切换智能体详情
@@ -1423,9 +1477,11 @@ export const demoPageContent = `
       document.getElementById('outer-status').textContent = '执行中...';
       document.getElementById('outer-status').className = 'text-sm text-primary-600';
 
-      const outerAgents = ['negative-list-agent', 'touch-agent', 'interest-alignment-agent'];
+      // 使用筛选后的外环智能体ID列表
+      const outerAgentIds = filteredOuterAgents.map(a => a.id);
+      console.log('执行外环智能体:', outerAgentIds);
       
-      for (const agentId of outerAgents) {
+      for (const agentId of outerAgentIds) {
         updateAgentStatus(agentId, 'running');
         
         const response = await apiCall('/api/ai/evaluate', {
@@ -1461,8 +1517,9 @@ export const demoPageContent = `
       document.getElementById('inner-status').textContent = '并行评估中...';
       document.getElementById('inner-status').className = 'text-sm text-primary-600';
 
-      const innerAgentIds = ['financial-health-agent', 'operational-capability-agent', 'legal-compliance-agent', 
-                            'risk-control-agent', 'interest-deep-agent', 'economic-calculation-agent'];
+      // 使用筛选后的中环智能体ID列表（根据项目赛道筛选）
+      const innerAgentIds = filteredInnerAgents.map(a => a.id);
+      console.log('执行中环智能体:', innerAgentIds);
       
       innerAgentIds.forEach(id => updateAgentStatus(id, 'running'));
 
@@ -1492,14 +1549,12 @@ export const demoPageContent = `
       document.getElementById('final-status').textContent = '计算中...';
       document.getElementById('final-status').className = 'text-sm text-primary-600';
 
-      const weights = {
-        'financial-health-agent': 25,
-        'operational-capability-agent': 20,
-        'legal-compliance-agent': 15,
-        'risk-control-agent': 15,
-        'interest-deep-agent': 10,
-        'economic-calculation-agent': 10
-      };
+      // 动态构建权重（使用筛选后的中环智能体的权重）
+      const weights = {};
+      filteredInnerAgents.forEach(agent => {
+        weights[agent.id] = agent.weight || 10;
+      });
+      console.log('使用权重配置:', weights);
 
       let weightedSum = 0;
       let totalWeight = 0;
@@ -1601,25 +1656,22 @@ export const demoPageContent = `
     }
   }
 
-  // 更新雷达图
+  // 更新雷达图（动态使用筛选后的中环智能体）
   function updateRadarChart(scores) {
     const ctx = document.getElementById('radar-chart').getContext('2d');
     if (radarChart) radarChart.destroy();
 
+    // 动态生成标签和数据（基于筛选后的中环智能体）
+    const labels = filteredInnerAgents.map(a => a.dimension || a.name.replace('智能体', ''));
+    const data = filteredInnerAgents.map(a => scores[a.id] || 0);
+
     radarChart = new Chart(ctx, {
       type: 'radar',
       data: {
-        labels: ['财务健康', '运营能力', '法律合规', '风险控制', '利益一致', '经济性'],
+        labels: labels,
         datasets: [{
           label: '评分',
-          data: [
-            scores['financial-health-agent'] || 0,
-            scores['operational-capability-agent'] || 0,
-            scores['legal-compliance-agent'] || 0,
-            scores['risk-control-agent'] || 0,
-            scores['interest-deep-agent'] || 0,
-            scores['economic-calculation-agent'] || 0
-          ],
+          data: data,
           fill: true,
           backgroundColor: 'rgba(99, 102, 241, 0.2)',
           borderColor: 'rgb(99, 102, 241)',
