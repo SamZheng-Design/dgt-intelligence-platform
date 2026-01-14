@@ -454,6 +454,706 @@ Cardi B中国市场热度：
   result: "pending"
 }
 
+// ============================================
+// 新增：符合滴灌通收入分成模式的标的项目
+// ============================================
+
+// 餐饮赛道 - 连锁奶茶品牌
+export const teaChainDeal = {
+  id: "DGT-2026-0001",
+  company_name: "茶颜悦色（长沙）餐饮管理有限公司",
+  credit_code: "91430102MA4L5XYZ01",
+  industry: "catering",
+  status: "pending",
+  main_business: `新式茶饮连锁品牌运营，主打中国风茶饮，以鲜茶、鲜奶、鲜果为核心原料。品牌创立于2013年，深耕长沙市场后逐步向全国扩张。目前已在长沙、武汉、重庆、南京等城市拥有500+门店，日均客流量超过50万人次。`,
+  funding_amount: 500,
+  contact_name: "吕良",
+  contact_phone: "13800138001",
+  website: "https://chayanyuese.com",
+  submitted_date: "2026-01-12T09:00:00.000Z",
+  project_documents: `【项目名称】茶颜悦色杭州旗舰店项目
+
+【品牌介绍】
+茶颜悦色是中国新式茶饮头部品牌，以"中国风茶饮"为定位，主打幽兰拿铁、声声乌龙、桂花弄等爆款产品。
+
+品牌数据：
+- 门店数量：500+（全国）
+- 日均客流：50万+
+- 复购率：45%（行业领先）
+- 单店月均营收：35-50万元
+- 抖音粉丝：800万+
+
+【项目概述】
+本次融资用于杭州湖滨银泰旗舰店开设，包括：
+- 店铺租金及装修：150万
+- 设备采购：80万
+- 首批原料及物料：50万
+- 员工培训及运营启动：40万
+- 流动资金及应急：180万
+
+【选址分析】
+- 位置：杭州湖滨银泰in77 B区一楼
+- 面积：120平米
+- 日均人流：15万+
+- 周边竞品：喜茶、奈雪（500米内）
+- 租金：8万/月（含物业费）
+
+【收入预测】
+基于品牌其他新一线城市门店数据：
+- 日均销量：800-1200杯
+- 客单价：22元
+- 月均营收：45-55万元
+- 毛利率：65%
+
+【利益分配机制】
+1. 收入来源：门店全部营业收入
+2. 共管账户：招商银行三方监管账户
+3. 分配比例：
+   - 运营成本（原料、人工、租金）：55%
+   - 投资方分成：15%（月度结算）
+   - 运营方分成：30%
+4. 投资方保底：12%年化收益
+5. 超额分配：投资方25%，运营方75%
+
+【运营方投入】
+- 品牌授权费：80万（投入共管）
+- 管理团队派驻：店长1人、督导1人
+- 供应链支持：总部统一采购
+
+【风险控制】
+- 翻台率监控：POS系统实时同步
+- 食品安全：总部统一质检
+- 履约保证金：50万
+- 回款周期：T+1日结算`,
+  financial_data: JSON.stringify({
+    project_type: "store_opening",
+    investment_amount: 500,
+    investment_currency: "CNY",
+    investment_unit: "万元",
+    revenue_forecast: {
+      total: 600,
+      unit: "万元/年",
+      monthly_avg: 50,
+      breakdown: {
+        drink_sales: 540,
+        merchandise: 30,
+        delivery: 30
+      }
+    },
+    cost_structure: {
+      total: 330,
+      unit: "万元/年",
+      breakdown: {
+        ingredients: { amount: 180, percentage: 30, note: "原料成本" },
+        labor: { amount: 90, percentage: 15, note: "人工成本" },
+        rent: { amount: 96, percentage: 16, note: "租金及物业" },
+        utilities: { amount: 24, percentage: 4, note: "水电气" },
+        marketing: { amount: 30, percentage: 5, note: "营销费用" },
+        contingency: { amount: 30, percentage: 5, note: "应急预备" }
+      }
+    },
+    profit_distribution: {
+      gross_profit: 270,
+      distribution_waterfall: [
+        { order: 1, item: "operating_costs", description: "运营成本", amount: 330 },
+        { order: 2, item: "investor_share", description: "投资方分成", rate: 0.15, amount: 90 },
+        { order: 3, item: "guaranteed_return", description: "保底收益", rate: 0.12, amount: 60 },
+        { order: 4, item: "excess_split", description: "超额分配", investor_share: 0.25, operator_share: 0.75 }
+      ],
+      investor_return: {
+        principal: 500,
+        guaranteed_return: 60,
+        excess_share: 45,
+        total_return: 605,
+        roi: 0.21,
+        irr_estimate: 0.25,
+        payback_months: 24
+      }
+    },
+    operator_investment: {
+      cash: 80,
+      resources_valuation: 150,
+      total: 230
+    }
+  }),
+  result: "pending"
+}
+
+// 零售赛道 - 社区生鲜超市
+export const freshMartDeal = {
+  id: "DGT-2026-0002",
+  company_name: "钱大妈生鲜连锁（深圳）有限公司",
+  credit_code: "91440300MA5D8ABC02",
+  industry: "retail",
+  status: "pending",
+  main_business: `社区生鲜连锁超市运营，主打"不卖隔夜肉"的品牌理念。采用日清模式，每日晚间定时打折清货，确保食材新鲜。目前全国门店超过3000家，覆盖广东、湖南、四川等15个省份。`,
+  funding_amount: 300,
+  contact_name: "冯卫华",
+  contact_phone: "13800138002",
+  website: "https://qiandama.com",
+  submitted_date: "2026-01-11T14:00:00.000Z",
+  project_documents: `【项目名称】钱大妈广州天河社区店项目
+
+【品牌介绍】
+钱大妈是中国领先的社区生鲜连锁品牌，以"不卖隔夜肉"的品牌承诺深入人心。
+
+品牌数据：
+- 全国门店：3000+
+- 日均服务家庭：200万+
+- 单店日均营收：1.2-1.8万
+- 复购率：60%+
+- 会员数：5000万+
+
+【项目概述】
+本次融资用于广州天河区龙洞社区店开设：
+- 店铺租金装修：80万
+- 冷链设备：60万
+- 首批货品：40万
+- 流动资金：120万
+
+【选址分析】
+- 位置：天河区龙洞街道某某小区底商
+- 面积：80平米
+- 周边住户：5000+户
+- 日均人流：8000人
+- 租金：2.5万/月
+
+【收入预测】
+- 日均营收：1.5万
+- 月均营收：45万
+- 年营收：540万
+- 毛利率：22%（生鲜行业标准）
+
+【利益分配机制】
+1. 收入来源：门店全部销售收入
+2. 共管账户：建设银行三方监管
+3. 分配方式：
+   - 货品成本：78%（总部集采）
+   - 投资方分成：8%
+   - 运营方分成：14%
+4. 投资方保底：10%年化
+5. 日清机制：每日19:00起阶梯打折
+
+【运营方投入】
+- 加盟保证金：30万
+- 店长派驻：1人
+- 供应链支持：总部日配
+
+【风险控制】
+- 库存监控：ERP系统实时监控
+- 损耗率控制：<5%
+- 履约保证金：30万
+- 日清制度：确保现金流稳定`,
+  financial_data: JSON.stringify({
+    project_type: "store_opening",
+    investment_amount: 300,
+    revenue_forecast: { total: 540, monthly_avg: 45 },
+    profit_distribution: {
+      investor_return: {
+        roi: 0.16,
+        irr_estimate: 0.18,
+        payback_months: 30
+      }
+    }
+  }),
+  result: "pending"
+}
+
+// 电商赛道 - 直播电商MCN
+export const liveStreamDeal = {
+  id: "DGT-2026-0003",
+  company_name: "谦寻（杭州）文化传媒有限公司",
+  credit_code: "91330108MA2CDEF03",
+  industry: "ecommerce",
+  status: "pending",
+  main_business: `头部直播电商MCN机构，旗下拥有薇娅、琦儿等知名主播。专注于直播电商全链路服务，包括主播孵化、品牌代播、供应链整合等业务。年GMV超过500亿，合作品牌超过10000个。`,
+  funding_amount: 2000,
+  contact_name: "董海锋",
+  contact_phone: "13800138003",
+  website: "https://qianxun.com",
+  submitted_date: "2026-01-10T16:00:00.000Z",
+  project_documents: `【项目名称】谦寻新锐主播矩阵孵化项目
+
+【公司介绍】
+谦寻文化是中国头部直播电商MCN机构，年GMV超500亿。
+
+公司数据：
+- 签约主播：200+
+- 合作品牌：10000+
+- 年GMV：500亿+
+- 淘宝直播机构排名：TOP 3
+
+【项目概述】
+本次融资用于新锐主播矩阵孵化：
+- 主播签约及培训：600万
+- 直播间搭建（5间）：400万
+- 流量投放：500万
+- 供应链建设：300万
+- 运营及应急：200万
+
+【孵化计划】
+- 签约主播：20人
+- 培养周期：6个月
+- 目标月GMV：5000万/人
+- 佣金率：15-25%
+
+【收入预测】
+项目周期18个月：
+- 预期GMV：60亿
+- 佣金收入：10亿
+- 品牌服务费：1亿
+- 总收入：11亿
+
+【利益分配机制】
+1. 收入来源：佣金收入+服务费
+2. 共管账户：招商银行三方监管
+3. 分配方式：
+   - 平台分成：30%
+   - 主播分成：35%
+   - 投资方分成：12%
+   - 运营方分成：23%
+4. 投资方保底：18%年化
+5. 超额分配：投资方30%，运营方70%
+
+【运营方投入】
+- 主播资源：估值3000万
+- 品牌关系：估值2000万
+- 管理团队：20人
+- 现金投入：500万
+
+【风险控制】
+- GMV监控：淘宝后台实时同步
+- 主播违约险：覆盖核心主播
+- 履约保证金：200万`,
+  financial_data: JSON.stringify({
+    project_type: "mcn_incubation",
+    investment_amount: 2000,
+    revenue_forecast: { total: 11000, gmv: 60000 },
+    profit_distribution: {
+      investor_return: {
+        roi: 0.35,
+        irr_estimate: 0.40,
+        payback_months: 18
+      }
+    }
+  }),
+  result: "pending"
+}
+
+// 教育培训赛道 - 职业技能培训
+export const educationDeal = {
+  id: "DGT-2026-0004",
+  company_name: "火星时代教育科技有限公司",
+  credit_code: "91110108MA00GHI04",
+  industry: "education",
+  status: "pending",
+  main_business: `数字艺术职业教育机构，专注于影视后期、游戏设计、UI设计、室内设计等领域的职业技能培训。成立于1994年，是中国最早的CG培训机构之一，累计培养学员超过50万人。`,
+  funding_amount: 800,
+  contact_name: "王琦",
+  contact_phone: "13800138004",
+  website: "https://hxsd.com",
+  submitted_date: "2026-01-09T11:00:00.000Z",
+  project_documents: `【项目名称】火星时代AI设计实训基地项目
+
+【公司介绍】
+火星时代是中国领先的数字艺术教育机构，30年专注CG培训。
+
+公司数据：
+- 成立时间：1994年
+- 全国校区：18个
+- 累计学员：50万+
+- 就业率：95%+
+- 企业合作：10000+
+
+【项目概述】
+本次融资用于AI设计实训基地建设：
+- 场地租赁装修：300万
+- AI设备采购：200万
+- 课程研发：100万
+- 师资引进：100万
+- 运营及招生：100万
+
+【课程规划】
+- AI绘画设计班（6个月）
+- AI影视特效班（8个月）
+- AI游戏设计班（8个月）
+- AIGC商业应用班（4个月）
+
+【收入预测】
+- 学员规模：500人/年
+- 客单价：2.5万/人
+- 年营收：1250万
+- 毛利率：50%
+
+【利益分配机制】
+1. 收入来源：学费收入
+2. 共管账户：工商银行三方监管
+3. 分配方式：
+   - 运营成本：50%
+   - 投资方分成：20%
+   - 运营方分成：30%
+4. 投资方保底：15%年化
+5. 就业对赌：就业率<90%时补偿
+
+【运营方投入】
+- 品牌授权：150万
+- 师资投入：200万
+- 课程IP：估值300万
+- 现金投入：100万
+
+【风险控制】
+- 学员到课监控：人脸识别系统
+- 就业跟踪：3个月就业保障期
+- 退费机制：开课7天内可全额退款
+- 履约保证金：80万`,
+  financial_data: JSON.stringify({
+    project_type: "training_base",
+    investment_amount: 800,
+    revenue_forecast: { total: 1250, students: 500 },
+    profit_distribution: {
+      investor_return: {
+        roi: 0.25,
+        irr_estimate: 0.28,
+        payback_months: 36
+      }
+    }
+  }),
+  result: "pending"
+}
+
+// 生活服务赛道 - 宠物医疗连锁
+export const petServiceDeal = {
+  id: "DGT-2026-0005",
+  company_name: "瑞派宠物医院管理有限公司",
+  credit_code: "91310000MA1FJKL05",
+  industry: "service",
+  status: "pending",
+  main_business: `全国性宠物医疗连锁机构，提供宠物诊疗、疫苗接种、手术治疗、美容洗护等一站式服务。目前全国拥有400+门店，年服务宠物超过500万只，是中国最大的宠物医疗连锁品牌之一。`,
+  funding_amount: 600,
+  contact_name: "彭永鹤",
+  contact_phone: "13800138005",
+  website: "https://ruipai.cn",
+  submitted_date: "2026-01-08T10:00:00.000Z",
+  project_documents: `【项目名称】瑞派宠物医院上海浦东旗舰店项目
+
+【品牌介绍】
+瑞派宠物医院是中国领先的宠物医疗连锁品牌。
+
+品牌数据：
+- 全国门店：400+
+- 年服务宠物：500万+
+- 执业兽医：1000+
+- 单店月均营收：25-40万
+- 复购率：70%+
+
+【项目概述】
+本次融资用于上海浦东旗舰店开设：
+- 店铺租金装修：200万
+- 医疗设备：180万（CT、DR、B超等）
+- 药品及耗材：80万
+- 人员招聘培训：60万
+- 流动资金：80万
+
+【选址分析】
+- 位置：上海浦东新区某某路
+- 面积：500平米（双层）
+- 周边宠物家庭：3万+
+- 竞品分析：500米内无大型宠物医院
+- 租金：6万/月
+
+【收入预测】
+- 日均诊疗：40-60只
+- 客单价：350元
+- 月均营收：45-60万
+- 毛利率：55%
+
+【利益分配机制】
+1. 收入来源：诊疗费+药品销售+增值服务
+2. 共管账户：浦发银行三方监管
+3. 分配方式：
+   - 运营成本：45%
+   - 投资方分成：18%
+   - 运营方分成：37%
+4. 投资方保底：14%年化
+5. 超额分配：投资方25%，运营方75%
+
+【运营方投入】
+- 品牌授权：100万
+- 专家资源：估值200万
+- 管理团队：院长1人，兽医5人
+- 现金投入：150万
+
+【风险控制】
+- 诊疗记录：电子病历系统
+- 医疗事故险：每店500万覆盖
+- 履约保证金：60万
+- 客诉处理：24小时响应`,
+  financial_data: JSON.stringify({
+    project_type: "pet_hospital",
+    investment_amount: 600,
+    revenue_forecast: { total: 600, monthly_avg: 50 },
+    profit_distribution: {
+      investor_return: {
+        roi: 0.22,
+        irr_estimate: 0.26,
+        payback_months: 30
+      }
+    }
+  }),
+  result: "pending"
+}
+
+// 健身运动赛道 - 连锁健身房
+export const fitnessDeal = {
+  id: "DGT-2026-0006",
+  company_name: "乐刻运动科技有限公司",
+  credit_code: "91330106MA2BMNO06",
+  industry: "service",
+  status: "pending",
+  main_business: `互联网健身连锁品牌，主打24小时智能健身房模式，月卡制收费，无推销无私教绑定。目前全国门店超过1200家，注册用户超过1000万，是中国最大的智能健身房连锁品牌。`,
+  funding_amount: 400,
+  contact_name: "韩伟",
+  contact_phone: "13800138006",
+  website: "https://lefit.com",
+  submitted_date: "2026-01-07T15:00:00.000Z",
+  project_documents: `【项目名称】乐刻运动杭州西湖区门店集群项目
+
+【品牌介绍】
+乐刻运动是中国领先的互联网智能健身房品牌。
+
+品牌数据：
+- 全国门店：1200+
+- 注册用户：1000万+
+- 月活用户：200万+
+- 单店月均营收：8-15万
+- 续费率：65%
+
+【项目概述】
+本次融资用于杭州西湖区5家门店集群开设：
+- 店铺租金装修：200万（5店）
+- 健身器材：120万
+- 智能系统：40万
+- 运营启动：40万
+
+【门店规划】
+- 门店1：西湖银泰店（200平米）
+- 门店2：黄龙万科店（180平米）
+- 门店3：城西银泰店（220平米）
+- 门店4：蒋村街道店（150平米）
+- 门店5：翠苑街道店（160平米）
+
+【收入预测】
+单店数据：
+- 会员容量：500-800人
+- 月卡价格：199元
+- 私教课：200元/节
+- 月均营收：10-15万
+
+5店年总营收：720万
+
+【利益分配机制】
+1. 收入来源：会员费+私教课+增值服务
+2. 共管账户：招商银行三方监管
+3. 分配方式：
+   - 运营成本：55%
+   - 投资方分成：18%
+   - 运营方分成：27%
+4. 投资方保底：12%年化
+5. 扩张机制：利润再投资可获额外权益
+
+【运营方投入】
+- 品牌授权：80万
+- 系统投入：60万
+- 管理团队：5位店长
+- 现金投入：60万
+
+【风险控制】
+- 客流监控：智能门禁+监控系统
+- 设备维护：总部统一保养
+- 会员权益保障：退费机制完善
+- 履约保证金：40万`,
+  financial_data: JSON.stringify({
+    project_type: "fitness_chain",
+    investment_amount: 400,
+    revenue_forecast: { total: 720, stores: 5 },
+    profit_distribution: {
+      investor_return: {
+        roi: 0.20,
+        irr_estimate: 0.24,
+        payback_months: 28
+      }
+    }
+  }),
+  result: "pending"
+}
+
+// 美业赛道 - 医美连锁
+export const beautyDeal = {
+  id: "DGT-2026-0007",
+  company_name: "美呗医疗美容管理有限公司",
+  credit_code: "91440300MA5DPQR07",
+  industry: "service",
+  status: "pending",
+  main_business: `轻医美连锁机构，专注于光电项目、注射类项目等非手术类医美服务。采用"互联网+医美"模式，线上获客线下服务。目前全国门店50+，年服务客户超过30万人次。`,
+  funding_amount: 1000,
+  contact_name: "龚连胜",
+  contact_phone: "13800138007",
+  website: "https://meibei.com",
+  submitted_date: "2026-01-06T09:00:00.000Z",
+  project_documents: `【项目名称】美呗医美深圳福田旗舰店项目
+
+【品牌介绍】
+美呗是中国领先的轻医美连锁机构，主打透明定价、标准化服务。
+
+品牌数据：
+- 全国门店：50+
+- 年服务客户：30万+
+- 客单价：3000-8000元
+- 复购率：55%
+- 满意度：98%+
+
+【项目概述】
+本次融资用于深圳福田旗舰店开设：
+- 店铺租金装修：400万
+- 医美设备：300万（激光、射频等）
+- 药品耗材：100万
+- 人员及运营：200万
+
+【选址分析】
+- 位置：深圳福田区CBD核心区
+- 面积：800平米
+- 目标客群：25-45岁女性白领
+- 竞品分析：周边医美机构5家
+- 租金：15万/月
+
+【收入预测】
+- 日均客流：30-50人
+- 客单价：5000元
+- 月均营收：300-400万
+- 毛利率：60%
+
+【主营项目】
+- 光子嫩肤：3000元/次
+- 热玛吉：15000元/次
+- 水光针：2000元/次
+- 玻尿酸：3000-8000元/支
+
+【利益分配机制】
+1. 收入来源：医美服务收入
+2. 共管账户：招商银行三方监管
+3. 分配方式：
+   - 运营成本：40%
+   - 投资方分成：22%
+   - 运营方分成：38%
+4. 投资方保底：16%年化
+5. 超额分配：投资方28%，运营方72%
+
+【运营方投入】
+- 医疗资质：估值300万
+- 专家团队：5名主治医师
+- 品牌资源：估值200万
+- 现金投入：200万
+
+【风险控制】
+- 医疗资质：三证齐全
+- 医疗事故险：每店1000万
+- 客诉处理：专业客服团队
+- 履约保证金：100万`,
+  financial_data: JSON.stringify({
+    project_type: "medical_beauty",
+    investment_amount: 1000,
+    revenue_forecast: { total: 4200, monthly_avg: 350 },
+    profit_distribution: {
+      investor_return: {
+        roi: 0.30,
+        irr_estimate: 0.35,
+        payback_months: 24
+      }
+    }
+  }),
+  result: "pending"
+}
+
+// 酒店民宿赛道 - 精品民宿
+export const hotelDeal = {
+  id: "DGT-2026-0008",
+  company_name: "途家民宿管理（北京）有限公司",
+  credit_code: "91110105MA00STU08",
+  industry: "service",
+  status: "pending",
+  main_business: `精品民宿运营管理，专注于城市及景区精品民宿的开发与运营。目前管理房源超过50万套，覆盖全国300+城市，是中国最大的民宿管理平台之一。`,
+  funding_amount: 500,
+  contact_name: "杨昌乐",
+  contact_phone: "13800138008",
+  website: "https://tujia.com",
+  submitted_date: "2026-01-05T14:00:00.000Z",
+  project_documents: `【项目名称】途家精品民宿丽江古城项目
+
+【品牌介绍】
+途家是中国领先的民宿管理平台，连接房东与住客。
+
+平台数据：
+- 管理房源：50万+套
+- 覆盖城市：300+
+- 年订单量：2000万+
+- 用户满意度：4.8/5.0
+
+【项目概述】
+本次融资用于丽江古城10套精品民宿改造运营：
+- 物业租赁（5年）：150万
+- 装修改造：200万
+- 家具家电：80万
+- 运营启动：70万
+
+【物业情况】
+- 位置：丽江古城核心区
+- 房源：10套独立院落
+- 房型：1-3居室
+- 面积：50-120平米/套
+
+【收入预测】
+- 平均房价：500-1200元/晚
+- 入住率：70%（年均）
+- 月均营收：35-45万
+- 年营收：450万
+
+【利益分配机制】
+1. 收入来源：房费收入
+2. 共管账户：建设银行三方监管
+3. 分配方式：
+   - 物业成本（租金+维护）：25%
+   - 平台抽成：15%
+   - 投资方分成：25%
+   - 运营方分成：35%
+4. 投资方保底：14%年化
+5. 淡旺季调节：旺季超额部分投资方40%
+
+【运营方投入】
+- 运营团队：管家2人
+- 系统支持：智能门锁+PMS
+- 营销资源：估值100万
+- 现金投入：50万
+
+【风险控制】
+- 房源监控：智能门锁+监控
+- 入住保障：携程、飞猪多平台分销
+- 季节性应对：淡季促销机制
+- 履约保证金：50万`,
+  financial_data: JSON.stringify({
+    project_type: "boutique_hotel",
+    investment_amount: 500,
+    revenue_forecast: { total: 450, rooms: 10 },
+    profit_distribution: {
+      investor_return: {
+        roi: 0.22,
+        irr_estimate: 0.26,
+        payback_months: 30
+      }
+    }
+  }),
+  result: "pending"
+}
+
 export const workflowConfig = {
   id: "workflow-standard",
   name: "标准投资筛选工作流",
@@ -482,3 +1182,16 @@ export const workflowConfig = {
   success_rate: 0,
   avg_duration: 0
 }
+
+// 导出所有标的数据
+export const allDeals = [
+  cardiBDeal,
+  teaChainDeal,
+  freshMartDeal,
+  liveStreamDeal,
+  educationDeal,
+  petServiceDeal,
+  fitnessDeal,
+  beautyDeal,
+  hotelDeal
+]

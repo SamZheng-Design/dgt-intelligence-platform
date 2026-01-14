@@ -1,7 +1,8 @@
 import { Hono } from 'hono'
 import OpenAI from 'openai'
 import { agentsSeed } from '../data/agents-seed'
-import { cardiBDeal, workflowConfig } from '../data/deals-seed'
+import { cardiBDeal, workflowConfig, allDeals } from '../data/deals-seed'
+import { allTrackAgents, industryTracks } from '../data/track-agents-seed'
 
 type Bindings = {
   DB: D1Database
@@ -163,16 +164,25 @@ api.get('/debug-env', (c) => {
 // ============================================
 api.post('/init-db', async (c) => {
   const db = c.env.DB
+  const force = c.req.query('force') === 'true'  // 强制重新初始化
   
   try {
     // 检查agents表是否有数据
     const existingAgents = await db.prepare('SELECT COUNT(*) as count FROM agents').first<{count: number}>()
     
-    if (existingAgents && existingAgents.count > 0) {
+    if (existingAgents && existingAgents.count > 0 && !force) {
       return c.json({ success: true, message: '数据库已初始化', agents: existingAgents.count })
     }
     
-    // 插入智能体种子数据
+    // 如果强制重新初始化，先清空数据（注意顺序，先删除有外键依赖的表）
+    if (force) {
+      await db.prepare('DELETE FROM evaluation_logs').run()  // 先删除有外键的表
+      await db.prepare('DELETE FROM workflow').run()
+      await db.prepare('DELETE FROM deals').run()
+      await db.prepare('DELETE FROM agents').run()
+    }
+    
+    // 插入通用智能体种子数据
     for (const agent of agentsSeed) {
       await db.prepare(`
         INSERT INTO agents (id, name, ring_type, industry, dimension, weight, description, 
@@ -187,19 +197,42 @@ api.post('/init-db', async (c) => {
       ).run()
     }
     
-    // 插入Cardi B项目数据
-    await db.prepare(`
-      INSERT INTO deals (id, company_name, credit_code, industry, status, main_business,
-        funding_amount, contact_name, contact_phone, website, submitted_date, project_documents,
-        financial_data, result)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      cardiBDeal.id, cardiBDeal.company_name, cardiBDeal.credit_code, cardiBDeal.industry,
-      cardiBDeal.status, cardiBDeal.main_business, cardiBDeal.funding_amount,
-      cardiBDeal.contact_name, cardiBDeal.contact_phone, cardiBDeal.website,
-      cardiBDeal.submitted_date, cardiBDeal.project_documents, cardiBDeal.financial_data,
-      cardiBDeal.result
-    ).run()
+    // 插入赛道专属智能体
+    let trackAgentOrder = 10  // 从10开始，避免与通用智能体冲突
+    for (const agent of allTrackAgents) {
+      await db.prepare(`
+        INSERT INTO agents (id, name, ring_type, industry, dimension, weight, description, 
+          system_prompt, evaluation_criteria, knowledge_base, knowledge_files, output_format, 
+          pass_threshold, is_enabled, execution_order, model_config, icon, icon_color)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(
+        agent.id, agent.name, agent.ring_type, agent.industry, agent.dimension, agent.weight,
+        agent.description, agent.system_prompt, agent.evaluation_criteria, agent.knowledge_base,
+        JSON.stringify([]), agent.output_format, agent.pass_threshold, agent.is_enabled,
+        trackAgentOrder++, agent.model_config, agent.icon, agent.icon_color
+      ).run()
+    }
+    
+    // 插入所有标的数据（包括Cardi B和新增的各赛道标的）
+    for (const deal of allDeals) {
+      try {
+        await db.prepare(`
+          INSERT INTO deals (id, company_name, credit_code, industry, status, main_business,
+            funding_amount, contact_name, contact_phone, website, submitted_date, project_documents,
+            financial_data, result)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          deal.id, deal.company_name, deal.credit_code || '', deal.industry,
+          deal.status || 'pending', deal.main_business, deal.funding_amount,
+          deal.contact_name || '', deal.contact_phone || '', deal.website || '',
+          deal.submitted_date || new Date().toISOString(), deal.project_documents || '',
+          typeof deal.financial_data === 'string' ? deal.financial_data : JSON.stringify(deal.financial_data),
+          deal.result || 'pending'
+        ).run()
+      } catch (e: any) {
+        console.error(`插入标的 ${deal.id} 失败:`, e.message)
+      }
+    }
     
     // 插入工作流配置
     await db.prepare(`
@@ -213,7 +246,16 @@ api.post('/init-db', async (c) => {
       workflowConfig.success_rate, workflowConfig.avg_duration
     ).run()
     
-    return c.json({ success: true, message: '数据库初始化成功', agents: agentsSeed.length })
+    return c.json({ 
+      success: true, 
+      message: '数据库初始化成功', 
+      stats: {
+        agents: agentsSeed.length + allTrackAgents.length,
+        trackAgents: allTrackAgents.length,
+        deals: allDeals.length,
+        tracks: industryTracks.length
+      }
+    })
   } catch (error: any) {
     return c.json({ success: false, error: error.message }, 500)
   }
@@ -361,24 +403,26 @@ api.delete('/agents/:id', async (c) => {
 
 // 获取所有赛道
 api.get('/tracks', async (c) => {
+  // 直接返回预定义的赛道配置，包含完整信息
+  return c.json({ success: true, data: industryTracks })
+})
+
+// 获取特定赛道的智能体
+api.get('/tracks/:trackId/agents', async (c) => {
   const db = c.env.DB
+  const trackId = c.req.param('trackId')
   
   try {
-    // 尝试从数据库读取
-    const result = await db.prepare('SELECT * FROM industry_tracks WHERE is_active = 1 ORDER BY name').all()
+    // 获取该赛道专属智能体 + 通用智能体
+    const result = await db.prepare(`
+      SELECT * FROM agents 
+      WHERE ring_type = 'inner' AND (industry = ? OR industry = 'all')
+      ORDER BY industry DESC, execution_order
+    `).bind(trackId).all()
+    
     return c.json({ success: true, data: result.results })
   } catch (error: any) {
-    // 如果表不存在，返回默认赛道
-    const defaultTracks = [
-      { id: 'light-asset', name: '轻资产', icon: 'fas fa-feather', icon_color: '#8B5CF6' },
-      { id: 'retail', name: '零售', icon: 'fas fa-store', icon_color: '#10B981' },
-      { id: 'catering', name: '餐饮', icon: 'fas fa-utensils', icon_color: '#F59E0B' },
-      { id: 'ecommerce', name: '电商', icon: 'fas fa-shopping-cart', icon_color: '#3B82F6' },
-      { id: 'education', name: '教育培训', icon: 'fas fa-graduation-cap', icon_color: '#EC4899' },
-      { id: 'entertainment', name: '文娱', icon: 'fas fa-film', icon_color: '#6366F1' },
-      { id: 'service', name: '生活服务', icon: 'fas fa-concierge-bell', icon_color: '#14B8A6' }
-    ]
-    return c.json({ success: true, data: defaultTracks })
+    return c.json({ success: false, error: error.message }, 500)
   }
 })
 
