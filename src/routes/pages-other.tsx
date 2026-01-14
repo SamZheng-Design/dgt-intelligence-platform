@@ -185,26 +185,13 @@ export const submitPageContent = `
   <div class="p-6">
     <!-- Step 1: 选择行业 -->
     <div id="form-step-1" class="step-content">
-      <h3 class="text-lg font-semibold mb-4">选择所属行业</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <label class="cursor-pointer">
-          <input type="radio" name="industry" value="ecommerce" class="hidden peer">
-          <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
-            <i class="fas fa-shopping-cart text-3xl text-orange-500 mb-2"></i>
-            <p class="font-medium">电商</p>
-          </div>
-        </label>
-        <label class="cursor-pointer">
-          <input type="radio" name="industry" value="overseas" class="hidden peer">
-          <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
-            <i class="fas fa-globe text-3xl text-blue-500 mb-2"></i>
-            <p class="font-medium">海外</p>
-          </div>
-        </label>
+      <h3 class="text-lg font-semibold mb-4">选择所属行业（赛道）</h3>
+      <div id="industry-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- 动态加载赛道选项 -->
         <label class="cursor-pointer">
           <input type="radio" name="industry" value="light-asset" class="hidden peer" checked>
           <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
-            <i class="fas fa-music text-3xl text-purple-500 mb-2"></i>
+            <i class="fas fa-feather text-3xl text-purple-500 mb-2"></i>
             <p class="font-medium">轻资产</p>
           </div>
         </label>
@@ -213,6 +200,48 @@ export const submitPageContent = `
           <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
             <i class="fas fa-store text-3xl text-green-500 mb-2"></i>
             <p class="font-medium">零售</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="industry" value="catering" class="hidden peer">
+          <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
+            <i class="fas fa-utensils text-3xl text-amber-500 mb-2"></i>
+            <p class="font-medium">餐饮</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="industry" value="ecommerce" class="hidden peer">
+          <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
+            <i class="fas fa-shopping-cart text-3xl text-blue-500 mb-2"></i>
+            <p class="font-medium">电商</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="industry" value="education" class="hidden peer">
+          <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
+            <i class="fas fa-graduation-cap text-3xl text-pink-500 mb-2"></i>
+            <p class="font-medium">教育培训</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="industry" value="healthcare" class="hidden peer">
+          <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
+            <i class="fas fa-heartbeat text-3xl text-red-500 mb-2"></i>
+            <p class="font-medium">医疗健康</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="industry" value="entertainment" class="hidden peer">
+          <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
+            <i class="fas fa-film text-3xl text-indigo-500 mb-2"></i>
+            <p class="font-medium">文娱</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="industry" value="service" class="hidden peer">
+          <div class="p-6 border-2 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-gray-300 transition">
+            <i class="fas fa-concierge-bell text-3xl text-teal-500 mb-2"></i>
+            <p class="font-medium">生活服务</p>
           </div>
         </label>
       </div>
@@ -359,7 +388,10 @@ export const submitPageContent = `
 
   function generateConfirmSummary() {
     const industry = document.querySelector('input[name="industry"]:checked')?.value;
-    const industryMap = { ecommerce: '电商', overseas: '海外', 'light-asset': '轻资产', retail: '零售' };
+    const industryMap = { 
+      ecommerce: '电商', overseas: '海外', 'light-asset': '轻资产', retail: '零售',
+      catering: '餐饮', education: '教育培训', healthcare: '医疗健康', entertainment: '文娱', service: '生活服务'
+    };
     
     document.getElementById('confirm-summary').innerHTML = \`
       <div class="grid grid-cols-2 gap-4">
@@ -470,13 +502,103 @@ export const dealsPageContent = `
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
+      
+      <!-- Tab切换 -->
+      <div class="border-b px-6">
+        <div class="flex space-x-4">
+          <button onclick="switchDealTab('info')" id="deal-tab-info" class="py-3 px-4 font-medium text-primary-600 border-b-2 border-primary-500">
+            <i class="fas fa-info-circle mr-2"></i>基本信息
+          </button>
+          <button onclick="switchDealTab('materials')" id="deal-tab-materials" class="py-3 px-4 font-medium text-gray-500 hover:text-gray-700">
+            <i class="fas fa-file-upload mr-2"></i>补充材料
+          </button>
+          <button onclick="switchDealTab('logs')" id="deal-tab-logs" class="py-3 px-4 font-medium text-gray-500 hover:text-gray-700">
+            <i class="fas fa-history mr-2"></i>评估日志
+          </button>
+        </div>
+      </div>
+      
       <div class="flex-1 overflow-y-auto p-6" id="deal-modal-content">
         <!-- 动态内容 -->
       </div>
       <div class="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
         <button onclick="closeDealModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">关闭</button>
-        <button onclick="startEvaluation()" id="btn-evaluate" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
-          <i class="fas fa-play mr-2"></i>开始评估
+        <div class="flex space-x-2">
+          <button onclick="openUploadMaterialModal()" id="btn-upload-material" class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
+            <i class="fas fa-upload mr-2"></i>上传材料
+          </button>
+          <button onclick="startEvaluation()" id="btn-evaluate" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+            <i class="fas fa-play mr-2"></i>开始评估
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 上传材料模态框 -->
+<div id="upload-material-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b bg-amber-50">
+      <h2 class="text-lg font-semibold text-amber-800">
+        <i class="fas fa-file-upload mr-2"></i>上传补充材料
+      </h2>
+      <button onclick="closeUploadMaterialModal()" class="text-gray-400 hover:text-gray-600">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-6">
+      <!-- 拖拽上传区 -->
+      <div id="deal-drop-zone" 
+        class="p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border-2 border-dashed border-amber-300 cursor-pointer hover:border-amber-400 transition"
+        onclick="document.getElementById('deal-file-input').click()"
+        ondrop="handleDealFileDrop(event)" 
+        ondragover="handleDealDragOver(event)" 
+        ondragleave="handleDealDragLeave(event)">
+        <div class="text-center">
+          <i class="fas fa-cloud-upload-alt text-4xl text-amber-400 mb-3"></i>
+          <p class="font-medium text-amber-700 mb-1">拖拽文件或点击选择</p>
+          <p class="text-xs text-gray-500">支持 TXT、PDF、DOC、DOCX、图片等</p>
+        </div>
+        <input type="file" id="deal-file-input" class="hidden" multiple 
+          accept=".txt,.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.md"
+          onchange="handleDealFileSelect(event)">
+      </div>
+      
+      <!-- 已选文件列表 -->
+      <div id="deal-selected-files" class="mt-4 hidden">
+        <h5 class="font-medium text-sm text-gray-700 mb-2">已选择文件：</h5>
+        <div id="deal-files-list" class="space-y-2 max-h-32 overflow-y-auto"></div>
+      </div>
+      
+      <!-- 材料分类 -->
+      <div class="mt-4">
+        <label class="text-sm text-gray-600">材料分类：</label>
+        <select id="deal-material-category" class="mt-1 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-400">
+          <option value="合同文件">合同文件</option>
+          <option value="审批文件">审批文件</option>
+          <option value="财务文件">财务文件</option>
+          <option value="保险文件">保险文件</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      
+      <!-- 已上传材料 -->
+      <div id="deal-uploaded-materials" class="mt-4 hidden">
+        <h5 class="font-medium text-sm text-green-700 mb-2">
+          <i class="fas fa-check-circle mr-1"></i>已上传材料：
+        </h5>
+        <div id="deal-uploaded-list" class="space-y-2 max-h-32 overflow-y-auto"></div>
+      </div>
+    </div>
+    <div class="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+      <button onclick="closeUploadMaterialModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">取消</button>
+      <div class="flex space-x-2">
+        <button onclick="uploadDealMaterials()" id="btn-do-upload" class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
+          <i class="fas fa-upload mr-2"></i>上传
+        </button>
+        <button onclick="uploadAndEvaluate()" id="btn-upload-evaluate" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+          <i class="fas fa-play mr-2"></i>上传并评估
         </button>
       </div>
     </div>
@@ -485,6 +607,11 @@ export const dealsPageContent = `
 
 <script>
   let currentDealId = null;
+  let currentDealData = null;
+  let currentDealLogs = [];
+  let dealSelectedFiles = [];
+  let dealUploadedMaterials = [];
+  let currentDealTab = 'info';
 
   const statusMap = {
     pending: { label: '待处理', class: 'bg-gray-100 text-gray-600' },
@@ -499,7 +626,12 @@ export const dealsPageContent = `
     ecommerce: '电商',
     overseas: '海外',
     'light-asset': '轻资产',
-    retail: '零售'
+    retail: '零售',
+    catering: '餐饮',
+    education: '教育培训',
+    healthcare: '医疗健康',
+    entertainment: '文娱',
+    service: '生活服务'
   };
 
   async function loadDeals() {
@@ -542,15 +674,70 @@ export const dealsPageContent = `
 
   async function openDealModal(id) {
     currentDealId = id;
+    currentDealTab = 'info';
     try {
       const { data: deal } = await apiCall(\`/api/deals/\${id}\`);
-      const { data: logs } = await apiCall(\`/api/evaluation-logs/\${id}\`);
+      let logs = [];
+      try {
+        const logsRes = await apiCall(\`/api/evaluation-logs/\${id}\`, { silent: true });
+        logs = logsRes.data || [];
+      } catch (e) {}
+      
+      currentDealData = deal;
+      currentDealLogs = logs;
+      
+      // 解析已上传材料
+      try {
+        dealUploadedMaterials = JSON.parse(deal.supplementary_materials || '[]');
+      } catch (e) {
+        dealUploadedMaterials = [];
+      }
       
       document.getElementById('deal-modal-title').textContent = deal.company_name + ' (' + deal.id + ')';
       
-      const status = statusMap[deal.status] || { label: deal.status, class: 'bg-gray-100' };
+      // 更新Tab样式
+      updateDealTabs();
       
-      document.getElementById('deal-modal-content').innerHTML = \`
+      // 渲染内容
+      renderDealContent();
+      
+      const btnEvaluate = document.getElementById('btn-evaluate');
+      btnEvaluate.classList.toggle('hidden', deal.status === 'completed' || deal.status === 'rejected');
+      
+      document.getElementById('deal-modal').classList.remove('hidden');
+    } catch (e) {
+      showToast('加载失败: ' + e.message, 'error');
+    }
+  }
+  
+  // Tab切换
+  function switchDealTab(tab) {
+    currentDealTab = tab;
+    updateDealTabs();
+    renderDealContent();
+  }
+  
+  function updateDealTabs() {
+    ['info', 'materials', 'logs'].forEach(t => {
+      const tabEl = document.getElementById(\`deal-tab-\${t}\`);
+      if (tabEl) {
+        tabEl.className = t === currentDealTab
+          ? 'py-3 px-4 font-medium text-primary-600 border-b-2 border-primary-500'
+          : 'py-3 px-4 font-medium text-gray-500 hover:text-gray-700';
+      }
+    });
+  }
+  
+  function renderDealContent() {
+    const deal = currentDealData;
+    const logs = currentDealLogs;
+    if (!deal) return;
+    
+    const status = statusMap[deal.status] || { label: deal.status, class: 'bg-gray-100' };
+    const contentEl = document.getElementById('deal-modal-content');
+    
+    if (currentDealTab === 'info') {
+      contentEl.innerHTML = \`
         <div class="grid grid-cols-2 gap-6">
           <div>
             <h4 class="font-medium mb-3">基本信息</h4>
@@ -577,29 +764,60 @@ export const dealsPageContent = `
             \` : '<p class="text-gray-500 text-center py-8">尚未评估</p>'}
           </div>
         </div>
-        
-        \${logs.length > 0 ? \`
-          <div class="mt-6 pt-6 border-t">
-            <h4 class="font-medium mb-3">评估日志</h4>
-            <div class="space-y-2 max-h-48 overflow-y-auto">
-              \${logs.map(log => \`
-                <div class="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
-                  <span>\${log.agent_name}</span>
-                  <span class="font-mono">\${log.score}</span>
-                  <span class="\${log.pass_status ? 'text-green-600' : 'text-red-600'}">\${log.pass_status ? '通过' : '未通过'}</span>
-                  <span class="text-gray-400">\${log.execution_time}ms</span>
+        <div class="mt-6 pt-6 border-t">
+          <h4 class="font-medium mb-3">主营业务</h4>
+          <p class="text-sm text-gray-600 line-clamp-4">\${deal.main_business || '暂无描述'}</p>
+        </div>
+      \`;
+    } else if (currentDealTab === 'materials') {
+      contentEl.innerHTML = \`
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-medium">补充材料</h4>
+            <button onclick="openUploadMaterialModal()" class="text-sm text-amber-600 hover:text-amber-700">
+              <i class="fas fa-plus mr-1"></i>上传新材料
+            </button>
+          </div>
+          \${dealUploadedMaterials.length > 0 ? \`
+            <div class="space-y-3">
+              \${dealUploadedMaterials.map((m, i) => \`
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div class="flex items-center space-x-3">
+                    <i class="fas fa-file text-gray-400"></i>
+                    <div>
+                      <p class="text-sm font-medium">\${m.name}</p>
+                      <p class="text-xs text-gray-500">\${m.category} · \${new Date(m.uploadedAt).toLocaleString()}</p>
+                    </div>
+                  </div>
+                  <span class="text-xs px-2 py-1 rounded bg-green-100 text-green-600">已上传</span>
                 </div>
               \`).join('')}
             </div>
-          </div>
-        \` : ''}
+          \` : \`
+            <div class="text-center py-12 text-gray-400">
+              <i class="fas fa-folder-open text-4xl mb-3"></i>
+              <p>暂无补充材料</p>
+              <button onclick="openUploadMaterialModal()" class="mt-4 text-amber-600 hover:text-amber-700">
+                <i class="fas fa-upload mr-1"></i>上传材料
+              </button>
+            </div>
+          \`}
+        </div>
       \`;
-      
-      const btnEvaluate = document.getElementById('btn-evaluate');
-      btnEvaluate.classList.toggle('hidden', deal.status !== 'pending' && deal.status !== 'evaluation');
-      
-      document.getElementById('deal-modal').classList.remove('hidden');
-    } catch (e) {}
+    } else if (currentDealTab === 'logs') {
+      contentEl.innerHTML = logs.length > 0 ? \`
+        <div class="space-y-2">
+          \${logs.map(log => \`
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg text-sm">
+              <span class="font-medium">\${log.agent_name}</span>
+              <span class="font-mono">\${log.score}</span>
+              <span class="\${log.pass_status ? 'text-green-600' : 'text-red-600'}">\${log.pass_status ? '通过' : '未通过'}</span>
+              <span class="text-gray-400">\${log.execution_time}ms</span>
+            </div>
+          \`).join('')}
+        </div>
+      \` : '<p class="text-center py-12 text-gray-400">暂无评估日志</p>';
+    }
   }
 
   function closeDealModal() {
@@ -628,6 +846,184 @@ export const dealsPageContent = `
       document.getElementById('btn-evaluate').innerHTML = '<i class="fas fa-play mr-2"></i>开始评估';
     }
   }
+
+  // ============================================
+  // 上传材料相关功能
+  // ============================================
+  
+  function openUploadMaterialModal() {
+    dealSelectedFiles = [];
+    updateDealFilesList();
+    loadDealUploadedMaterials();
+    document.getElementById('upload-material-modal').classList.remove('hidden');
+  }
+  
+  function closeUploadMaterialModal() {
+    document.getElementById('upload-material-modal').classList.add('hidden');
+  }
+  
+  function handleDealDragOver(e) {
+    e.preventDefault();
+    e.target.closest('#deal-drop-zone')?.classList.add('border-amber-500', 'bg-amber-100');
+  }
+  
+  function handleDealDragLeave(e) {
+    e.preventDefault();
+    e.target.closest('#deal-drop-zone')?.classList.remove('border-amber-500', 'bg-amber-100');
+  }
+  
+  function handleDealFileDrop(e) {
+    e.preventDefault();
+    e.target.closest('#deal-drop-zone')?.classList.remove('border-amber-500', 'bg-amber-100');
+    addDealFiles(Array.from(e.dataTransfer.files));
+  }
+  
+  function handleDealFileSelect(e) {
+    addDealFiles(Array.from(e.target.files));
+    e.target.value = '';
+  }
+  
+  function addDealFiles(files) {
+    const maxSize = 10 * 1024 * 1024;
+    const validTypes = ['txt', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'png', 'jpg', 'jpeg', 'gif', 'md'];
+    
+    files.forEach(file => {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!validTypes.includes(ext)) {
+        showToast(\`不支持的格式: \${file.name}\`, 'error');
+        return;
+      }
+      if (file.size > maxSize) {
+        showToast(\`文件过大: \${file.name}\`, 'error');
+        return;
+      }
+      if (!dealSelectedFiles.find(f => f.name === file.name)) {
+        dealSelectedFiles.push(file);
+      }
+    });
+    updateDealFilesList();
+  }
+  
+  function updateDealFilesList() {
+    const section = document.getElementById('deal-selected-files');
+    const list = document.getElementById('deal-files-list');
+    if (!section || !list) return;
+    
+    if (dealSelectedFiles.length > 0) {
+      section.classList.remove('hidden');
+      list.innerHTML = dealSelectedFiles.map((f, i) => \`
+        <div class="flex items-center justify-between p-2 bg-white rounded border">
+          <span class="text-sm truncate">\${f.name}</span>
+          <button onclick="dealSelectedFiles.splice(\${i}, 1); updateDealFilesList();" class="text-red-400 hover:text-red-600">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      \`).join('');
+    } else {
+      section.classList.add('hidden');
+    }
+  }
+  
+  function loadDealUploadedMaterials() {
+    const section = document.getElementById('deal-uploaded-materials');
+    const list = document.getElementById('deal-uploaded-list');
+    if (!section || !list) return;
+    
+    if (dealUploadedMaterials.length > 0) {
+      section.classList.remove('hidden');
+      list.innerHTML = dealUploadedMaterials.map(m => \`
+        <div class="flex items-center justify-between p-2 bg-green-50 rounded border border-green-200">
+          <span class="text-sm text-green-700">\${m.name}</span>
+          <span class="text-xs text-green-500">\${m.category}</span>
+        </div>
+      \`).join('');
+    } else {
+      section.classList.add('hidden');
+    }
+  }
+  
+  async function uploadDealMaterials() {
+    if (dealSelectedFiles.length === 0) {
+      showToast('请先选择文件', 'error');
+      return false;
+    }
+    
+    const btn = document.getElementById('btn-do-upload');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>上传中...';
+    btn.disabled = true;
+    
+    const category = document.getElementById('deal-material-category')?.value || '其他';
+    
+    try {
+      const materials = [];
+      for (const file of dealSelectedFiles) {
+        const content = await readDealFileContent(file);
+        materials.push({
+          name: file.name,
+          category: category,
+          content: content,
+          uploadedAt: new Date().toISOString()
+        });
+      }
+      
+      const response = await apiCall(\`/api/deals/\${currentDealId}/materials\`, {
+        method: 'POST',
+        body: JSON.stringify({ materials })
+      });
+      
+      if (response.success) {
+        dealUploadedMaterials = response.data || [];
+        dealSelectedFiles = [];
+        updateDealFilesList();
+        loadDealUploadedMaterials();
+        showToast('上传成功！', 'success');
+        return true;
+      }
+    } catch (e) {
+      showToast('上传失败: ' + e.message, 'error');
+    } finally {
+      btn.innerHTML = '<i class="fas fa-upload mr-2"></i>上传';
+      btn.disabled = false;
+    }
+    return false;
+  }
+  
+  async function readDealFileContent(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      const ext = file.name.split('.').pop().toLowerCase();
+      reader.onload = (e) => {
+        if (['txt', 'md'].includes(ext)) {
+          resolve(e.target.result);
+        } else {
+          resolve(\`[文件: \${file.name}, 类型: \${ext.toUpperCase()}, 大小: \${(file.size/1024).toFixed(1)}KB]\`);
+        }
+      };
+      reader.onerror = () => resolve(\`[文件: \${file.name}]\`);
+      if (['txt', 'md'].includes(ext)) {
+        reader.readAsText(file);
+      } else {
+        reader.readAsArrayBuffer(file);
+      }
+    });
+  }
+  
+  async function uploadAndEvaluate() {
+    if (dealSelectedFiles.length > 0) {
+      const uploaded = await uploadDealMaterials();
+      if (!uploaded) return;
+    }
+    closeUploadMaterialModal();
+    startEvaluation();
+  }
+  
+  // 键盘事件
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeDealModal();
+      closeUploadMaterialModal();
+    }
+  });
 
   document.addEventListener('DOMContentLoaded', () => setTimeout(loadDeals, 500));
 </script>
