@@ -208,57 +208,123 @@ export const demoPageContent = `
       </div>
     </div>
 
-    <!-- 综合改进建议（新增） -->
+    <!-- 综合改进建议（优化版v2） -->
     <div id="improvement-section" class="hidden">
-      <div class="bg-white rounded-xl card-shadow p-6">
-        <h3 class="font-semibold text-lg flex items-center mb-4">
-          <i class="fas fa-clipboard-check text-orange-500 mr-2"></i>
-          综合改进建议
-          <span class="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded">待补充材料 & 改进项</span>
-        </h3>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- 待补充材料 -->
-          <div class="bg-amber-50 rounded-lg p-4">
-            <h4 class="font-medium text-amber-800 mb-3 flex items-center">
-              <i class="fas fa-file-circle-plus mr-2"></i>
-              待补充材料
-            </h4>
-            <ul id="missing-materials" class="space-y-2 text-sm text-amber-900">
-              <li class="flex items-start space-x-2">
-                <i class="fas fa-circle text-xs mt-1.5 text-amber-400"></i>
-                <span>加载中...</span>
-              </li>
-            </ul>
-          </div>
-          
-          <!-- 改进建议 -->
-          <div class="bg-blue-50 rounded-lg p-4">
-            <h4 class="font-medium text-blue-800 mb-3 flex items-center">
-              <i class="fas fa-lightbulb mr-2"></i>
-              项目改进建议
-            </h4>
-            <ul id="improvement-suggestions" class="space-y-2 text-sm text-blue-900">
-              <li class="flex items-start space-x-2">
-                <i class="fas fa-circle text-xs mt-1.5 text-blue-400"></i>
-                <span>加载中...</span>
-              </li>
-            </ul>
-          </div>
+      <div class="bg-white rounded-xl card-shadow overflow-hidden">
+        <!-- 标题栏 -->
+        <div class="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b">
+          <h3 class="font-semibold text-lg flex items-center text-gray-800">
+            <i class="fas fa-clipboard-check text-orange-500 mr-2"></i>
+            综合改进建议
+            <span class="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded">智能汇总</span>
+          </h3>
         </div>
         
-        <!-- 下一步行动 -->
-        <div class="mt-4 pt-4 border-t">
-          <h4 class="font-medium text-gray-700 mb-3 flex items-center">
-            <i class="fas fa-tasks text-green-500 mr-2"></i>
-            建议下一步行动
-          </h4>
-          <div id="next-actions" class="space-y-2 text-sm">
-            <div class="flex items-center space-x-2 text-gray-600">
-              <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">1</span>
-              <span>加载中...</span>
+        <div class="p-6">
+          <!-- 三栏卡片布局 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <!-- 待补充材料卡片 -->
+            <div class="bg-amber-50 rounded-xl border border-amber-100 overflow-hidden hover:shadow-md transition-shadow">
+              <div class="p-3 bg-amber-100/50 flex items-center justify-between cursor-pointer" onclick="toggleImprovementCard('missing')">
+                <h4 class="font-medium text-amber-800 flex items-center text-sm">
+                  <i class="fas fa-file-circle-plus mr-2 text-amber-500"></i>
+                  待补充材料
+                  <span id="missing-count" class="ml-2 bg-amber-200 text-amber-700 text-xs px-1.5 py-0.5 rounded-full">0</span>
+                </h4>
+                <i id="missing-expand-icon" class="fas fa-chevron-down text-amber-400 text-xs transition-transform"></i>
+              </div>
+              <div id="missing-content" class="p-3">
+                <ul id="missing-materials" class="space-y-2 text-sm text-amber-900">
+                  <li class="text-gray-400 text-xs">加载中...</li>
+                </ul>
+                <button onclick="showImprovementPopup('missing')" class="mt-3 w-full text-xs text-amber-600 hover:text-amber-700 flex items-center justify-center py-1.5 bg-amber-100/50 rounded-lg hover:bg-amber-100 transition">
+                  <i class="fas fa-expand-alt mr-1"></i>查看全部
+                </button>
+              </div>
+            </div>
+            
+            <!-- 项目改进建议卡片 -->
+            <div class="bg-blue-50 rounded-xl border border-blue-100 overflow-hidden hover:shadow-md transition-shadow">
+              <div class="p-3 bg-blue-100/50 flex items-center justify-between cursor-pointer" onclick="toggleImprovementCard('improvement')">
+                <h4 class="font-medium text-blue-800 flex items-center text-sm">
+                  <i class="fas fa-lightbulb mr-2 text-blue-500"></i>
+                  改进建议
+                  <span id="improvement-count" class="ml-2 bg-blue-200 text-blue-700 text-xs px-1.5 py-0.5 rounded-full">0</span>
+                </h4>
+                <i id="improvement-expand-icon" class="fas fa-chevron-down text-blue-400 text-xs transition-transform"></i>
+              </div>
+              <div id="improvement-content" class="p-3">
+                <ul id="improvement-suggestions" class="space-y-2 text-sm text-blue-900">
+                  <li class="text-gray-400 text-xs">加载中...</li>
+                </ul>
+                <button onclick="showImprovementPopup('improvement')" class="mt-3 w-full text-xs text-blue-600 hover:text-blue-700 flex items-center justify-center py-1.5 bg-blue-100/50 rounded-lg hover:bg-blue-100 transition">
+                  <i class="fas fa-expand-alt mr-1"></i>查看全部
+                </button>
+              </div>
+            </div>
+            
+            <!-- 下一步行动卡片 -->
+            <div class="bg-green-50 rounded-xl border border-green-100 overflow-hidden hover:shadow-md transition-shadow">
+              <div class="p-3 bg-green-100/50 flex items-center justify-between cursor-pointer" onclick="toggleImprovementCard('actions')">
+                <h4 class="font-medium text-green-800 flex items-center text-sm">
+                  <i class="fas fa-tasks mr-2 text-green-500"></i>
+                  下一步行动
+                  <span id="actions-count" class="ml-2 bg-green-200 text-green-700 text-xs px-1.5 py-0.5 rounded-full">0</span>
+                </h4>
+                <i id="actions-expand-icon" class="fas fa-chevron-down text-green-400 text-xs transition-transform"></i>
+              </div>
+              <div id="actions-content" class="p-3">
+                <div id="next-actions" class="space-y-2 text-sm">
+                  <div class="text-gray-400 text-xs">加载中...</div>
+                </div>
+                <button onclick="showImprovementPopup('actions')" class="mt-3 w-full text-xs text-green-600 hover:text-green-700 flex items-center justify-center py-1.5 bg-green-100/50 rounded-lg hover:bg-green-100 transition">
+                  <i class="fas fa-expand-alt mr-1"></i>查看全部
+                </button>
+              </div>
+            </div>
+            
+          </div>
+          
+          <!-- 风险建议专区（来自风险控制智能体） -->
+          <div id="risk-recommendation-section" class="mt-4 hidden">
+            <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border border-red-100 overflow-hidden">
+              <div class="p-3 bg-red-100/30 flex items-center justify-between cursor-pointer" onclick="toggleImprovementCard('risk-rec')">
+                <h4 class="font-medium text-red-800 flex items-center text-sm">
+                  <i class="fas fa-shield-halved mr-2 text-red-500"></i>
+                  风险管理建议
+                  <span class="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">来自风险控制智能体</span>
+                </h4>
+                <i id="risk-rec-expand-icon" class="fas fa-chevron-down text-red-400 text-xs transition-transform"></i>
+              </div>
+              <div id="risk-rec-content" class="p-4">
+                <div id="risk-recommendation-preview" class="text-sm text-gray-700 line-clamp-3">
+                  加载中...
+                </div>
+                <button onclick="showImprovementPopup('risk-rec')" class="mt-3 text-sm text-red-600 hover:text-red-700 flex items-center transition">
+                  <i class="fas fa-external-link-alt mr-1"></i>查看完整风险管理建议
+                </button>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 改进建议详情浮窗 -->
+    <div id="improvement-popup" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4" onclick="if(event.target === this) closeImprovementPopup()">
+      <div class="bg-white rounded-xl max-w-2xl w-full max-h-[80vh] overflow-hidden shadow-2xl">
+        <div id="improvement-popup-header" class="p-4 border-b flex items-center justify-between">
+          <h3 id="improvement-popup-title" class="font-bold text-lg flex items-center">
+            <i class="fas fa-lightbulb mr-2"></i>
+            <span>详情</span>
+          </h3>
+          <button onclick="closeImprovementPopup()" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition">
+            <i class="fas fa-times text-gray-500"></i>
+          </button>
+        </div>
+        <div id="improvement-popup-content" class="p-6 overflow-y-auto max-h-[70vh]">
+          <!-- 内容动态填充 -->
         </div>
       </div>
     </div>
@@ -327,6 +393,49 @@ export const demoPageContent = `
   }
   .reasoning-text p {
     margin-bottom: 0.75rem;
+  }
+  
+  /* 改进建议浮窗滚动条 */
+  #improvement-popup-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  #improvement-popup-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  #improvement-popup-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+  #improvement-popup-content::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+  }
+  
+  /* 风险建议内容格式 */
+  .risk-rec-content h4 {
+    font-size: 0.95rem;
+    margin-top: 1rem;
+  }
+  .risk-rec-content ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .risk-rec-content li {
+    font-size: 0.875rem;
+  }
+  
+  /* 文本截断 */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 </style>
 
@@ -975,11 +1084,20 @@ export const demoPageContent = `
     }
   }
 
+  // 存储改进建议数据（用于浮窗显示）
+  let improvementData = {
+    missing: [],
+    improvement: [],
+    actions: [],
+    riskRecommendation: ''
+  };
+
   // 生成综合改进建议
   function generateImprovementSuggestions() {
     const missingMaterials = new Set();
     const improvements = new Set();
     const nextActions = [];
+    let riskRecommendation = '';
     
     // 从所有评估结果中收集改进建议
     Object.values(evaluationResults).forEach((r) => {
@@ -998,12 +1116,9 @@ export const demoPageContent = `
           }
         });
       }
-      // 从recommendation中提取
-      if (r.result?.recommendation) {
-        const rec = r.result.recommendation;
-        if (rec.includes('补充') || rec.includes('完善') || rec.includes('加强')) {
-          improvements.add(rec);
-        }
+      // 获取风险控制智能体的recommendation
+      if (r.agentId === 'risk-control-agent' && r.result?.recommendation) {
+        riskRecommendation = r.result.recommendation;
       }
     });
     
@@ -1025,38 +1140,196 @@ export const demoPageContent = `
     }
     
     // 生成下一步行动
-    nextActions.push('提交缺失材料至项目组审核');
-    nextActions.push('与运营方确认涉外审批进度');
-    nextActions.push('完成保险方案比选并签约');
-    nextActions.push('启动票务预售方案设计');
+    nextActions.push({ priority: '紧急', action: '提交缺失材料至项目组审核', deadline: '本周内' });
+    nextActions.push({ priority: '重要', action: '与运营方确认涉外审批进度', deadline: '3日内' });
+    nextActions.push({ priority: '重要', action: '完成保险方案比选并签约', deadline: '2周内' });
+    nextActions.push({ priority: '常规', action: '启动票务预售方案设计', deadline: '1月内' });
     
-    // 更新UI
+    // 存储数据供浮窗使用
+    improvementData = {
+      missing: Array.from(missingMaterials),
+      improvement: Array.from(improvements),
+      actions: nextActions,
+      riskRecommendation
+    };
+    
+    // 更新UI - 待补充材料
     const missingEl = document.getElementById('missing-materials');
+    const missingArr = improvementData.missing.slice(0, 3);
+    missingEl.innerHTML = missingArr.map(m => \`
+      <li class="flex items-start space-x-2 p-1.5 bg-white/50 rounded-lg">
+        <i class="fas fa-file-circle-exclamation text-amber-500 mt-0.5 text-xs"></i>
+        <span class="text-xs line-clamp-1">\${m.length > 30 ? m.substring(0, 30) + '...' : m}</span>
+      </li>
+    \`).join('');
+    document.getElementById('missing-count').textContent = improvementData.missing.length;
+    
+    // 更新UI - 项目改进建议
     const improvementEl = document.getElementById('improvement-suggestions');
+    const improvementArr = improvementData.improvement.slice(0, 3);
+    improvementEl.innerHTML = improvementArr.map(i => \`
+      <li class="flex items-start space-x-2 p-1.5 bg-white/50 rounded-lg">
+        <i class="fas fa-arrow-up-right-dots text-blue-500 mt-0.5 text-xs"></i>
+        <span class="text-xs line-clamp-1">\${i.length > 30 ? i.substring(0, 30) + '...' : i}</span>
+      </li>
+    \`).join('');
+    document.getElementById('improvement-count').textContent = improvementData.improvement.length;
+    
+    // 更新UI - 下一步行动
     const actionsEl = document.getElementById('next-actions');
-    
-    missingEl.innerHTML = Array.from(missingMaterials).slice(0, 6).map(m => \`
-      <li class="flex items-start space-x-2">
-        <i class="fas fa-file-circle-exclamation text-amber-500 mt-0.5"></i>
-        <span>\${m}</span>
-      </li>
-    \`).join('');
-    
-    improvementEl.innerHTML = Array.from(improvements).slice(0, 6).map(i => \`
-      <li class="flex items-start space-x-2">
-        <i class="fas fa-arrow-up-right-dots text-blue-500 mt-0.5"></i>
-        <span>\${i}</span>
-      </li>
-    \`).join('');
-    
-    actionsEl.innerHTML = nextActions.slice(0, 4).map((a, i) => \`
-      <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
-        <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">\${i + 1}</span>
-        <span class="text-gray-700">\${a}</span>
+    actionsEl.innerHTML = nextActions.slice(0, 3).map((a, i) => \`
+      <div class="flex items-center space-x-2 p-1.5 bg-white/50 rounded-lg">
+        <span class="w-5 h-5 rounded-full bg-green-200 text-green-700 flex items-center justify-center text-xs font-bold flex-shrink-0">\${i + 1}</span>
+        <span class="text-xs text-gray-700 line-clamp-1">\${a.action}</span>
       </div>
     \`).join('');
+    document.getElementById('actions-count').textContent = nextActions.length;
+    
+    // 显示风险管理建议（如果有）
+    if (riskRecommendation) {
+      document.getElementById('risk-recommendation-section').classList.remove('hidden');
+      const preview = riskRecommendation.replace(/\\n/g, ' ').substring(0, 150) + '...';
+      document.getElementById('risk-recommendation-preview').textContent = preview;
+    }
     
     document.getElementById('improvement-section').classList.remove('hidden');
+  }
+  
+  // 切换卡片展开/收起
+  function toggleImprovementCard(type) {
+    const contentEl = document.getElementById(\`\${type}-content\`);
+    const iconEl = document.getElementById(\`\${type}-expand-icon\`);
+    if (contentEl && iconEl) {
+      contentEl.classList.toggle('hidden');
+      iconEl.classList.toggle('rotate-180');
+    }
+  }
+  
+  // 显示改进建议浮窗
+  function showImprovementPopup(type) {
+    const popup = document.getElementById('improvement-popup');
+    const header = document.getElementById('improvement-popup-header');
+    const title = document.getElementById('improvement-popup-title');
+    const content = document.getElementById('improvement-popup-content');
+    
+    let headerClass = 'p-4 border-b flex items-center justify-between ';
+    let titleHtml = '';
+    let contentHtml = '';
+    
+    if (type === 'missing') {
+      headerClass += 'bg-amber-50';
+      titleHtml = '<i class="fas fa-file-circle-plus mr-2 text-amber-500"></i><span class="text-amber-800">待补充材料清单</span>';
+      contentHtml = \`
+        <p class="text-sm text-gray-500 mb-4">以下材料需要补充完善，以便进行更准确的评估：</p>
+        <div class="space-y-3">
+          \${improvementData.missing.map((m, i) => \`
+            <div class="flex items-start space-x-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
+              <span class="w-6 h-6 rounded-full bg-amber-200 text-amber-700 flex items-center justify-center text-xs font-bold flex-shrink-0">\${i + 1}</span>
+              <div class="flex-1">
+                <p class="text-sm text-gray-800">\${m}</p>
+              </div>
+              <span class="text-xs bg-amber-100 text-amber-600 px-2 py-0.5 rounded">待提交</span>
+            </div>
+          \`).join('')}
+        </div>
+      \`;
+    } else if (type === 'improvement') {
+      headerClass += 'bg-blue-50';
+      titleHtml = '<i class="fas fa-lightbulb mr-2 text-blue-500"></i><span class="text-blue-800">项目改进建议</span>';
+      contentHtml = \`
+        <p class="text-sm text-gray-500 mb-4">基于AI智能体评估结果，以下方面建议改进：</p>
+        <div class="space-y-3">
+          \${improvementData.improvement.map((item, i) => \`
+            <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
+              <div class="w-6 h-6 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-arrow-up text-xs"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-800">\${item}</p>
+              </div>
+            </div>
+          \`).join('')}
+        </div>
+      \`;
+    } else if (type === 'actions') {
+      headerClass += 'bg-green-50';
+      titleHtml = '<i class="fas fa-tasks mr-2 text-green-500"></i><span class="text-green-800">建议下一步行动</span>';
+      contentHtml = \`
+        <p class="text-sm text-gray-500 mb-4">按优先级排序的行动计划：</p>
+        <div class="space-y-3">
+          \${improvementData.actions.map((a, i) => {
+            const priorityColors = {
+              '紧急': 'bg-red-100 text-red-700 border-red-200',
+              '重要': 'bg-orange-100 text-orange-700 border-orange-200',
+              '常规': 'bg-green-100 text-green-700 border-green-200'
+            };
+            const priorityBadge = priorityColors[a.priority] || priorityColors['常规'];
+            return \`
+              <div class="flex items-center space-x-3 p-3 bg-white rounded-lg border shadow-sm">
+                <span class="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-bold">\${i + 1}</span>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-gray-800">\${a.action}</p>
+                  <p class="text-xs text-gray-500 mt-0.5">建议完成时间：\${a.deadline}</p>
+                </div>
+                <span class="text-xs px-2 py-1 rounded border \${priorityBadge}">\${a.priority}</span>
+              </div>
+            \`;
+          }).join('')}
+        </div>
+      \`;
+    } else if (type === 'risk-rec') {
+      headerClass += 'bg-red-50';
+      titleHtml = '<i class="fas fa-shield-halved mr-2 text-red-500"></i><span class="text-red-800">风险管理建议</span>';
+      const formattedRec = formatRiskRecommendation(improvementData.riskRecommendation);
+      contentHtml = \`
+        <p class="text-sm text-gray-500 mb-4">来自风险控制智能体的专业建议：</p>
+        <div class="bg-red-50 rounded-lg p-4 border border-red-100">
+          <div class="prose prose-sm max-w-none text-gray-700 risk-rec-content">
+            \${formattedRec}
+          </div>
+        </div>
+      \`;
+    }
+    
+    header.className = headerClass;
+    title.innerHTML = titleHtml;
+    content.innerHTML = contentHtml;
+    popup.classList.remove('hidden');
+  }
+  
+  // 格式化风险建议内容
+  function formatRiskRecommendation(text) {
+    if (!text) return '<p class="text-gray-400">暂无详细建议</p>';
+    
+    // 将文本按段落分割并格式化
+    return text
+      .split(/\\n\\n|\\\\n\\\\n/)
+      .map(para => {
+        // 检测是否是标题行（如 "1) 立即行动项："）
+        if (/^\\d+\\)|^[一二三四五六七八九十]+、/.test(para.trim())) {
+          const lines = para.split(/\\n|\\\\n/);
+          const title = lines[0];
+          const items = lines.slice(1);
+          
+          return \`
+            <div class="mb-4">
+              <h4 class="font-semibold text-red-800 mb-2">\${title}</h4>
+              \${items.length > 0 ? \`
+                <ul class="space-y-1 ml-4">
+                  \${items.map(item => item.trim() ? \`<li class="flex items-start space-x-2"><i class="fas fa-check-circle text-red-400 mt-1 text-xs"></i><span>\${item.replace(/^\\s*-\\s*/, '')}</span></li>\` : '').join('')}
+                </ul>
+              \` : ''}
+            </div>
+          \`;
+        }
+        return para.trim() ? \`<p class="mb-3">\${para.replace(/\\n|\\\\n/g, '<br>')}</p>\` : '';
+      })
+      .join('');
+  }
+  
+  // 关闭改进建议浮窗
+  function closeImprovementPopup() {
+    document.getElementById('improvement-popup').classList.add('hidden');
   }
 
   // 开始演示
@@ -1297,6 +1570,7 @@ export const demoPageContent = `
     if (e.key === 'Escape') {
       closeDetailModal();
       closeReasoningPopup();
+      closeImprovementPopup();
     }
   });
 
