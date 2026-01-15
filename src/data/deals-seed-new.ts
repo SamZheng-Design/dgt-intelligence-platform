@@ -1181,9 +1181,14 @@ export const workflowConfig = {
 };
 
 // ============================================
-// 导出所有标的
+// 导入扩展标的（20个）
 // ============================================
-export const allDeals = [
+import { extendedDeals, extendedDealsSummary } from './deals-seed-extended';
+
+// ============================================
+// 导出基础标的（10个）
+// ============================================
+export const baseDeals = [
   deal_01_tea,      // 蜜雪冰城-深圳-每日
   deal_02_fastfood, // 老乡鸡-上海-每日
   deal_03_fresh,    // 叮咚买菜-杭州-每日
@@ -1197,9 +1202,17 @@ export const allDeals = [
 ];
 
 // ============================================
-// 标的摘要信息（用于快速展示）
+// 导出所有标的（30个 = 基础10个 + 扩展20个）
 // ============================================
-export const dealsSummary = [
+export const allDeals = [
+  ...baseDeals,
+  ...extendedDeals
+];
+
+// ============================================
+// 基础标的摘要信息
+// ============================================
+export const baseDealsSummary = [
   { id: "DGT-2026-001", name: "蜜雪冰城深圳科技园店", industry: "餐饮-茶饮", city: "深圳", amount: 35, share: "8%", frequency: "每日", irr: "18%" },
   { id: "DGT-2026-002", name: "老乡鸡上海日月光店", industry: "餐饮-快餐", city: "上海", amount: 80, share: "6%", frequency: "每日", irr: "22%" },
   { id: "DGT-2026-003", name: "叮咚买菜杭州拱墅仓", industry: "零售-生鲜", city: "杭州", amount: 120, share: "5%", frequency: "每日", irr: "21%" },
@@ -1210,4 +1223,12 @@ export const dealsSummary = [
   { id: "DGT-2026-008", name: "唱吧麦颂KTV南京新街口", industry: "文娱-KTV", city: "南京", amount: 200, share: "8%", frequency: "每月", irr: "15%" },
   { id: "DGT-2026-009", name: "途虎养车重庆龙湖店", industry: "服务-汽车养护", city: "重庆", amount: 180, share: "9%", frequency: "每月", irr: "18%" },
   { id: "DGT-2026-010", name: "海底捞西安大雁塔店", industry: "餐饮-火锅", city: "西安", amount: 300, share: "5%", frequency: "每月", irr: "25%" }
+];
+
+// ============================================
+// 全部标的摘要信息（30个）
+// ============================================
+export const dealsSummary = [
+  ...baseDealsSummary,
+  ...extendedDealsSummary
 ];
