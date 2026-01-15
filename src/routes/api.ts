@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import OpenAI from 'openai'
 import { agentsSeed } from '../data/agents-seed'
-import { allDeals, workflowConfig, dealsSummary } from '../data/deals-seed-new'
+import { allDeals, workflowConfig, dealsSummary, completeDeals, completeDealsSummary, allDealsWithComplete } from '../data/deals-seed-new'
 import { allTrackAgents, industryTracks } from '../data/track-agents-seed'
 
 type Bindings = {
@@ -262,6 +262,92 @@ api.post('/init-db', async (c) => {
   } catch (error: any) {
     return c.json({ success: false, error: error.message }, 500)
   }
+})
+
+// ============================================
+// 数据库初始化 - 使用完整50个新标的
+// ============================================
+api.post('/init-db-complete', async (c) => {
+  const db = c.env.DB
+  const force = c.req.query('force') === 'true'
+  
+  try {
+    // 检查deals表是否有数据
+    const existingDeals = await db.prepare('SELECT COUNT(*) as count FROM deals').first<{count: number}>()
+    
+    if (existingDeals && existingDeals.count > 0 && !force) {
+      return c.json({ success: true, message: '数据库已有标的数据', deals: existingDeals.count })
+    }
+    
+    // 如果强制重新初始化，先清空标的数据
+    if (force) {
+      await db.prepare('DELETE FROM evaluation_logs').run()
+      await db.prepare('DELETE FROM deals').run()
+    }
+    
+    // 插入50个完整标的数据（从 deals-seed-complete.ts）
+    let insertedCount = 0
+    for (const deal of completeDeals) {
+      try {
+        const d = deal as any
+        await db.prepare(`
+          INSERT INTO deals (id, company_name, credit_code, industry, status, main_business,
+            funding_amount, contact_name, contact_phone, website, submitted_date, project_documents,
+            financial_data, result, region, city, cashflow_frequency)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          d.id, d.company_name, d.credit_code || '', d.industry,
+          d.status || 'pending', d.main_business, d.funding_amount,
+          d.contact_name || '', d.contact_phone || '', d.website || '',
+          d.submitted_date || new Date().toISOString(), d.project_documents || '',
+          typeof d.financial_data === 'string' ? d.financial_data : JSON.stringify(d.financial_data),
+          d.result || 'pending',
+          d.region || '', d.city || '', d.cashflow_frequency || 'monthly'
+        ).run()
+        insertedCount++
+      } catch (e: any) {
+        console.error(`插入完整标的失败: ${deal.id}`, e.message)
+      }
+    }
+    
+    return c.json({ 
+      success: true, 
+      message: `完整标的数据初始化成功（${insertedCount}/${completeDeals.length}个）`, 
+      stats: {
+        dealsTotal: completeDeals.length,
+        dealsInserted: insertedCount,
+        source: 'deals-seed-complete.ts'
+      }
+    })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// ============================================
+// 获取数据概览（包含新旧数据集信息）
+// ============================================
+api.get('/data-overview', async (c) => {
+  return c.json({
+    success: true,
+    data: {
+      originalDeals: {
+        count: allDeals.length,
+        description: '原有50个标的（10基础 + 20扩展门店 + 20创新领域）',
+        source: 'deals-seed-new.ts'
+      },
+      completeDeals: {
+        count: completeDeals.length,
+        description: '50个全新完整标的（包含完整评估智能体所需的所有字段）',
+        source: 'deals-seed-complete.ts',
+        summary: completeDealsSummary.slice(0, 10) // 返回前10个摘要示例
+      },
+      allDealsWithComplete: {
+        count: allDealsWithComplete.length,
+        description: '原有50个 + 新完整50个 = 100个标的'
+      }
+    }
+  })
 })
 
 // ============================================
