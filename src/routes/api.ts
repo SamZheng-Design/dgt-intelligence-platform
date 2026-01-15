@@ -325,6 +325,91 @@ api.post('/init-db-complete', async (c) => {
 })
 
 // ============================================
+// 数据库初始化 - 使用全部100个标的（原始50个+完整50个）
+// ============================================
+api.post('/init-db-all', async (c) => {
+  const db = c.env.DB
+  const force = c.req.query('force') === 'true'
+  
+  try {
+    // 检查deals表是否有数据
+    const existingDeals = await db.prepare('SELECT COUNT(*) as count FROM deals').first<{count: number}>()
+    
+    if (existingDeals && existingDeals.count > 0 && !force) {
+      return c.json({ success: true, message: '数据库已有标的数据', deals: existingDeals.count })
+    }
+    
+    // 如果强制重新初始化，先清空标的数据
+    if (force) {
+      await db.prepare('DELETE FROM evaluation_logs').run()
+      await db.prepare('DELETE FROM deals').run()
+    }
+    
+    // 插入全部100个标的数据（原始50个 + 完整50个）
+    let insertedCount = 0
+    let errorCount = 0
+    const errors: string[] = []
+    
+    for (const deal of allDealsWithComplete) {
+      try {
+        const d = deal as any
+        
+        // 从 financial_data 中提取字段（如果顶级字段不存在）
+        let financialData: any = {}
+        try {
+          financialData = typeof d.financial_data === 'string' 
+            ? JSON.parse(d.financial_data) 
+            : d.financial_data || {}
+        } catch (e) {
+          // 解析失败时使用空对象
+        }
+        
+        // 使用顶级字段或从 financial_data 中获取
+        const investment_period_months = d.investment_period_months || financialData.investment_period_months || 24
+        const revenue_share_ratio = d.revenue_share_ratio || financialData.revenue_share_ratio || 0.05
+        const cashflow_frequency = d.cashflow_frequency || financialData.cashflow_frequency || 'monthly'
+        
+        await db.prepare(`
+          INSERT INTO deals (id, company_name, credit_code, industry, status, main_business,
+            funding_amount, contact_name, contact_phone, website, submitted_date, project_documents,
+            financial_data, result, region, city, cashflow_frequency)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          d.id, d.company_name, d.credit_code || '', d.industry,
+          d.status || 'pending', d.main_business || '', d.funding_amount || 0,
+          d.contact_name || '', d.contact_phone || '', d.website || '',
+          d.submitted_date || new Date().toISOString(), d.project_documents || '',
+          typeof d.financial_data === 'string' ? d.financial_data : JSON.stringify(d.financial_data || {}),
+          d.result || 'pending',
+          d.region || '', d.city || '', cashflow_frequency
+        ).run()
+        insertedCount++
+      } catch (e: any) {
+        errorCount++
+        errors.push(`${deal.id}: ${e.message}`)
+        console.error(`插入标的失败: ${deal.id}`, e.message)
+      }
+    }
+    
+    return c.json({ 
+      success: true, 
+      message: `全部标的数据初始化完成（成功${insertedCount}个，失败${errorCount}个）`, 
+      stats: {
+        dealsTotal: allDealsWithComplete.length,
+        dealsInserted: insertedCount,
+        dealsFailed: errorCount,
+        originalDeals: allDeals.length,
+        completeDeals: completeDeals.length,
+        source: 'allDealsWithComplete (deals-seed-new.ts + deals-seed-complete.ts)',
+        errors: errors.slice(0, 10) // 只返回前10个错误
+      }
+    })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// ============================================
 // 获取数据概览（包含新旧数据集信息）
 // ============================================
 api.get('/data-overview', async (c) => {

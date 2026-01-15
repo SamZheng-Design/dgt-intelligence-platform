@@ -85,8 +85,9 @@ export const deal_31_concert = {
     cashflow_frequency: "weekly",
     tour_metrics: { cities: 3, shows: 6, avg_capacity: 40000, avg_ticket_price: 950 },
     revenue_data: { per_show_revenue: 38000000, total_revenue: 228000000, gross_margin: 0.70, net_margin: 0.35 },
-    investment_return: { total_share_income: 6840000, moic: 1.37, irr_estimate: 0.37 }
-  }),
+    investment_return: { total_share_income: 6840000, moic: 1.37, irr_estimate: 0.37 },
+    interest_alignment: {"investor_share":0.03,"operator_share":0.97,"minimum_guarantee":false,"minimum_guarantee_amount":null,"performance_bonus":null,"lock_up_period_months":4,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":40,"minimum_monthly_share":513000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -157,8 +158,9 @@ UR（URBAN REVIVO）创立于2006年广州，是中国本土快时尚领导品�
     cashflow_frequency: "weekly",
     ads_metrics: { daily_budget: 10000, target_roi: 3.5, platform: "抖音千川" },
     revenue_data: { expected_gmv: 7000000, gross_margin: 0.50, net_margin: 0.25, share_base: "net_profit" },
-    investment_return: { total_share_income: 2625000, moic: 1.31, irr_estimate: 0.32 }
-  }),
+    investment_return: { total_share_income: 2625000, moic: 1.31, irr_estimate: 0.32 },
+    interest_alignment: {"investor_share":0.15,"operator_share":0.85,"minimum_guarantee":false,"minimum_guarantee_amount":null,"performance_bonus":null,"lock_up_period_months":3,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":16,"minimum_monthly_share":105000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -234,8 +236,9 @@ export const deal_33_ev_charging = {
     cashflow_frequency: "daily",
     station_metrics: { stations: 10, chargers_per_station: 8, power_kw: 120, service_fee: 0.6 },
     revenue_data: { daily_kwh_per_charger: 180, daily_revenue: 8640, monthly_revenue: 259200, annual_revenue: 3110400 },
-    investment_return: { annual_share_income: 622080, moic: 0.21, irr_estimate: 0.21 }
-  }),
+    investment_return: { annual_share_income: 622080, moic: 0.21, irr_estimate: 0.21 },
+    interest_alignment: {"investor_share":0.2,"operator_share":0.8,"minimum_guarantee":true,"minimum_guarantee_amount":31104,"performance_bonus":{"threshold":40,"bonus_rate":0.02},"lock_up_period_months":12,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":24,"minimum_monthly_share":31104,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -309,8 +312,9 @@ export const deal_34_saas = {
     cashflow_frequency: "monthly",
     saas_metrics: { target_merchants: 500, avg_arpu: 12000, renewal_rate: 0.70 },
     revenue_data: { year1_arr: 6000000, year2_arr: 4200000, total_arr: 10200000 },
-    investment_return: { total_share_income: 816000, moic: 0.20, irr_estimate: 0.10 }
-  }),
+    investment_return: { total_share_income: 816000, moic: 0.20, irr_estimate: 0.10 },
+    interest_alignment: {"investor_share":0.08,"operator_share":0.92,"minimum_guarantee":true,"minimum_guarantee_amount":4800,"performance_bonus":{"threshold":40,"bonus_rate":0.02},"lock_up_period_months":12,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":32,"minimum_monthly_share":4800,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -383,8 +387,9 @@ export const deal_35_mcn = {
     cashflow_frequency: "monthly",
     mcn_metrics: { influencers: 10, target_followers: 1000000, categories: ["美妆", "穿搭", "生活", "美食"] },
     revenue_data: { expected_gmv: 10000000, expected_ads: 2000000, total_revenue: 12000000 },
-    investment_return: { total_share_income: 1440000, moic: 0.96, irr_estimate: 0.25 }
-  }),
+    investment_return: { total_share_income: 1440000, moic: 0.96, irr_estimate: 0.25 },
+    interest_alignment: {"investor_share":0.12,"operator_share":0.88,"minimum_guarantee":true,"minimum_guarantee_amount":48000,"performance_bonus":null,"lock_up_period_months":9,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":12,"minimum_monthly_share":48000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -452,8 +457,9 @@ export const deal_36_knowledge = {
     cashflow_frequency: "monthly",
     course_metrics: { price: 199, target_sales: 50000, lectures: 52 },
     revenue_data: { total_sales_revenue: 9950000, platform_share: 0.30, net_revenue: 6965000 },
-    investment_return: { total_share_income: 1492500, moic: 1.87, irr_estimate: 0.40 }
-  }),
+    investment_return: { total_share_income: 1492500, moic: 1.87, irr_estimate: 0.40 },
+    interest_alignment: {"investor_share":0.15,"operator_share":0.85,"minimum_guarantee":true,"minimum_guarantee_amount":9000,"performance_bonus":{"threshold":40,"bonus_rate":0.02},"lock_up_period_months":12,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":6,"minimum_monthly_share":9000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -524,8 +530,9 @@ export const deal_37_music_royalty = {
     cashflow_frequency: "monthly",
     royalty_metrics: { songs: 50, historical_annual_royalty: 850000, collection_agency: "中国音著协" },
     revenue_data: { projected_5yr_royalty: 4250000, investor_share: 2975000 },
-    investment_return: { total_share_income: 2975000, moic: 0.50, irr_estimate: 0.08 }
-  }),
+    investment_return: { total_share_income: 2975000, moic: 0.50, irr_estimate: 0.08 },
+    interest_alignment: {"investor_share":0.7,"operator_share":0.3,"minimum_guarantee":true,"minimum_guarantee_amount":42000,"performance_bonus":{"threshold":40,"bonus_rate":0.02},"lock_up_period_months":12,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":48,"minimum_monthly_share":42000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -592,8 +599,9 @@ export const deal_38_ecom_operation = {
     cashflow_frequency: "monthly",
     operation_metrics: { brands: 3, platform: "天猫", category: "美妆" },
     revenue_data: { target_gmv: 80000000, gross_margin: 0.60 },
-    investment_return: { total_share_income: 4000000, moic: 1.60, irr_estimate: 0.60 }
-  }),
+    investment_return: { total_share_income: 4000000, moic: 1.60, irr_estimate: 0.60 },
+    interest_alignment: {"investor_share":0.05,"operator_share":0.95,"minimum_guarantee":true,"minimum_guarantee_amount":3000,"performance_bonus":null,"lock_up_period_months":6,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":20,"minimum_monthly_share":3000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -666,8 +674,9 @@ export const deal_39_solar = {
     cashflow_frequency: "monthly",
     solar_metrics: { capacity_mw: 5, rooftops: 10, annual_generation_kwh: 5500000, self_use_ratio: 0.70 },
     revenue_data: { self_use_price: 0.85, grid_price: 0.40, annual_revenue: 3932500 },
-    investment_return: { annual_share_income: 983125, moic: 0.28, irr_estimate: 0.18 }
-  }),
+    investment_return: { annual_share_income: 983125, moic: 0.28, irr_estimate: 0.18 },
+    interest_alignment: {"investor_share":0.25,"operator_share":0.75,"minimum_guarantee":true,"minimum_guarantee_amount":49156,"performance_bonus":{"threshold":40,"bonus_rate":0.02},"lock_up_period_months":12,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":28,"minimum_monthly_share":49156,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -736,8 +745,9 @@ export const deal_40_game = {
     cashflow_frequency: "weekly",
     game_metrics: { games: 3, platform: "微信小程序", target_cac: 8, target_ltv: 15 },
     revenue_data: { expected_users: 225000, expected_revenue: 3375000 },
-    investment_return: { total_share_income: 607500, moic: 0.34, irr_estimate: 0.35 }
-  }),
+    investment_return: { total_share_income: 607500, moic: 0.34, irr_estimate: 0.35 },
+    interest_alignment: {"investor_share":0.18,"operator_share":0.82,"minimum_guarantee":false,"minimum_guarantee_amount":null,"performance_bonus":null,"lock_up_period_months":3,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":14,"minimum_monthly_share":10800,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -809,8 +819,9 @@ export const deal_41_festival = {
     cashflow_frequency: "weekly",
     festival_metrics: { days: 3, daily_capacity: 30000, ticket_price_range: "380-880" },
     revenue_data: { ticket_revenue: 30000000, sponsorship: 5000000, merchandise: 2000000, total: 37000000 },
-    investment_return: { total_share_income: 2220000, moic: 1.11, irr_estimate: 0.55 }
-  }),
+    investment_return: { total_share_income: 2220000, moic: 1.11, irr_estimate: 0.55 },
+    interest_alignment: {"investor_share":0.06,"operator_share":0.94,"minimum_guarantee":false,"minimum_guarantee_amount":null,"performance_bonus":null,"lock_up_period_months":2,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":16,"minimum_monthly_share":3600,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -876,8 +887,9 @@ export const deal_42_douyin_food = {
     cashflow_frequency: "weekly",
     ads_metrics: { daily_budget: 15000, target_roi: 4.0, campaign: "年货节" },
     revenue_data: { expected_gmv: 4800000, net_margin: 0.20, share_base: "net_profit" },
-    investment_return: { total_share_income: 1152000, moic: 0.96, irr_estimate: 0.96 }
-  }),
+    investment_return: { total_share_income: 1152000, moic: 0.96, irr_estimate: 0.96 },
+    interest_alignment: {"investor_share":0.12,"operator_share":0.88,"minimum_guarantee":false,"minimum_guarantee_amount":null,"performance_bonus":null,"lock_up_period_months":2,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":10,"minimum_monthly_share":115200,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -947,8 +959,9 @@ export const deal_43_energy_storage = {
     cashflow_frequency: "daily",
     storage_metrics: { capacity_mwh: 3, sites: 3, peak_valley_spread: 0.70, daily_cycles: 2 },
     revenue_data: { daily_revenue: 4200, monthly_revenue: 126000, annual_revenue: 1512000 },
-    investment_return: { annual_share_income: 332640, moic: 0.12, irr_estimate: 0.12 }
-  }),
+    investment_return: { annual_share_income: 332640, moic: 0.12, irr_estimate: 0.12 },
+    interest_alignment: {"investor_share":0.22,"operator_share":0.78,"minimum_guarantee":true,"minimum_guarantee_amount":16632,"performance_bonus":{"threshold":40,"bonus_rate":0.02},"lock_up_period_months":12,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":22,"minimum_monthly_share":16632,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1014,8 +1027,9 @@ BLG（Bilibili Gaming）是哔哩哔哩旗下电竞战队，LPL顶级俱乐部�
     cashflow_frequency: "monthly",
     team_metrics: { league: "LPL", achievements: "2024 MSI冠军" },
     revenue_data: { league_share: 20000000, sponsorship: 15000000, prize: 5000000, streaming: 8000000, merchandise: 2000000, total: 50000000 },
-    investment_return: { total_share_income: 4000000, moic: 1.33, irr_estimate: 0.33 }
-  }),
+    investment_return: { total_share_income: 4000000, moic: 1.33, irr_estimate: 0.33 },
+    interest_alignment: {"investor_share":0.08,"operator_share":0.92,"minimum_guarantee":true,"minimum_guarantee_amount":4800,"performance_bonus":null,"lock_up_period_months":6,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":24,"minimum_monthly_share":4800,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1084,8 +1098,9 @@ export const deal_45_battery_swap = {
     cashflow_frequency: "daily",
     swap_metrics: { stations: 20, slots_per_station: 12, swap_price: 5, daily_swaps: 60 },
     revenue_data: { daily_revenue: 6000, monthly_revenue: 180000, annual_revenue: 2160000 },
-    investment_return: { annual_share_income: 540000, moic: 0.34, irr_estimate: 0.22 }
-  }),
+    investment_return: { annual_share_income: 540000, moic: 0.34, irr_estimate: 0.22 },
+    interest_alignment: {"investor_share":0.25,"operator_share":0.75,"minimum_guarantee":true,"minimum_guarantee_amount":27000,"performance_bonus":{"threshold":40,"bonus_rate":0.02},"lock_up_period_months":12,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":13,"minimum_monthly_share":27000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1153,8 +1168,9 @@ export const deal_46_drama = {
     cashflow_frequency: "monthly",
     drama_metrics: { episodes: 24, platform: "爱奇艺", tier: "A级", revenue_per_play: 2 },
     revenue_data: { expected_plays: 8000000, total_revenue: 16000000 },
-    investment_return: { total_share_income: 3200000, moic: 1.78, irr_estimate: 0.78 }
-  }),
+    investment_return: { total_share_income: 3200000, moic: 1.78, irr_estimate: 0.78 },
+    interest_alignment: {"investor_share":0.2,"operator_share":0.8,"minimum_guarantee":true,"minimum_guarantee_amount":160000,"performance_bonus":null,"lock_up_period_months":6,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":14,"minimum_monthly_share":160000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1222,8 +1238,9 @@ export const deal_47_dest_charging = {
     cashflow_frequency: "weekly",
     charging_metrics: { hotels: 20, chargers_per_hotel: 4, avg_kwh_daily: 50 },
     revenue_data: { daily_revenue: 4000, annual_revenue: 1460000 },
-    investment_return: { annual_share_income: 321200, moic: 0.27, irr_estimate: 0.18 }
-  }),
+    investment_return: { annual_share_income: 321200, moic: 0.27, irr_estimate: 0.18 },
+    interest_alignment: {"investor_share":0.22,"operator_share":0.78,"minimum_guarantee":true,"minimum_guarantee_amount":16060,"performance_bonus":{"threshold":40,"bonus_rate":0.02},"lock_up_period_months":12,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":10,"minimum_monthly_share":16060,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1288,8 +1305,9 @@ export const deal_48_podcast = {
     cashflow_frequency: "monthly",
     podcast_metrics: { shows: 10, avg_listeners: 200000, categories: ["财经", "人文", "生活", "科技"] },
     revenue_data: { annual_ad_revenue: 8000000 },
-    investment_return: { total_share_income: 1200000, moic: 1.20, irr_estimate: 0.20 }
-  }),
+    investment_return: { total_share_income: 1200000, moic: 1.20, irr_estimate: 0.20 },
+    interest_alignment: {"investor_share":0.15,"operator_share":0.85,"minimum_guarantee":true,"minimum_guarantee_amount":9000,"performance_bonus":null,"lock_up_period_months":6,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":8,"minimum_monthly_share":9000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1354,8 +1372,9 @@ export const deal_49_private_ecom = {
     cashflow_frequency: "weekly",
     private_metrics: { users: 30000000, communities: 10000, repurchase_rate: 0.40 },
     revenue_data: { target_gmv: 30000000 },
-    investment_return: { total_share_income: 1800000, moic: 1.20, irr_estimate: 0.20 }
-  }),
+    investment_return: { total_share_income: 1800000, moic: 1.20, irr_estimate: 0.20 },
+    interest_alignment: {"investor_share":0.06,"operator_share":0.94,"minimum_guarantee":true,"minimum_guarantee_amount":3600,"performance_bonus":null,"lock_up_period_months":6,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":12,"minimum_monthly_share":3600,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1428,8 +1447,9 @@ A-SOUL是中国最成功的虚拟偶像团体，字节跳动旗下乐华娱乐�
     cashflow_frequency: "monthly",
     vtuber_metrics: { members: 5, bilibili_fans: 4000000, douyin_fans: 3000000 },
     revenue_data: { streaming: 10000000, concerts: 8000000, sponsorship: 4000000, merchandise: 3000000, total: 25000000 },
-    investment_return: { total_share_income: 2500000, moic: 1.25, irr_estimate: 0.25 }
-  }),
+    investment_return: { total_share_income: 2500000, moic: 1.25, irr_estimate: 0.25 },
+    interest_alignment: {"investor_share":0.1,"operator_share":0.9,"minimum_guarantee":true,"minimum_guarantee_amount":6000,"performance_bonus":null,"lock_up_period_months":9,"exit_mechanism":"项目到期自动结束，提前终止按比例补偿"},
+    guarantee_mechanism: {"deposit":16,"minimum_monthly_share":6000,"data_transparency":"平台API实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };

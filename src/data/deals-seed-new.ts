@@ -146,6 +146,16 @@ export const deal_01_tea = {
       irr_estimate: 0.18
     },
     
+    interest_alignment: {
+      investor_share: 0.08,
+      operator_share: 0.92,
+      minimum_guarantee: true,
+      minimum_guarantee_amount: 6000,
+      performance_bonus: null,
+      lock_up_period_months: 12,
+      exit_mechanism: "到期自动结束，品牌方提供差额补贴保障"
+    },
+    
     cost_structure: {
       ingredients: { ratio: 0.35, note: "原料成本" },
       labor: { ratio: 0.15, note: "人工成本" },
@@ -271,6 +281,23 @@ export const deal_02_fastfood = {
       total_period_income: 718200,
       moic: 0.90,
       irr_estimate: 0.22
+    },
+    
+    interest_alignment: {
+      investor_share: 0.06,
+      operator_share: 0.94,
+      minimum_guarantee: true,
+      minimum_guarantee_amount: 20000,
+      performance_bonus: { threshold: 45, bonus_rate: 0.01 },
+      lock_up_period_months: 18,
+      exit_mechanism: "提前3个月告知，按剩余月份×月均分成80%补偿"
+    },
+    
+    guarantee_mechanism: {
+      deposit: 10,
+      minimum_monthly_share: 20000,
+      data_transparency: "中央厨房统一配送+POS同步",
+      account_type: "三方共管账户"
     }
   }),
   
@@ -374,6 +401,29 @@ export const deal_03_fresh = {
       annual_gmv: 11016000,
       gross_margin: 0.22,
       net_margin: 0.03
+    },
+    
+    investment_return: {
+      annual_share_income: 550800, // 1101.6万×5%
+      total_period_income: 1101600, // 24个月
+      moic: 0.92, // 回本倍数
+      irr_estimate: 0.21
+    },
+    
+    interest_alignment: {
+      investor_share: 0.05,
+      operator_share: 0.95,
+      minimum_guarantee: false,
+      performance_bonus: null,
+      lock_up_period_months: 12,
+      exit_mechanism: "到期自动结束，无提前退出条款"
+    },
+    
+    guarantee_mechanism: {
+      deposit: 15,
+      minimum_monthly_share: 40000,
+      data_transparency: "系统实时同步",
+      account_type: "三方共管账户"
     }
   }),
   
@@ -472,6 +522,29 @@ export const deal_04_convenience = {
       gross_margin: 0.28,
       net_margin: 0.08,
       fresh_food_ratio: 0.35
+    },
+    
+    investment_return: {
+      annual_share_income: 430920, // 615.6万×7%
+      total_period_income: 1077300, // 30个月
+      moic: 1.80, // 回本倍数
+      irr_estimate: 0.35
+    },
+    
+    interest_alignment: {
+      investor_share: 0.07,
+      operator_share: 0.93,
+      minimum_guarantee: false,
+      performance_bonus: null,
+      lock_up_period_months: 12,
+      exit_mechanism: "到期自动结束"
+    },
+    
+    guarantee_mechanism: {
+      deposit: 8,
+      minimum_monthly_share: 30000,
+      data_transparency: "POS实时同步",
+      account_type: "三方共管账户"
     }
   }),
   
@@ -588,6 +661,30 @@ export const deal_05_pet = {
       surgery: 0.15,
       grooming: 0.12,
       retail: 0.08
+    },
+    
+    investment_return: {
+      annual_share_income: 459648, // 383.04万×12%
+      total_period_income: 1378944, // 36个月
+      moic: 0.92, // 回本倍数
+      irr_estimate: 0.20
+    },
+    
+    interest_alignment: {
+      investor_share: 0.12,
+      operator_share: 0.88,
+      minimum_guarantee: true,
+      minimum_guarantee_amount: 35000,
+      performance_bonus: { threshold: 45, bonus_rate: 0.02 },
+      lock_up_period_months: 18,
+      exit_mechanism: "提前6个月告知，按剩余月份×月均分成80%补偿"
+    },
+    
+    guarantee_mechanism: {
+      deposit: 20,
+      minimum_monthly_share: 35000,
+      data_transparency: "系统实时同步",
+      account_type: "三方共管账户"
     }
   }),
   
@@ -697,6 +794,29 @@ export const deal_06_fitness = {
       annual_revenue: 1458000,
       gross_margin: 0.60,
       net_margin: 0.25
+    },
+    
+    investment_return: {
+      annual_share_income: 145800, // 145.8万×10%
+      total_period_income: 364500, // 30个月
+      moic: 0.43, // 回本倍数
+      irr_estimate: 0.15
+    },
+    
+    interest_alignment: {
+      investor_share: 0.10,
+      operator_share: 0.90,
+      minimum_guarantee: false,
+      performance_bonus: null,
+      lock_up_period_months: 12,
+      exit_mechanism: "到期自动结束"
+    },
+    
+    guarantee_mechanism: {
+      deposit: 10,
+      minimum_monthly_share: 10000,
+      data_transparency: "系统实时同步",
+      account_type: "三方共管账户"
     }
   }),
   
@@ -799,6 +919,29 @@ export const deal_07_beauty = {
       annual_revenue: 1944000,
       gross_margin: 0.50,
       net_margin: 0.15
+    },
+    
+    investment_return: {
+      annual_share_income: 194400, // 194.4万×10%
+      total_period_income: 388800, // 24个月
+      moic: 0.71, // 回本倍数
+      irr_estimate: 0.18
+    },
+    
+    interest_alignment: {
+      investor_share: 0.10,
+      operator_share: 0.90,
+      minimum_guarantee: false,
+      performance_bonus: null,
+      lock_up_period_months: 6,
+      exit_mechanism: "到期自动结束"
+    },
+    
+    guarantee_mechanism: {
+      deposit: 8,
+      minimum_monthly_share: 12000,
+      data_transparency: "POS实时同步",
+      account_type: "三方共管账户"
     }
   }),
   
@@ -906,6 +1049,30 @@ export const deal_08_ktv = {
       annual_revenue: 5508000,
       gross_margin: 0.45,
       net_margin: 0.12
+    },
+    
+    investment_return: {
+      annual_share_income: 440640, // 550.8万×8%
+      total_period_income: 1321920, // 36个月
+      moic: 0.66, // 回本倍数
+      irr_estimate: 0.15
+    },
+    
+    interest_alignment: {
+      investor_share: 0.08,
+      operator_share: 0.92,
+      minimum_guarantee: true,
+      minimum_guarantee_amount: 30000,
+      performance_bonus: { threshold: 55, bonus_rate: 0.01 },
+      lock_up_period_months: 18,
+      exit_mechanism: "提前3个月告知，按剩余月份×月均分成70%补偿"
+    },
+    
+    guarantee_mechanism: {
+      deposit: 25,
+      minimum_monthly_share: 30000,
+      data_transparency: "系统实时同步",
+      account_type: "三方共管账户"
     }
   }),
   
@@ -1011,6 +1178,30 @@ export const deal_09_auto = {
       annual_revenue: 5670000,
       gross_margin: 0.35,
       net_margin: 0.10
+    },
+    
+    investment_return: {
+      annual_share_income: 510300, // 567万×9%
+      total_period_income: 1275750, // 30个月
+      moic: 0.71, // 回本倍数
+      irr_estimate: 0.18
+    },
+    
+    interest_alignment: {
+      investor_share: 0.09,
+      operator_share: 0.91,
+      minimum_guarantee: true,
+      minimum_guarantee_amount: 40000,
+      performance_bonus: { threshold: 60, bonus_rate: 0.015 },
+      lock_up_period_months: 12,
+      exit_mechanism: "提前3个月告知，按剩余月份×月均分成75%补偿"
+    },
+    
+    guarantee_mechanism: {
+      deposit: 20,
+      minimum_monthly_share: 40000,
+      data_transparency: "系统实时同步",
+      account_type: "三方共管账户"
     }
   }),
   
@@ -1122,6 +1313,30 @@ export const deal_10_hotpot = {
       annual_revenue: 26989200,
       gross_margin: 0.58,
       net_margin: 0.08
+    },
+    
+    investment_return: {
+      annual_share_income: 1349460, // 2698.92万×5%
+      total_period_income: 4048380, // 36个月
+      moic: 1.35, // 回本倍数
+      irr_estimate: 0.25
+    },
+    
+    interest_alignment: {
+      investor_share: 0.05,
+      operator_share: 0.95,
+      minimum_guarantee: true,
+      minimum_guarantee_amount: 100000,
+      performance_bonus: { threshold: 250, bonus_rate: 0.01 },
+      lock_up_period_months: 24,
+      exit_mechanism: "提前6个月告知，按剩余月份×月均分成85%补偿"
+    },
+    
+    guarantee_mechanism: {
+      deposit: 50,
+      minimum_monthly_share: 100000,
+      data_transparency: "POS实时同步+品牌监管",
+      account_type: "三方共管账户"
     }
   }),
   

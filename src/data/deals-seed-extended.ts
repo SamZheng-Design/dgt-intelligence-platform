@@ -86,8 +86,9 @@ export const deal_11_bakery = {
     cashflow_frequency: "daily",
     store_metrics: { area_sqm: 60, rent_monthly: 4.5, staff_count: 8 },
     revenue_data: { daily_revenue: 18000, monthly_revenue: 540000, annual_revenue: 6480000, gross_margin: 0.52, net_margin: 0.16 },
-    investment_return: { annual_share_income: 453600, moic: 1.01, irr_estimate: 0.25 }
-  }),
+    investment_return: { annual_share_income: 453600, moic: 1.01, irr_estimate: 0.25 },
+    interest_alignment: {"investor_share":0.07,"operator_share":0.93,"minimum_guarantee":true,"minimum_guarantee_amount":26460,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":5,"minimum_monthly_share":26460,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -168,8 +169,9 @@ export const deal_12_baby = {
     cashflow_frequency: "daily",
     store_metrics: { area_sqm: 800, rent_monthly: 15, staff_count: 18 },
     revenue_data: { daily_revenue: 85000, monthly_revenue: 2550000, annual_revenue: 30600000, gross_margin: 0.28, net_margin: 0.06 },
-    investment_return: { annual_share_income: 1224000, moic: 0.82, irr_estimate: 0.20 }
-  }),
+    investment_return: { annual_share_income: 1224000, moic: 0.82, irr_estimate: 0.20 },
+    interest_alignment: {"investor_share":0.04,"operator_share":0.96,"minimum_guarantee":true,"minimum_guarantee_amount":71400,"performance_bonus":{"threshold":50,"bonus_rate":0.01},"lock_up_period_months":18,"exit_mechanism":"提前3个月告知，按剩余月份×月均分成80%补偿"},
+    guarantee_mechanism: {"deposit":15,"minimum_monthly_share":71400,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -252,8 +254,9 @@ export const deal_13_dental = {
     cashflow_frequency: "weekly",
     store_metrics: { area_sqm: 400, rent_monthly: 12, staff_count: 20, dental_chairs: 12 },
     revenue_data: { daily_patients: 50, daily_revenue: 50000, monthly_revenue: 1500000, annual_revenue: 18000000, gross_margin: 0.55, net_margin: 0.18 },
-    investment_return: { annual_share_income: 1440000, moic: 0.72, irr_estimate: 0.18 }
-  }),
+    investment_return: { annual_share_income: 1440000, moic: 0.72, irr_estimate: 0.18 },
+    interest_alignment: {"investor_share":0.08,"operator_share":0.92,"minimum_guarantee":true,"minimum_guarantee_amount":84000,"performance_bonus":{"threshold":50,"bonus_rate":0.01},"lock_up_period_months":18,"exit_mechanism":"提前3个月告知，按剩余月份×月均分成80%补偿"},
+    guarantee_mechanism: {"deposit":20,"minimum_monthly_share":84000,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -330,8 +333,9 @@ export const deal_14_optical = {
     cashflow_frequency: "weekly",
     store_metrics: { area_sqm: 150, rent_monthly: 6.5, staff_count: 8 },
     revenue_data: { daily_sales: 30, daily_revenue: 20000, monthly_revenue: 600000, annual_revenue: 7200000, gross_margin: 0.60, net_margin: 0.15 },
-    investment_return: { annual_share_income: 648000, moic: 1.00, irr_estimate: 0.24 }
-  }),
+    investment_return: { annual_share_income: 648000, moic: 1.00, irr_estimate: 0.24 },
+    interest_alignment: {"investor_share":0.09,"operator_share":0.91,"minimum_guarantee":true,"minimum_guarantee_amount":37800,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":7,"minimum_monthly_share":37800,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -408,8 +412,9 @@ export const deal_15_laundry = {
     cashflow_frequency: "weekly",
     store_metrics: { area_sqm: 80, rent_monthly: 3.5, staff_count: 5 },
     revenue_data: { daily_orders: 60, daily_revenue: 5000, monthly_revenue: 150000, annual_revenue: 1800000, gross_margin: 0.55, net_margin: 0.20 },
-    investment_return: { annual_share_income: 216000, moic: 0.54, irr_estimate: 0.16 }
-  }),
+    investment_return: { annual_share_income: 216000, moic: 0.54, irr_estimate: 0.16 },
+    interest_alignment: {"investor_share":0.12,"operator_share":0.88,"minimum_guarantee":true,"minimum_guarantee_amount":12600,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":4,"minimum_monthly_share":12600,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -486,8 +491,9 @@ export const deal_16_coffee = {
     cashflow_frequency: "daily",
     store_metrics: { area_sqm: 45, rent_monthly: 3.5, staff_count: 4 },
     revenue_data: { daily_cups: 400, avg_price: 18, daily_revenue: 7200, monthly_revenue: 216000, annual_revenue: 2592000, gross_margin: 0.65, net_margin: 0.15 },
-    investment_return: { annual_share_income: 155520, moic: 0.62, irr_estimate: 0.18 }
-  }),
+    investment_return: { annual_share_income: 155520, moic: 0.62, irr_estimate: 0.18 },
+    interest_alignment: {"investor_share":0.06,"operator_share":0.94,"minimum_guarantee":true,"minimum_guarantee_amount":9072,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":5,"minimum_monthly_share":9072,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -564,8 +570,9 @@ export const deal_17_pharmacy = {
     cashflow_frequency: "daily",
     store_metrics: { area_sqm: 200, rent_monthly: 5, staff_count: 8 },
     revenue_data: { daily_customers: 250, daily_revenue: 21000, monthly_revenue: 630000, annual_revenue: 7560000, gross_margin: 0.32, net_margin: 0.08 },
-    investment_return: { annual_share_income: 378000, moic: 0.47, irr_estimate: 0.15 }
-  }),
+    investment_return: { annual_share_income: 378000, moic: 0.47, irr_estimate: 0.15 },
+    interest_alignment: {"investor_share":0.05,"operator_share":0.95,"minimum_guarantee":true,"minimum_guarantee_amount":22050,"performance_bonus":{"threshold":50,"bonus_rate":0.01},"lock_up_period_months":15,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":8,"minimum_monthly_share":22050,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -647,8 +654,9 @@ export const deal_18_education = {
     cashflow_frequency: "monthly",
     store_metrics: { area_sqm: 500, rent_monthly: 12, staff_count: 15 },
     revenue_data: { active_members: 800, monthly_new_sales: 35, monthly_revenue: 850000, annual_revenue: 10200000, gross_margin: 0.50, net_margin: 0.12 },
-    investment_return: { annual_share_income: 816000, moic: 0.68, irr_estimate: 0.17 }
-  }),
+    investment_return: { annual_share_income: 816000, moic: 0.68, irr_estimate: 0.17 },
+    interest_alignment: {"investor_share":0.08,"operator_share":0.92,"minimum_guarantee":true,"minimum_guarantee_amount":47600,"performance_bonus":{"threshold":50,"bonus_rate":0.01},"lock_up_period_months":18,"exit_mechanism":"提前3个月告知，按剩余月份×月均分成80%补偿"},
+    guarantee_mechanism: {"deposit":12,"minimum_monthly_share":47600,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -726,8 +734,9 @@ export const deal_19_bbq = {
     cashflow_frequency: "monthly",
     store_metrics: { area_sqm: 280, rent_monthly: 8, staff_count: 18, seats: 120 },
     revenue_data: { daily_tables: 85, daily_revenue: 25000, monthly_revenue: 750000, annual_revenue: 9000000, gross_margin: 0.55, net_margin: 0.14 },
-    investment_return: { annual_share_income: 630000, moic: 0.63, irr_estimate: 0.19 }
-  }),
+    investment_return: { annual_share_income: 630000, moic: 0.63, irr_estimate: 0.19 },
+    interest_alignment: {"investor_share":0.07,"operator_share":0.93,"minimum_guarantee":true,"minimum_guarantee_amount":36750,"performance_bonus":{"threshold":50,"bonus_rate":0.01},"lock_up_period_months":15,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":10,"minimum_monthly_share":36750,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -804,8 +813,9 @@ export const deal_20_fruit = {
     cashflow_frequency: "daily",
     store_metrics: { area_sqm: 80, rent_monthly: 3.2, staff_count: 5 },
     revenue_data: { daily_customers: 180, daily_revenue: 12000, monthly_revenue: 360000, annual_revenue: 4320000, gross_margin: 0.28, net_margin: 0.08 },
-    investment_return: { annual_share_income: 259200, moic: 0.47, irr_estimate: 0.14 }
-  }),
+    investment_return: { annual_share_income: 259200, moic: 0.47, irr_estimate: 0.14 },
+    interest_alignment: {"investor_share":0.06,"operator_share":0.94,"minimum_guarantee":true,"minimum_guarantee_amount":15120,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":6,"minimum_monthly_share":15120,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -882,8 +892,9 @@ export const deal_21_carwash = {
     cashflow_frequency: "weekly",
     store_metrics: { area_sqm: 350, rent_monthly: 4.5, staff_count: 10, service_bays: 6 },
     revenue_data: { daily_cars: 100, daily_revenue: 18000, monthly_revenue: 540000, annual_revenue: 6480000, gross_margin: 0.45, net_margin: 0.15 },
-    investment_return: { annual_share_income: 648000, moic: 0.86, irr_estimate: 0.22 }
-  }),
+    investment_return: { annual_share_income: 648000, moic: 0.86, irr_estimate: 0.22 },
+    interest_alignment: {"investor_share":0.1,"operator_share":0.9,"minimum_guarantee":true,"minimum_guarantee_amount":37800,"performance_bonus":{"threshold":50,"bonus_rate":0.01},"lock_up_period_months":15,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":8,"minimum_monthly_share":37800,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -961,8 +972,9 @@ export const deal_22_noodle = {
     cashflow_frequency: "daily",
     store_metrics: { area_sqm: 150, rent_monthly: 2.5, staff_count: 12, seats: 80 },
     revenue_data: { daily_bowls: 1350, avg_price: 22, daily_revenue: 29700, monthly_revenue: 891000, annual_revenue: 10692000, gross_margin: 0.58, net_margin: 0.22 },
-    investment_return: { annual_share_income: 855360, moic: 2.85, irr_estimate: 0.65 }
-  }),
+    investment_return: { annual_share_income: 855360, moic: 2.85, irr_estimate: 0.65 },
+    interest_alignment: {"investor_share":0.08,"operator_share":0.92,"minimum_guarantee":true,"minimum_guarantee_amount":49896,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":3,"minimum_monthly_share":49896,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1039,8 +1051,9 @@ export const deal_23_snack = {
     cashflow_frequency: "daily",
     store_metrics: { area_sqm: 100, rent_monthly: 4.5, staff_count: 6 },
     revenue_data: { daily_customers: 150, daily_revenue: 13000, monthly_revenue: 390000, annual_revenue: 4680000, gross_margin: 0.38, net_margin: 0.10 },
-    investment_return: { annual_share_income: 327600, moic: 0.68, irr_estimate: 0.18 }
-  }),
+    investment_return: { annual_share_income: 327600, moic: 0.68, irr_estimate: 0.18 },
+    interest_alignment: {"investor_share":0.07,"operator_share":0.93,"minimum_guarantee":true,"minimum_guarantee_amount":19110,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":5,"minimum_monthly_share":19110,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1122,8 +1135,9 @@ export const deal_24_maternity = {
     cashflow_frequency: "monthly",
     store_metrics: { area_sqm: 2500, rent_monthly: 25, staff_count: 50, rooms: 28 },
     revenue_data: { occupancy_rate: 0.85, monthly_guests: 24, avg_package_price: 88000, monthly_revenue: 1800000, annual_revenue: 21600000, gross_margin: 0.45, net_margin: 0.12 },
-    investment_return: { annual_share_income: 1296000, moic: 0.52, irr_estimate: 0.15 }
-  }),
+    investment_return: { annual_share_income: 1296000, moic: 0.52, irr_estimate: 0.15 },
+    interest_alignment: {"investor_share":0.06,"operator_share":0.94,"minimum_guarantee":true,"minimum_guarantee_amount":75600,"performance_bonus":{"threshold":50,"bonus_rate":0.01},"lock_up_period_months":18,"exit_mechanism":"提前3个月告知，按剩余月份×月均分成80%补偿"},
+    guarantee_mechanism: {"deposit":25,"minimum_monthly_share":75600,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1200,8 +1214,9 @@ export const deal_25_teahouse = {
     cashflow_frequency: "daily",
     store_metrics: { area_sqm: 200, rent_monthly: 6, staff_count: 15, seats: 100 },
     revenue_data: { daily_customers: 200, daily_revenue: 13000, monthly_revenue: 390000, annual_revenue: 4680000, gross_margin: 0.55, net_margin: 0.12 },
-    investment_return: { annual_share_income: 280800, moic: 0.31, irr_estimate: 0.12 }
-  }),
+    investment_return: { annual_share_income: 280800, moic: 0.31, irr_estimate: 0.12 },
+    interest_alignment: {"investor_share":0.06,"operator_share":0.94,"minimum_guarantee":true,"minimum_guarantee_amount":16380,"performance_bonus":{"threshold":50,"bonus_rate":0.01},"lock_up_period_months":15,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":9,"minimum_monthly_share":16380,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1278,8 +1293,9 @@ export const deal_26_yoga = {
     cashflow_frequency: "weekly",
     store_metrics: { area_sqm: 450, rent_monthly: 5.5, staff_count: 12, studios: 4 },
     revenue_data: { active_members: 1200, monthly_revenue: 450000, annual_revenue: 5400000, gross_margin: 0.55, net_margin: 0.18 },
-    investment_return: { annual_share_income: 594000, moic: 0.85, irr_estimate: 0.21 }
-  }),
+    investment_return: { annual_share_income: 594000, moic: 0.85, irr_estimate: 0.21 },
+    interest_alignment: {"investor_share":0.11,"operator_share":0.89,"minimum_guarantee":true,"minimum_guarantee_amount":34650,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":7,"minimum_monthly_share":34650,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1356,8 +1372,9 @@ export const deal_27_home = {
     cashflow_frequency: "daily",
     store_metrics: { area_sqm: 180, rent_monthly: 7.5, staff_count: 8 },
     revenue_data: { daily_customers: 350, daily_revenue: 12000, monthly_revenue: 360000, annual_revenue: 4320000, gross_margin: 0.40, net_margin: 0.10 },
-    investment_return: { annual_share_income: 259200, moic: 0.43, irr_estimate: 0.13 }
-  }),
+    investment_return: { annual_share_income: 259200, moic: 0.43, irr_estimate: 0.13 },
+    interest_alignment: {"investor_share":0.06,"operator_share":0.94,"minimum_guarantee":true,"minimum_guarantee_amount":15120,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":6,"minimum_monthly_share":15120,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1434,8 +1451,9 @@ export const deal_28_petshop = {
     cashflow_frequency: "weekly",
     store_metrics: { area_sqm: 200, rent_monthly: 4, staff_count: 8 },
     revenue_data: { daily_customers: 80, daily_revenue: 8500, monthly_revenue: 255000, annual_revenue: 3060000, gross_margin: 0.45, net_margin: 0.15 },
-    investment_return: { annual_share_income: 306000, moic: 0.61, irr_estimate: 0.19 }
-  }),
+    investment_return: { annual_share_income: 306000, moic: 0.61, irr_estimate: 0.19 },
+    interest_alignment: {"investor_share":0.1,"operator_share":0.9,"minimum_guarantee":true,"minimum_guarantee_amount":17850,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":5,"minimum_monthly_share":17850,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1513,8 +1531,9 @@ export const deal_29_hotpot2 = {
     cashflow_frequency: "monthly",
     store_metrics: { area_sqm: 450, rent_monthly: 12, staff_count: 35, seats: 180 },
     revenue_data: { daily_turnover: 3.8, daily_revenue: 42000, monthly_revenue: 1260000, annual_revenue: 15120000, gross_margin: 0.58, net_margin: 0.14 },
-    investment_return: { annual_share_income: 907200, moic: 0.50, irr_estimate: 0.16 }
-  }),
+    investment_return: { annual_share_income: 907200, moic: 0.50, irr_estimate: 0.16 },
+    interest_alignment: {"investor_share":0.06,"operator_share":0.94,"minimum_guarantee":true,"minimum_guarantee_amount":52920,"performance_bonus":{"threshold":50,"bonus_rate":0.01},"lock_up_period_months":18,"exit_mechanism":"提前3个月告知，按剩余月份×月均分成80%补偿"},
+    guarantee_mechanism: {"deposit":18,"minimum_monthly_share":52920,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
@@ -1597,8 +1616,9 @@ export const deal_30_mystery = {
     cashflow_frequency: "monthly",
     store_metrics: { area_sqm: 600, rent_monthly: 8, staff_count: 20, rooms: 12 },
     revenue_data: { daily_sessions: 15, daily_revenue: 12000, monthly_revenue: 360000, annual_revenue: 4320000, gross_margin: 0.60, net_margin: 0.20 },
-    investment_return: { annual_share_income: 518400, moic: 0.61, irr_estimate: 0.18 }
-  }),
+    investment_return: { annual_share_income: 518400, moic: 0.61, irr_estimate: 0.18 },
+    interest_alignment: {"investor_share":0.12,"operator_share":0.88,"minimum_guarantee":true,"minimum_guarantee_amount":30240,"performance_bonus":null,"lock_up_period_months":12,"exit_mechanism":"到期自动结束"},
+    guarantee_mechanism: {"deposit":9,"minimum_monthly_share":30240,"data_transparency":"系统实时同步","account_type":"三方共管账户"} }),
   
   result: "pending"
 };
