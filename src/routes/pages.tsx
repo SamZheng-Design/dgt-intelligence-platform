@@ -14,7 +14,7 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} - MIFC智能评估系统</title>
+  <title>${title} - 滴灌投资智能评估系统</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -286,23 +286,25 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
     <div class="max-w-7xl mx-auto px-6">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-10">
-          <!-- MIFC Logo - 全新专业设计 -->
+          <!-- 滴灌投资 Logo - 全新专业设计 -->
           <a href="/" class="flex items-center space-x-3 group">
             <div class="relative">
-              <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Logo图标 - 抽象M形状代表智能/数据流 -->
-                <rect x="0" y="8" width="32" height="24" rx="6" fill="white" fill-opacity="0.2"/>
-                <path d="M8 24L12 14L16 22L20 14L24 24" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="16" cy="12" r="2" fill="#F59E0B"/>
-                <!-- MIFC文字 -->
-                <text x="42" y="26" font-family="Inter, -apple-system, sans-serif" font-size="20" font-weight="700" fill="white" letter-spacing="1">MIFC</text>
+              <svg width="160" height="40" viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Logo图标 - 水滴形状代表滴灌投资 -->
+                <rect x="0" y="6" width="32" height="28" rx="6" fill="white" fill-opacity="0.2"/>
+                <!-- 水滴图案 -->
+                <path d="M16 10C16 10 22 18 22 22C22 25.3 19.3 28 16 28C12.7 28 10 25.3 10 22C10 18 16 10 16 10Z" fill="white" fill-opacity="0.9"/>
+                <!-- 水滴内的增长曲线 -->
+                <path d="M12 23L14 21L16 22.5L18 19L20 21" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- 滴灌投资文字 -->
+                <text x="40" y="27" font-family="Inter, -apple-system, sans-serif" font-size="18" font-weight="700" fill="white" letter-spacing="1">滴灌投资</text>
                 <!-- 副标题线 -->
-                <line x1="42" y1="30" x2="102" y2="30" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                <line x1="40" y1="32" x2="120" y2="32" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
               </svg>
             </div>
             <div class="hidden lg:flex flex-col border-l border-white/20 pl-4">
               <span class="font-semibold text-white text-sm tracking-wide">智能评估平台</span>
-              <span class="text-[11px] text-white/60 tracking-wider">AI-Powered Assessment</span>
+              <span class="text-[11px] text-white/60 tracking-wider">Smart Investment AI</span>
             </div>
           </a>
           <div class="hidden md:flex items-center space-x-1">
@@ -430,16 +432,18 @@ pages.get('/', (c) => {
               <i class="fas fa-sparkles mr-1"></i>AI驱动
             </span>
           </div>
-          <h1 class="text-3xl font-bold mb-3">欢迎使用 MIFC 智能评估系统</h1>
+          <h1 class="text-3xl font-bold mb-3">欢迎使用滴灌投资智能评估系统</h1>
           <p class="text-white/80 text-lg max-w-xl">多智能体协作的投资标的风险评估平台，为您提供专业、高效、精准的投资决策支持</p>
         </div>
         <div class="hidden lg:block">
           <svg width="200" height="80" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-90">
-            <rect x="0" y="16\" width=\"56\" height=\"48\" rx=\"12\" fill=\"white\" fill-opacity=\"0.15\"/>
-            <path d=\"M14 48L22 28L32 44L42 28L50 48\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>
-            <circle cx=\"32\" cy=\"24\" r=\"4\" fill=\"#F59E0B\"/>
-            <text x=\"70\" y=\"52\" font-family=\"Inter, -apple-system, sans-serif\" font-size=\"36\" font-weight=\"800\" fill=\"white\" letter-spacing=\"2\">MIFC</text>
-            <line x1=\"70\" y1=\"60\" x2=\"190\" y2=\"60\" stroke=\"rgba(255,255,255,0.3)\" stroke-width=\"2\"/>
+            <rect x="0" y="16" width="56" height="48" rx="12" fill="white" fill-opacity="0.15"/>
+            <!-- 水滴图案 -->
+            <path d="M28 24C28 24 40 38 40 46C40 53 34 58 28 58C22 58 16 53 16 46C16 38 28 24 28 24Z" fill="white" fill-opacity="0.9"/>
+            <!-- 水滴内增长曲线 -->
+            <path d="M20 48L24 44L28 47L32 42L36 46" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="65" y="52" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="800" fill="white" letter-spacing="1">滴灌投资</text>
+            <line x1="65" y1="60" x2="190" y2="60" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
           </svg>
         </div>
       </div>
