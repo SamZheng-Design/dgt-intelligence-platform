@@ -24,65 +24,96 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif; }
     
-    /* 滴灌投资配色方案 - 深色护眼主题 */
-    /* 基于用户上传配色：奶油色(243,238,217)、青绿色(0,210,158)、深绿(98,156,133)、薄荷浅(217,237,223)、森林绿(73,117,77) */
+    /* 滴灌投资配色方案 - 美拉德深色护眼主题 */
+    /* 设计理念：墨绿/橄榄绿/苔藓绿为主，搭配焦糖棕/暖沙/驼色美拉德色调，低饱和奶茶色/米白中和 */
     :root {
-      --dg-primary: #00B386;        /* 主色-深青绿 (暗化后的青绿色) */
-      --dg-primary-light: #00D29E; /* 主色浅-原青绿色 */
-      --dg-primary-dark: #008A68;  /* 主色深 */
-      --dg-secondary: #49754D;     /* 辅助色-森林绿 (73-117-77) */
-      --dg-accent: #629C85;        /* 强调色-灰绿 (98-156-133) */
-      --dg-success: #3D7A5A;       /* 成功色-深绿 */
-      --dg-danger: #A85454;        /* 危险色-柔和深红 */
-      --dg-warning: #9A7B4E;       /* 警告色-深棕 */
-      --dg-info: #4A7896;          /* 信息色-深灰蓝 */
-      --dg-dark: #1E2B1E;          /* 深色背景-深绿灰 (更深) */
-      --dg-dark-secondary: #283528;/* 次深色背景 */
-      --dg-dark-tertiary: #354435; /* 第三层深色 */
-      --dg-light: #E8E4D4;         /* 浅色背景-暗化后的奶油色 */
-      --dg-light-secondary: #DDD9C8;/* 次浅色背景 */
-      --dg-light-tertiary: #C9DFD0; /* 暗化后的薄荷浅色 */
-      --dg-border: #A8B8A8;        /* 边框色-深绿灰 */
-      --dg-text-primary: #1E2B1E;  /* 主文字色-深绿灰 */
-      --dg-text-secondary: #4A5B4A;/* 次要文字色 */
-      --dg-text-muted: #6A7B6A;    /* 弱化文字色 */
-      --dg-card-bg: #F0EDE0;       /* 卡片背景色-暗化的奶油色 */
+      /* === 主色系 - 带灰调的墨绿/橄榄绿/苔藓绿 === */
+      --dg-primary: #5A7A64;        /* 主色-苔藓绿（灰调） */
+      --dg-primary-light: #6B8B73;  /* 主色浅-橄榄绿 */
+      --dg-primary-dark: #4A6854;   /* 主色深-墨绿 */
+      --dg-secondary: #6B7B5C;      /* 辅助色-灰橄榄 */
+      --dg-accent: #7A8B6A;         /* 强调色-苔藓浅 */
+      
+      /* === 美拉德色调 - 焦糖棕/暖沙/驼色 === */
+      --dg-caramel: #8B6B4A;        /* 焦糖棕 */
+      --dg-sand: #A89A7A;           /* 暖沙色 */
+      --dg-camel: #9A8A6A;          /* 驼色 */
+      
+      /* === 状态色 === */
+      --dg-success: #5A7A5A;        /* 成功色-灰绿 */
+      --dg-danger: #8B5A5A;         /* 危险色-灰红（柔和） */
+      --dg-warning: #8B7A5A;        /* 警告色-焦糖 */
+      --dg-info: #5A6A7A;           /* 信息色-灰蓝 */
+      
+      /* === 深色背景 - 深墨绿灰 === */
+      --dg-dark: #2A3A2E;           /* 深色背景-墨绿灰 */
+      --dg-dark-secondary: #354540; /* 次深色背景 */
+      --dg-dark-tertiary: #404F45;  /* 第三层深色 */
+      
+      /* === 浅色背景 - 低饱和奶茶/米白 === */
+      --dg-light: #EAE6DC;          /* 浅色背景-米白 */
+      --dg-light-secondary: #DED8CC;/* 次浅色-暖米 */
+      --dg-light-tertiary: #D5D0C5; /* 第三层浅色-奶茶米 */
+      --dg-cream: #F2EEE4;          /* 奶油色 */
+      
+      /* === 边框与文字 === */
+      --dg-border: #B8B0A0;         /* 边框色-暖灰 */
+      --dg-border-light: #D0CAC0;   /* 浅边框 */
+      --dg-text-primary: #3A4A3E;   /* 主文字色-墨绿灰 */
+      --dg-text-secondary: #5A6A5E; /* 次要文字色 */
+      --dg-text-muted: #7A8A7E;     /* 弱化文字色 */
+      
+      /* === 卡片背景 === */
+      --dg-card-bg: #F5F2EA;        /* 卡片背景色-暖白 */
+      --dg-card-hover: #EFEBE0;     /* 卡片悬停 */
     }
     
-    /* 渐变效果 - 深色护眼 */
+    /* 渐变效果 - 美拉德深色调 */
     .gs-gradient-primary { 
-      background: linear-gradient(135deg, var(--dg-primary) 0%, var(--dg-secondary) 100%); 
+      background: linear-gradient(135deg, var(--dg-primary) 0%, var(--dg-caramel) 100%); 
     }
     .gs-gradient-dark { 
       background: linear-gradient(180deg, var(--dg-dark) 0%, var(--dg-dark-secondary) 100%); 
     }
     .gs-gradient-hero {
-      background: linear-gradient(135deg, #2D4A38 0%, #1E3528 50%, #3A5542 100%);
+      background: linear-gradient(135deg, #3A4A40 0%, #2E3E34 50%, #4A5A4E 100%);
+    }
+    .gs-gradient-warm {
+      background: linear-gradient(135deg, var(--dg-caramel) 0%, var(--dg-sand) 100%);
+    }
+    .gs-gradient-moss {
+      background: linear-gradient(135deg, var(--dg-primary-dark) 0%, var(--dg-primary) 100%);
     }
     
     /* 背景色 */
     .gs-bg { background-color: var(--dg-light); }
     .gs-bg-dark { background-color: var(--dg-dark); }
     
-    /* 卡片样式 - 柔和阴影 */
+    /* 卡片样式 - 暖色柔和阴影 */
     .gs-card { 
       background: var(--dg-card-bg);
       border-radius: 12px;
-      border: 1px solid var(--dg-border);
-      box-shadow: 0 2px 8px rgba(45, 59, 45, 0.06);
+      border: 1px solid var(--dg-border-light);
+      box-shadow: 0 2px 8px rgba(90, 80, 60, 0.06);
       transition: all 0.2s ease;
     }
     .gs-card:hover {
-      box-shadow: 0 4px 16px rgba(45, 59, 45, 0.1);
+      background: var(--dg-card-hover);
+      box-shadow: 0 4px 16px rgba(90, 80, 60, 0.1);
       transform: translateY(-1px);
     }
     .gs-card-flat {
       background: var(--dg-card-bg);
       border-radius: 12px;
-      border: 1px solid var(--dg-border);
+      border: 1px solid var(--dg-border-light);
+    }
+    .gs-card-warm {
+      background: linear-gradient(145deg, var(--dg-cream) 0%, var(--dg-light) 100%);
+      border-radius: 12px;
+      border: 1px solid var(--dg-border-light);
     }
     
-    /* 按钮样式 */
+    /* 按钮样式 - 美拉德色调 */
     .gs-btn {
       font-weight: 500;
       border-radius: 8px;
@@ -99,7 +130,16 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
     .gs-btn-primary:hover {
       background: var(--dg-primary-dark);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 166, 126, 0.3);
+      box-shadow: 0 4px 12px rgba(90, 122, 100, 0.3);
+    }
+    .gs-btn-warm {
+      background: var(--dg-caramel);
+      color: white;
+    }
+    .gs-btn-warm:hover {
+      background: #7A5B3A;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(139, 107, 74, 0.3);
     }
     .gs-btn-secondary {
       background: var(--dg-light-secondary);
@@ -107,7 +147,7 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
       border: 1px solid var(--dg-border);
     }
     .gs-btn-secondary:hover {
-      background: var(--dg-border);
+      background: var(--dg-light-tertiary);
     }
     .gs-btn-ghost {
       background: transparent;
@@ -115,25 +155,26 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
     }
     .gs-btn-ghost:hover {
       background: var(--dg-light-secondary);
-      color: var(--dg-primary);
+      color: var(--dg-primary-dark);
     }
     
-    /* 输入框样式 */
+    /* 输入框样式 - 暖色调 */
     .gs-input {
       border: 1px solid var(--dg-border);
       border-radius: 8px;
       padding: 10px 14px;
       font-size: 14px;
       transition: all 0.15s ease;
-      background: var(--dg-card-bg);
+      background: var(--dg-cream);
     }
     .gs-input:focus {
       outline: none;
       border-color: var(--dg-primary);
-      box-shadow: 0 0 0 3px rgba(0, 166, 126, 0.1);
+      box-shadow: 0 0 0 3px rgba(90, 122, 100, 0.15);
+      background: white;
     }
     
-    /* 徽章样式 */
+    /* 徽章样式 - 美拉德配色 */
     .gs-badge {
       font-size: 12px;
       font-weight: 500;
@@ -143,12 +184,14 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
       align-items: center;
       gap: 4px;
     }
-    .gs-badge-primary { background: rgba(0, 166, 126, 0.12); color: var(--dg-primary); }
-    .gs-badge-success { background: rgba(61, 139, 95, 0.12); color: var(--dg-success); }
-    .gs-badge-warning { background: rgba(184, 149, 110, 0.15); color: var(--dg-warning); }
-    .gs-badge-danger { background: rgba(196, 92, 92, 0.12); color: var(--dg-danger); }
-    .gs-badge-info { background: rgba(91, 143, 168, 0.12); color: var(--dg-info); }
+    .gs-badge-primary { background: rgba(90, 122, 100, 0.15); color: var(--dg-primary-dark); }
+    .gs-badge-success { background: rgba(90, 122, 90, 0.15); color: var(--dg-success); }
+    .gs-badge-warning { background: rgba(139, 107, 74, 0.15); color: var(--dg-caramel); }
+    .gs-badge-danger { background: rgba(139, 90, 90, 0.12); color: var(--dg-danger); }
+    .gs-badge-info { background: rgba(90, 106, 122, 0.12); color: var(--dg-info); }
     .gs-badge-neutral { background: var(--dg-light-secondary); color: var(--dg-text-secondary); }
+    .gs-badge-caramel { background: rgba(139, 107, 74, 0.2); color: var(--dg-caramel); }
+    .gs-badge-sand { background: rgba(168, 154, 122, 0.2); color: #7A6A4A; }
     
     /* 动画效果 */
     .gs-fade-in { animation: fadeIn 0.3s ease; }
@@ -156,7 +199,7 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
     .pulse-dot { animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     
-    /* 表格样式 */
+    /* 表格样式 - 暖色调 */
     .gs-table { width: 100%; border-collapse: collapse; }
     .gs-table th {
       text-align: left;
@@ -167,28 +210,28 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
       text-transform: uppercase;
       letter-spacing: 0.05em;
       background: var(--dg-light-secondary);
-      border-bottom: 1px solid var(--dg-border);
+      border-bottom: 1px solid var(--dg-border-light);
     }
     .gs-table td {
       padding: 14px 16px;
-      border-bottom: 1px solid var(--dg-border);
+      border-bottom: 1px solid var(--dg-border-light);
       color: var(--dg-text-primary);
     }
     .gs-table tr:hover td {
-      background: var(--dg-light);
+      background: var(--dg-cream);
     }
     
-    /* Markdown样式 */
+    /* Markdown样式 - 美拉德配色 */
     .markdown-content h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--dg-text-primary); }
-    .markdown-content h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; margin-top: 1rem; color: var(--dg-primary); }
-    .markdown-content h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .markdown-content h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; margin-top: 1rem; color: var(--dg-primary-dark); }
+    .markdown-content h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--dg-caramel); }
     .markdown-content p { margin-bottom: 0.75rem; line-height: 1.7; }
     .markdown-content ul, .markdown-content ol { margin-left: 1.5rem; margin-bottom: 0.75rem; }
     .markdown-content li { margin-bottom: 0.25rem; }
-    .markdown-content code { background: var(--dg-light-secondary); padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.875rem; color: var(--dg-primary); }
+    .markdown-content code { background: var(--dg-light-tertiary); padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.875rem; color: var(--dg-primary-dark); }
     .markdown-content pre { background: var(--dg-dark); color: #e2e8f0; padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; }
     .markdown-content table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-    .markdown-content th, .markdown-content td { border: 1px solid var(--dg-border); padding: 0.5rem; text-align: left; }
+    .markdown-content th, .markdown-content td { border: 1px solid var(--dg-border-light); padding: 0.5rem; text-align: left; }
     .markdown-content th { background: var(--dg-light-secondary); font-weight: 600; }
     .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     
@@ -222,21 +265,28 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
       border-radius: 2px;
     }
     
-    /* 滚动条样式 */
+    /* 滚动条样式 - 暖色调 */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: var(--dg-light-secondary); }
+    ::-webkit-scrollbar-track { background: var(--dg-light-tertiary); }
     ::-webkit-scrollbar-thumb { background: var(--dg-border); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--dg-text-muted); }
     
-    /* 兼容旧样式 */
-    .card-shadow { box-shadow: 0 2px 8px rgba(45, 59, 45, 0.06); }
+    /* 兼容旧样式 + 美拉德扩展 */
+    .card-shadow { box-shadow: 0 2px 8px rgba(90, 80, 60, 0.06); }
     .agent-card:hover { transform: translateY(-2px); transition: all 0.2s; }
     .progress-ring { transition: stroke-dashoffset 0.5s; }
     .mc-bg { background-color: var(--dg-light); }
-    .mc-primary { color: var(--dg-primary); }
+    .mc-primary { color: var(--dg-primary-dark); }
     .mc-light-bg { background-color: var(--dg-light-secondary); }
-    .gradient-bg { background: linear-gradient(135deg, #2D4A38 0%, #3A5542 100%); }
+    .gradient-bg { background: linear-gradient(135deg, #3A4A40 0%, #4A5A4E 100%); }
     .nav-active { background: rgba(255,255,255,0.18); }
+    
+    /* 美拉德专属样式 */
+    .maillard-card { background: linear-gradient(145deg, var(--dg-cream) 0%, var(--dg-light) 100%); }
+    .maillard-border { border-color: var(--dg-sand); }
+    .maillard-text { color: var(--dg-caramel); }
+    .moss-accent { background: var(--dg-primary); color: white; }
+    .caramel-accent { background: var(--dg-caramel); color: white; }
   </style>
   <script>
     tailwind.config = {
@@ -244,39 +294,47 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
         extend: {
           colors: {
             primary: { 
-              50: '#E8F5F0', 
-              100: '#D1EBE2', 
-              200: '#A3D7C5',
-              300: '#75C3A8',
-              400: '#47AF8B',
-              500: '#00B386',  /* 主色-深青绿 */
-              600: '#009A73', 
-              700: '#008160',
-              800: '#00684D',
-              900: '#004F3A'
+              50: '#F0F4F2',   /* 苔藓浅米 */
+              100: '#E0E8E4',  /* 苔藓浅 */
+              200: '#C5D5CC',  /* 苔藓粉 */
+              300: '#9AB8A5',  /* 苔藓绿 */
+              400: '#7A9A85',  /* 橄榄绿 */
+              500: '#5A7A64',  /* 主色-苔藓绿（灰调） */
+              600: '#4A6854',  /* 墨绿 */
+              700: '#3A5544',  /* 深墨绿 */
+              800: '#2A4234',  /* 深森林 */
+              900: '#1A3024'   /* 极深墨绿 */
             },
             gs: {
-              primary: '#00B386',     /* 深青绿 */
-              secondary: '#49754D',   /* 森林绿 */
-              accent: '#629C85',      /* 灰绿强调 */
-              success: '#3D7A5A',     /* 深绿成功 */
-              danger: '#A85454',      /* 柔和深红 */
-              warning: '#9A7B4E',     /* 深棕警告 */
-              info: '#4A7896',        /* 深灰蓝 */
-              dark: '#1E2B1E',        /* 深绿灰 */
-              light: '#E8E4D4'        /* 暗奶油色 */
+              primary: '#5A7A64',     /* 苔藓绿 */
+              secondary: '#6B7B5C',   /* 灰橄榄 */
+              accent: '#7A8B6A',      /* 苔藓浅 */
+              success: '#5A7A5A',     /* 灰绿 */
+              danger: '#8B5A5A',      /* 灰红 */
+              warning: '#8B7A5A',     /* 焦糖 */
+              info: '#5A6A7A',        /* 灰蓝 */
+              dark: '#2A3A2E',        /* 墨绿灰 */
+              light: '#EAE6DC',       /* 米白 */
+              caramel: '#8B6B4A',     /* 焦糖棕 */
+              sand: '#A89A7A',        /* 暖沙 */
+              camel: '#9A8A6A',       /* 驼色 */
+              cream: '#F2EEE4'        /* 奶油色 */
             },
             mc: {
-              primary: '#00B386',
-              secondary: '#49754D',
-              accent: '#629C85',
-              light: '#E8E4D4',
-              cream: '#DDD9C8',
-              bg: '#F0EDE0'
+              primary: '#5A7A64',     /* 苔藓绿 */
+              secondary: '#6B7B5C',   /* 灰橄榄 */
+              accent: '#8B6B4A',      /* 焦糖棕 */
+              light: '#EAE6DC',       /* 米白 */
+              cream: '#F2EEE4',       /* 奶油色 */
+              bg: '#F5F2EA',          /* 暖白 */
+              sand: '#A89A7A',        /* 暖沙 */
+              camel: '#9A8A6A'        /* 驼色 */
             },
-            success: '#3D7A5A',
-            danger: '#A85454',
-            warning: '#9A7B4E'
+            success: '#5A7A5A',
+            danger: '#8B5A5A',
+            warning: '#8B7A5A',
+            caramel: '#8B6B4A',
+            sand: '#A89A7A'
           }
         }
       }
@@ -294,15 +352,15 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
             <div class="relative">
               <svg width="160" height="40" viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <!-- Logo图标 - 水滴形状代表滴灌投资 -->
-                <rect x="0" y="6" width="32" height="28" rx="6" fill="white" fill-opacity="0.2"/>
+                <rect x="0" y="6" width="32" height="28" rx="6" fill="rgba(168,154,122,0.3)"/>
                 <!-- 水滴图案 -->
-                <path d="M16 10C16 10 22 18 22 22C22 25.3 19.3 28 16 28C12.7 28 10 25.3 10 22C10 18 16 10 16 10Z" fill="white" fill-opacity="0.9"/>
-                <!-- 水滴内的增长曲线 -->
-                <path d="M12 23L14 21L16 22.5L18 19L20 21" stroke="#00B386" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 10C16 10 22 18 22 22C22 25.3 19.3 28 16 28C12.7 28 10 25.3 10 22C10 18 16 10 16 10Z" fill="white" fill-opacity="0.95"/>
+                <!-- 水滴内的增长曲线 - 美拉德色 -->
+                <path d="M12 23L14 21L16 22.5L18 19L20 21" stroke="#8B6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 <!-- 滴灌投资文字 -->
                 <text x="40" y="27" font-family="Inter, -apple-system, sans-serif" font-size="18" font-weight="700" fill="white" letter-spacing="1">滴灌投资</text>
-                <!-- 副标题线 -->
-                <line x1="40" y1="32" x2="120" y2="32" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <!-- 副标题线 - 暖沙色 -->
+                <line x1="40" y1="32" x2="120" y2="32" stroke="rgba(168,154,122,0.5)" stroke-width="1"/>
               </svg>
             </div>
             <div class="hidden lg:flex flex-col border-l border-white/20 pl-4">
@@ -440,13 +498,13 @@ pages.get('/', (c) => {
         </div>
         <div class="hidden lg:block">
           <svg width="200" height="80" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-90">
-            <rect x="0" y="16" width="56" height="48" rx="12" fill="white" fill-opacity="0.15"/>
+            <rect x="0" y="16" width="56" height="48" rx="12" fill="rgba(168,154,122,0.25)"/>
             <!-- 水滴图案 -->
-            <path d="M28 24C28 24 40 38 40 46C40 53 34 58 28 58C22 58 16 53 16 46C16 38 28 24 28 24Z" fill="white" fill-opacity="0.9"/>
-            <!-- 水滴内增长曲线 -->
-            <path d="M20 48L24 44L28 47L32 42L36 46" stroke="#00B386" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M28 24C28 24 40 38 40 46C40 53 34 58 28 58C22 58 16 53 16 46C16 38 28 24 28 24Z" fill="white" fill-opacity="0.95"/>
+            <!-- 水滴内增长曲线 - 焦糖棕 -->
+            <path d="M20 48L24 44L28 47L32 42L36 46" stroke="#8B6B4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <text x="65" y="52" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="800" fill="white" letter-spacing="1">滴灌投资</text>
-            <line x1="65" y1="60" x2="190" y2="60" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+            <line x1="65" y1="60" x2="190" y2="60" stroke="rgba(168,154,122,0.5)" stroke-width="2"/>
           </svg>
         </div>
       </div>
@@ -518,7 +576,7 @@ pages.get('/', (c) => {
           <a href="/submit" class="gs-btn gs-btn-primary w-full py-3">
             <i class="fas fa-plus"></i>提交新标的
           </a>
-          <a href="/demo" class="gs-btn w-full py-3 bg-gradient-to-r from-violet-500 to-purple-500 text-white hover:from-violet-600 hover:to-purple-600">
+          <a href="/demo" class="gs-btn gs-btn-warm w-full py-3">
             <i class="fas fa-play"></i>运行演示评估
           </a>
           <a href="/agents" class="gs-btn gs-btn-secondary w-full py-3">
