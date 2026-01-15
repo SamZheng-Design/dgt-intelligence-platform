@@ -4,6 +4,7 @@ import { agentsPageContent } from './pages-agents'
 import { demoPageContent } from './pages-demo'
 import { workflowPageContent, submitPageContent, dealsPageContent } from './pages-other'
 import { dealDetailPageContent } from './pages-deal-detail'
+import { investorPortalPageContent } from './pages-investor'
 
 const pages = new Hono()
 
@@ -384,6 +385,9 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
             <a href="/submit" class="nav-item ${activeNav === 'submit' ? 'active' : ''}">
               <i class="fas fa-file-upload mr-2 text-sm"></i>提交申请
             </a>
+            <a href="/investor" class="nav-item ${activeNav === 'investor' ? 'active' : ''}">
+              <i class="fas fa-chart-pie mr-2 text-sm"></i>投资人入口
+            </a>
             <a href="/demo" class="nav-item ${activeNav === 'demo' ? 'active' : ''}">
               <i class="fas fa-play mr-2 text-sm"></i>演示
             </a>
@@ -740,6 +744,11 @@ pages.get('/submit', (c) => {
 // Demo演示页面
 pages.get('/demo', (c) => {
   return c.html(baseLayout('Cardi B演示', demoPageContent, 'demo'))
+})
+
+// 投资人入口页面 - 新增
+pages.get('/investor', (c) => {
+  return c.html(baseLayout('投资人入口', investorPortalPageContent, 'investor'))
 })
 
 // 标的详情页面 - 新增

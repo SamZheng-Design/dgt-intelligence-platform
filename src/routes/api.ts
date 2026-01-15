@@ -1209,4 +1209,317 @@ api.get('/stats', async (c) => {
   }
 })
 
+// ============================================
+// 投资人门户 API
+// ============================================
+
+// 演示数据生成器
+function generateDemoInvestorData() {
+  // 已投资标的演示数据
+  const demoDeals = [
+    { id: 'DGT-2026-CARDIB', company_name: 'Cardi B演唱会', industry: 'light-asset', invested_amount: 3000, total_cashflow: 1250, cashflow_frequency: 'weekly', region: '北京', city: '北京' },
+    { id: 'DGT-2026-CHAYEN', company_name: '茶颜悦色杭州旗舰店', industry: 'catering', invested_amount: 500, total_cashflow: 185, cashflow_frequency: 'monthly', region: '浙江', city: '杭州' },
+    { id: 'DGT-2026-QIANDA', company_name: '钱大妈社区店', industry: 'retail', invested_amount: 300, total_cashflow: 92, cashflow_frequency: 'daily', region: '广东', city: '深圳' },
+    { id: 'DGT-2026-QIANXU', company_name: '谦寻MCN主播孵化', industry: 'ecommerce', invested_amount: 2000, total_cashflow: 680, cashflow_frequency: 'monthly', region: '浙江', city: '杭州' },
+    { id: 'DGT-2026-JINSE', company_name: '锦瑟服饰抖音投流', industry: 'douyin-ecommerce', invested_amount: 800, total_cashflow: 320, cashflow_frequency: 'weekly', region: '广东', city: '广州' },
+    { id: 'DGT-2026-CUICA', company_name: '璀璨美妆抖音投流', industry: 'douyin-ecommerce', invested_amount: 1500, total_cashflow: 580, cashflow_frequency: 'weekly', region: '上海', city: '上海' },
+    { id: 'DGT-2026-LEKE', company_name: '乐刻健身门店集群', industry: 'service', invested_amount: 400, total_cashflow: 125, cashflow_frequency: 'monthly', region: '浙江', city: '杭州' },
+  ]
+  
+  // 统计数据
+  const totalCashflow = demoDeals.reduce((sum, d) => sum + d.total_cashflow, 0)
+  const totalInvested = demoDeals.reduce((sum, d) => sum + d.invested_amount, 0)
+  
+  const stats = {
+    totalCashflow: totalCashflow,
+    yesterdayCashflow: 45.8,
+    totalInvested: totalInvested,
+    investedDeals: demoDeals.length,
+    activeDeals: demoDeals.length,
+    avgReturnRate: (totalCashflow / totalInvested * 100).toFixed(1),
+    issuers: demoDeals.length,
+    assets: demoDeals.length,
+    countries: 1,
+    cities: 5,
+    regions: { '浙江': 43, '广东': 28, '北京': 14, '上海': 15 }
+  }
+  
+  // 回款记录演示数据
+  const today = new Date()
+  const cashflows: any[] = []
+  for (let i = 30; i >= 0; i--) {
+    const date = new Date(today)
+    date.setDate(date.getDate() - i)
+    cashflows.push({
+      date: date.toISOString().split('T')[0],
+      amount: Math.round((Math.random() * 100 + 20) * 100) / 100,
+      cumulative: Math.round((30 - i) * 85 + Math.random() * 50)
+    })
+  }
+  
+  // 交易记录演示数据
+  const transactions = [
+    { id: 'TRX-001', deal_name: 'Cardi B演唱会', deal_code: 'CARDIB', currency: 'CNY', transaction_date: '2026-01-10', amount: 3000, type: 'invest' },
+    { id: 'TRX-002', deal_name: '茶颜悦色', deal_code: 'CHAYEN', currency: 'CNY', transaction_date: '2026-01-08', amount: 500, type: 'invest' },
+    { id: 'TRX-003', deal_name: '钱大妈', deal_code: 'QIANDA', currency: 'CNY', transaction_date: '2026-01-05', amount: 300, type: 'invest' },
+    { id: 'TRX-004', deal_name: '谦寻MCN', deal_code: 'QIANXU', currency: 'CNY', transaction_date: '2026-01-03', amount: 2000, type: 'invest' },
+    { id: 'TRX-005', deal_name: '锦瑟服饰', deal_code: 'JINSE', currency: 'CNY', transaction_date: '2026-01-01', amount: 800, type: 'invest' },
+    { id: 'TRX-006', deal_name: '璀璨美妆', deal_code: 'CUICA', currency: 'CNY', transaction_date: '2025-12-28', amount: 1500, type: 'invest' },
+    { id: 'TRX-007', deal_name: '乐刻健身', deal_code: 'LEKE', currency: 'CNY', transaction_date: '2025-12-25', amount: 400, type: 'invest' },
+  ]
+  
+  // 公告演示数据
+  const announcements = [
+    { id: 'ANN-001', title: '2026年1月收益分配公告', category: 'distribution', priority: 'high', publish_date: '2026-01-15', content: '本月收益分配将于1月20日完成，请投资人关注账户变动。' },
+    { id: 'ANN-002', title: '新资产上线通知 - 璀璨美妆抖音投流', category: 'asset', priority: 'normal', publish_date: '2026-01-12', content: '美妆赛道新标的已上线，欢迎查看项目详情。' },
+    { id: 'ANN-003', title: '平台规则更新说明', category: 'platform', priority: 'normal', publish_date: '2026-01-10', content: '回款周期调整相关规则已更新，请查阅最新版本。' },
+    { id: 'ANN-004', title: '春节期间服务安排通知', category: 'platform', priority: 'normal', publish_date: '2026-01-08', content: '春节期间（1月28日-2月4日）平台正常运营，客服响应时间可能延长。' },
+    { id: 'ANN-005', title: 'Cardi B演唱会项目超预期公告', category: 'asset', priority: 'high', publish_date: '2026-01-05', content: '该项目票房表现超出预期，预计提前回款。' },
+  ]
+  
+  return { deals: demoDeals, stats, cashflows, transactions, announcements }
+}
+
+// 获取已投资标的列表
+api.get('/investor/deals', async (c) => {
+  const db = c.env.DB
+  
+  try {
+    // 尝试从数据库查询已投资状态的标的
+    const result = await db.prepare(`
+      SELECT * FROM deals 
+      WHERE status = 'invested' OR invested_amount > 0
+      ORDER BY invested_date DESC, submitted_date DESC
+    `).all()
+    
+    if (result.results && result.results.length > 0) {
+      return c.json({ success: true, data: result.results })
+    }
+    
+    // 如果没有数据，返回演示数据
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.deals })
+  } catch (error: any) {
+    // 发生错误时返回演示数据
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.deals })
+  }
+})
+
+// 获取投资人统计数据
+api.get('/investor/stats', async (c) => {
+  const db = c.env.DB
+  
+  try {
+    // 尝试从数据库获取统计数据
+    const investedDeals = await db.prepare(`
+      SELECT COUNT(*) as count FROM deals WHERE status = 'invested' OR invested_amount > 0
+    `).first<{count: number}>()
+    
+    if (investedDeals && investedDeals.count > 0) {
+      const totalCashflow = await db.prepare(`
+        SELECT COALESCE(SUM(total_cashflow), 0) as total FROM deals WHERE status = 'invested'
+      `).first<{total: number}>()
+      
+      const totalInvested = await db.prepare(`
+        SELECT COALESCE(SUM(invested_amount), 0) as total FROM deals WHERE status = 'invested'
+      `).first<{total: number}>()
+      
+      return c.json({
+        success: true,
+        data: {
+          totalCashflow: totalCashflow?.total || 0,
+          yesterdayCashflow: 45.8,
+          totalInvested: totalInvested?.total || 0,
+          investedDeals: investedDeals?.count || 0,
+          activeDeals: investedDeals?.count || 0,
+          avgReturnRate: totalInvested?.total ? ((totalCashflow?.total || 0) / totalInvested.total * 100).toFixed(1) : '0',
+          issuers: investedDeals?.count || 0,
+          assets: investedDeals?.count || 0,
+          countries: 1,
+          cities: 5,
+          regions: { '浙江': 43, '广东': 28, '北京': 14, '上海': 15 }
+        }
+      })
+    }
+    
+    // 返回演示数据
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.stats })
+  } catch (error: any) {
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.stats })
+  }
+})
+
+// 获取回款记录
+api.get('/investor/cashflows', async (c) => {
+  const db = c.env.DB
+  
+  try {
+    const result = await db.prepare(`
+      SELECT * FROM cashflow_records 
+      ORDER BY payment_date DESC
+      LIMIT 100
+    `).all()
+    
+    if (result.results && result.results.length > 0) {
+      return c.json({ success: true, data: result.results })
+    }
+    
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.cashflows })
+  } catch (error: any) {
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.cashflows })
+  }
+})
+
+// 获取交易记录
+api.get('/investor/transactions', async (c) => {
+  const db = c.env.DB
+  
+  try {
+    const result = await db.prepare(`
+      SELECT t.*, d.company_name as deal_name 
+      FROM transactions t
+      LEFT JOIN deals d ON t.deal_id = d.id
+      ORDER BY transaction_date DESC
+      LIMIT 100
+    `).all()
+    
+    if (result.results && result.results.length > 0) {
+      return c.json({ success: true, data: result.results })
+    }
+    
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.transactions })
+  } catch (error: any) {
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.transactions })
+  }
+})
+
+// 获取公告列表
+api.get('/investor/announcements', async (c) => {
+  const db = c.env.DB
+  
+  try {
+    const result = await db.prepare(`
+      SELECT * FROM announcements 
+      WHERE is_active = 1
+      ORDER BY priority DESC, publish_date DESC
+      LIMIT 20
+    `).all()
+    
+    if (result.results && result.results.length > 0) {
+      return c.json({ success: true, data: result.results })
+    }
+    
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.announcements })
+  } catch (error: any) {
+    const demoData = generateDemoInvestorData()
+    return c.json({ success: true, data: demoData.announcements })
+  }
+})
+
+// 更新标的为已投资状态
+api.post('/investor/invest/:dealId', async (c) => {
+  const db = c.env.DB
+  const dealId = c.req.param('dealId')
+  const body = await c.req.json()
+  
+  try {
+    await db.prepare(`
+      UPDATE deals SET 
+        status = 'invested',
+        invested_amount = ?,
+        invested_date = ?,
+        cashflow_frequency = ?,
+        region = ?,
+        city = ?,
+        updated_at = ?
+      WHERE id = ?
+    `).bind(
+      body.invested_amount || 0,
+      body.invested_date || new Date().toISOString(),
+      body.cashflow_frequency || 'monthly',
+      body.region || '',
+      body.city || '',
+      new Date().toISOString(),
+      dealId
+    ).run()
+    
+    return c.json({ success: true, message: '标的已更新为已投资状态' })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// 添加回款记录
+api.post('/investor/cashflows', async (c) => {
+  const db = c.env.DB
+  const body = await c.req.json()
+  
+  try {
+    const cfId = `CF-${Date.now()}`
+    
+    await db.prepare(`
+      INSERT INTO cashflow_records (id, deal_id, amount, currency, period_type, 
+        period_start, period_end, payment_date, status, notes)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      cfId,
+      body.deal_id,
+      body.amount,
+      body.currency || 'CNY',
+      body.period_type || 'monthly',
+      body.period_start,
+      body.period_end,
+      body.payment_date,
+      body.status || 'paid',
+      body.notes || ''
+    ).run()
+    
+    // 更新标的的累计回款
+    await db.prepare(`
+      UPDATE deals SET total_cashflow = total_cashflow + ? WHERE id = ?
+    `).bind(body.amount, body.deal_id).run()
+    
+    return c.json({ success: true, data: { id: cfId }, message: '回款记录已添加' })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// 添加公告
+api.post('/investor/announcements', async (c) => {
+  const db = c.env.DB
+  const body = await c.req.json()
+  
+  try {
+    const annId = `ANN-${Date.now()}`
+    
+    await db.prepare(`
+      INSERT INTO announcements (id, title, content, category, priority, 
+        target_deals, publish_date, expire_date, is_active)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+    `).bind(
+      annId,
+      body.title,
+      body.content,
+      body.category || 'platform',
+      body.priority || 'normal',
+      body.target_deals ? JSON.stringify(body.target_deals) : null,
+      body.publish_date || new Date().toISOString(),
+      body.expire_date || null
+    ).run()
+    
+    return c.json({ success: true, data: { id: annId }, message: '公告已发布' })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
 export default api

@@ -1,0 +1,982 @@
+// 投资人入口页面 - Investor Portal
+// 投资人可以在这里查看已投资标的的信息、历史回款、收益分析等
+
+export const investorPortalPageContent = `
+<div class="mb-6">
+  <!-- 页面标题区 -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800 flex items-center">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5A7A64] to-[#8B6B4A] flex items-center justify-center mr-3 shadow-md">
+          <i class="fas fa-chart-pie text-white"></i>
+        </div>
+        投资人入口
+      </h1>
+      <p class="text-slate-500 mt-1 ml-13">查看已投资标的、收益分成、投后表现分析</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <button onclick="refreshInvestorData()" class="gs-btn gs-btn-secondary px-4 py-2">
+        <i class="fas fa-sync-alt mr-2"></i>刷新数据
+      </button>
+      <button onclick="exportInvestorReport()" class="gs-btn gs-btn-warm px-4 py-2">
+        <i class="fas fa-download mr-2"></i>导出报告
+      </button>
+    </div>
+  </div>
+
+  <!-- 统计概览卡片 -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <div class="gs-card p-6 group">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500 mb-1">累计收益分成</p>
+          <p class="text-3xl font-bold text-[#5A7A64]" id="stat-total-cashflow">¥0</p>
+          <p class="text-xs text-slate-400 mt-2" id="stat-yesterday-cashflow">
+            <i class="fas fa-calendar-day mr-1"></i>昨日 +¥0
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-[#5A7A64]/10 rounded-xl flex items-center justify-center group-hover:bg-[#5A7A64]/20 transition">
+          <i class="fas fa-coins text-[#5A7A64] text-lg"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="gs-card p-6 group">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500 mb-1">已投资标的数</p>
+          <p class="text-3xl font-bold text-[#8B6B4A]" id="stat-invested-deals">0</p>
+          <p class="text-xs text-slate-400 mt-2" id="stat-active-deals">
+            <i class="fas fa-check-circle mr-1 text-emerald-500"></i>活跃 <span id="stat-active-count">0</span> 个
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-[#8B6B4A]/10 rounded-xl flex items-center justify-center group-hover:bg-[#8B6B4A]/20 transition">
+          <i class="fas fa-briefcase text-[#8B6B4A] text-lg"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="gs-card p-6 group">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500 mb-1">总投资金额</p>
+          <p class="text-3xl font-bold text-[#5A6A7A]" id="stat-total-invested">¥0</p>
+          <p class="text-xs text-slate-400 mt-2">
+            <i class="fas fa-percentage mr-1"></i>平均回报率 <span id="stat-avg-return" class="text-emerald-500">0%</span>
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-[#5A6A7A]/10 rounded-xl flex items-center justify-center group-hover:bg-[#5A6A7A]/20 transition">
+          <i class="fas fa-wallet text-[#5A6A7A] text-lg"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="gs-card p-6 group">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500 mb-1">覆盖地区/城市</p>
+          <p class="text-3xl font-bold text-[#6B7B5C]" id="stat-regions">0</p>
+          <p class="text-xs text-slate-400 mt-2" id="stat-issuers">
+            <i class="fas fa-building mr-1"></i>发行方 <span id="stat-issuer-count">0</span> 家
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-[#6B7B5C]/10 rounded-xl flex items-center justify-center group-hover:bg-[#6B7B5C]/20 transition">
+          <i class="fas fa-map-marker-alt text-[#6B7B5C] text-lg"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主内容区：左右布局 -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- 左侧：已投资标的列表 + 累计收益图表 -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- 累计收益分成图表 -->
+      <div class="gs-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-base font-semibold text-slate-800 flex items-center">
+            <div class="w-8 h-8 bg-[#5A7A64]/10 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-chart-area text-[#5A7A64] text-sm"></i>
+            </div>
+            累计收益分成 (Total Cashflow Distribution)
+          </h3>
+          <div class="flex items-center space-x-2">
+            <button onclick="switchCashflowPeriod('week')" id="btn-period-week" class="px-3 py-1 text-xs rounded-lg bg-[#5A7A64] text-white">近7天</button>
+            <button onclick="switchCashflowPeriod('month')" id="btn-period-month" class="px-3 py-1 text-xs rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">近30天</button>
+            <button onclick="switchCashflowPeriod('year')" id="btn-period-year" class="px-3 py-1 text-xs rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">近1年</button>
+          </div>
+        </div>
+        
+        <!-- 图表区域 -->
+        <div class="relative h-64">
+          <canvas id="cashflow-chart"></canvas>
+        </div>
+        
+        <!-- 图表下方统计 -->
+        <div class="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-100">
+          <div class="text-center">
+            <p class="text-xs text-slate-500">历史累计收益</p>
+            <p class="text-lg font-bold text-[#5A7A64]" id="chart-total-return">¥0</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-slate-500">昨日收益分成</p>
+            <p class="text-lg font-bold text-[#8B6B4A]" id="chart-yesterday-return">¥0</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-slate-500">本月预估</p>
+            <p class="text-lg font-bold text-[#5A6A7A]" id="chart-estimated-return">¥0</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 已投资标的列表 -->
+      <div class="gs-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-base font-semibold text-slate-800 flex items-center">
+            <div class="w-8 h-8 bg-[#8B6B4A]/10 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-briefcase text-[#8B6B4A] text-sm"></i>
+            </div>
+            已投资标的
+          </h3>
+          <div class="flex items-center space-x-2">
+            <select id="filter-deal-industry" onchange="filterInvestedDeals()" class="text-xs border rounded-lg px-3 py-1.5 bg-slate-50">
+              <option value="">全部行业</option>
+              <option value="catering">餐饮</option>
+              <option value="retail">零售</option>
+              <option value="ecommerce">电商</option>
+              <option value="douyin-ecommerce">抖音投流</option>
+              <option value="education">教育培训</option>
+              <option value="service">生活服务</option>
+              <option value="light-asset">文娱轻资产</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="gs-table w-full">
+            <thead>
+              <tr>
+                <th class="text-left">ID / 企业名称</th>
+                <th class="text-left">行业</th>
+                <th class="text-right">投资金额</th>
+                <th class="text-right">累计回款</th>
+                <th class="text-center">回款周期</th>
+                <th class="text-center">操作</th>
+              </tr>
+            </thead>
+            <tbody id="invested-deals-list">
+              <!-- 动态加载 -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="mt-4 text-center">
+          <button onclick="loadMoreDeals()" class="text-sm text-[#5A7A64] hover:text-[#4A6854]">
+            查看更多 <i class="fas fa-chevron-down ml-1"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 交易记录与排名 -->
+      <div class="gs-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-base font-semibold text-slate-800 flex items-center">
+            <div class="w-8 h-8 bg-[#5A6A7A]/10 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-exchange-alt text-[#5A6A7A] text-sm"></i>
+            </div>
+            交易记录与排名
+          </h3>
+          <div class="flex items-center space-x-2">
+            <button onclick="switchRankingTab('transactions')" id="btn-tab-transactions" class="px-3 py-1 text-xs rounded-lg bg-[#5A6A7A] text-white">交易记录</button>
+            <button onclick="switchRankingTab('return')" id="btn-tab-return" class="px-3 py-1 text-xs rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">总回报排名</button>
+            <button onclick="switchRankingTab('volume')" id="btn-tab-volume" class="px-3 py-1 text-xs rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">交易量排名</button>
+          </div>
+        </div>
+        
+        <!-- 交易记录表格 -->
+        <div id="ranking-content-transactions" class="ranking-content">
+          <table class="gs-table w-full">
+            <thead>
+              <tr>
+                <th>名称/代码</th>
+                <th>货币</th>
+                <th>交易日期</th>
+                <th class="text-right">交易金额</th>
+                <th>类型</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-list">
+              <!-- 动态加载 -->
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- 总回报排名 -->
+        <div id="ranking-content-return" class="ranking-content hidden">
+          <div id="return-ranking-list" class="space-y-3">
+            <!-- 动态加载 -->
+          </div>
+        </div>
+        
+        <!-- 交易量排名 -->
+        <div id="ranking-content-volume" class="ranking-content hidden">
+          <div id="volume-ranking-list" class="space-y-3">
+            <!-- 动态加载 -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 右侧：基础统计 + 主题分布 + 公告 -->
+    <div class="space-y-6">
+      
+      <!-- 基础统计维度 -->
+      <div class="gs-card p-6">
+        <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center">
+          <div class="w-8 h-8 bg-[#6B7B5C]/10 rounded-lg flex items-center justify-center mr-3">
+            <i class="fas fa-chart-bar text-[#6B7B5C] text-sm"></i>
+          </div>
+          基础统计维度
+        </h3>
+        
+        <div class="space-y-4">
+          <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div class="flex items-center">
+              <i class="fas fa-building text-[#5A7A64] mr-3"></i>
+              <span class="text-sm text-slate-600">发行方数量</span>
+            </div>
+            <span class="font-bold text-[#5A7A64]" id="stat-detail-issuers">0</span>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div class="flex items-center">
+              <i class="fas fa-boxes text-[#8B6B4A] mr-3"></i>
+              <span class="text-sm text-slate-600">上市资产数量</span>
+            </div>
+            <span class="font-bold text-[#8B6B4A]" id="stat-detail-assets">0</span>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div class="flex items-center">
+              <i class="fas fa-globe text-[#5A6A7A] mr-3"></i>
+              <span class="text-sm text-slate-600">覆盖国家/地区</span>
+            </div>
+            <span class="font-bold text-[#5A6A7A]" id="stat-detail-countries">0</span>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div class="flex items-center">
+              <i class="fas fa-city text-[#6B7B5C] mr-3"></i>
+              <span class="text-sm text-slate-600">中国内地省份/城市</span>
+            </div>
+            <span class="font-bold text-[#6B7B5C]" id="stat-detail-cities">0</span>
+          </div>
+        </div>
+        
+        <!-- 地区分布迷你图表 -->
+        <div class="mt-4 pt-4 border-t border-slate-100">
+          <p class="text-xs text-slate-500 mb-2">地区分布</p>
+          <div id="region-distribution" class="space-y-2">
+            <!-- 动态加载 -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- 资产主题分布 -->
+      <div class="gs-card p-6">
+        <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center">
+          <div class="w-8 h-8 bg-violet-50 rounded-lg flex items-center justify-center mr-3">
+            <i class="fas fa-tags text-violet-500 text-sm"></i>
+          </div>
+          资产主题分布
+        </h3>
+        
+        <div class="relative h-48">
+          <canvas id="theme-distribution-chart"></canvas>
+        </div>
+        
+        <div id="theme-legend" class="mt-4 space-y-2">
+          <!-- 动态加载 -->
+        </div>
+      </div>
+      
+      <!-- 平台公告 -->
+      <div class="gs-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-base font-semibold text-slate-800 flex items-center">
+            <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-bullhorn text-amber-500 text-sm"></i>
+            </div>
+            平台公告
+          </h3>
+          <a href="#" onclick="viewAllAnnouncements()" class="text-xs text-[#5A7A64] hover:text-[#4A6854]">
+            查看全部 <i class="fas fa-arrow-right ml-1"></i>
+          </a>
+        </div>
+        
+        <div id="announcements-list" class="space-y-3">
+          <!-- 动态加载 -->
+        </div>
+      </div>
+      
+      <!-- 行业智能体入口 -->
+      <div class="gs-card p-6 bg-gradient-to-br from-[#F5F2EA] to-[#EAE6DC]">
+        <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center">
+          <div class="w-8 h-8 bg-[#5A7A64]/20 rounded-lg flex items-center justify-center mr-3">
+            <i class="fas fa-robot text-[#5A7A64] text-sm"></i>
+          </div>
+          行业筛子体系
+        </h3>
+        <p class="text-sm text-slate-600 mb-4">点击行业查看对应的智能体评估体系</p>
+        <div id="industry-agents-links" class="space-y-2">
+          <!-- 动态加载 -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 标的详情弹窗 -->
+<div id="deal-detail-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="flex items-center justify-between px-6 py-4 border-b bg-gradient-to-r from-[#5A7A64]/10 to-[#8B6B4A]/10">
+        <h2 id="deal-detail-title" class="text-lg font-semibold text-slate-800"></h2>
+        <button onclick="closeDealDetailModal()" class="text-slate-400 hover:text-slate-600">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-6" id="deal-detail-content">
+        <!-- 动态加载 -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================
+  // 全局变量和状态
+  // ============================================
+  let investorData = {
+    deals: [],
+    cashflows: [],
+    transactions: [],
+    announcements: [],
+    stats: {}
+  };
+  let currentCashflowPeriod = 'week';
+  let currentRankingTab = 'transactions';
+  let cashflowChart = null;
+  let themeChart = null;
+
+  // ============================================
+  // 初始化
+  // ============================================
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      loadInvestorData();
+    }, 500);
+  });
+
+  // ============================================
+  // 数据加载
+  // ============================================
+  async function loadInvestorData() {
+    try {
+      // 加载已投资标的
+      const dealsRes = await apiCall('/api/investor/deals');
+      investorData.deals = dealsRes.data || [];
+      
+      // 加载统计数据
+      const statsRes = await apiCall('/api/investor/stats');
+      investorData.stats = statsRes.data || {};
+      
+      // 加载回款记录
+      const cashflowsRes = await apiCall('/api/investor/cashflows');
+      investorData.cashflows = cashflowsRes.data || [];
+      
+      // 加载交易记录
+      const transactionsRes = await apiCall('/api/investor/transactions');
+      investorData.transactions = transactionsRes.data || [];
+      
+      // 加载公告
+      const announcementsRes = await apiCall('/api/investor/announcements');
+      investorData.announcements = announcementsRes.data || [];
+      
+      // 渲染所有组件
+      renderStats();
+      renderDeals();
+      renderCashflowChart();
+      renderTransactions();
+      renderRankings();
+      renderThemeDistribution();
+      renderAnnouncements();
+      renderIndustryLinks();
+      
+    } catch (e) {
+      console.error('加载投资人数据失败:', e);
+      // 使用演示数据
+      loadDemoData();
+    }
+  }
+  
+  // 加载演示数据（当API不可用时）
+  function loadDemoData() {
+    // 演示数据 - 已投资标的
+    investorData.deals = [
+      { id: 'DGT-2026-CARDIB', company_name: 'Cardi B演唱会', industry: 'light-asset', invested_amount: 3000, total_cashflow: 1250, cashflow_frequency: 'weekly', region: '北京', city: '北京' },
+      { id: 'DGT-2026-CHAYEN', company_name: '茶颜悦色杭州旗舰店', industry: 'catering', invested_amount: 500, total_cashflow: 185, cashflow_frequency: 'monthly', region: '浙江', city: '杭州' },
+      { id: 'DGT-2026-QIANDA', company_name: '钱大妈社区店', industry: 'retail', invested_amount: 300, total_cashflow: 92, cashflow_frequency: 'daily', region: '广东', city: '深圳' },
+      { id: 'DGT-2026-QIANXU', company_name: '谦寻MCN主播孵化', industry: 'ecommerce', invested_amount: 2000, total_cashflow: 680, cashflow_frequency: 'monthly', region: '浙江', city: '杭州' },
+      { id: 'DGT-2026-JINSE', company_name: '锦瑟服饰抖音投流', industry: 'douyin-ecommerce', invested_amount: 800, total_cashflow: 320, cashflow_frequency: 'weekly', region: '广东', city: '广州' },
+    ];
+    
+    // 演示统计数据
+    investorData.stats = {
+      totalCashflow: 2527,
+      yesterdayCashflow: 45.8,
+      totalInvested: 6600,
+      investedDeals: 5,
+      activeDeals: 5,
+      avgReturnRate: 8.2,
+      issuers: 5,
+      assets: 5,
+      countries: 1,
+      cities: 4,
+      regions: { '浙江': 40, '广东': 35, '北京': 25 }
+    };
+    
+    // 演示回款数据
+    const today = new Date();
+    investorData.cashflows = [];
+    for (let i = 30; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      investorData.cashflows.push({
+        date: date.toISOString().split('T')[0],
+        amount: Math.random() * 100 + 20,
+        cumulative: (30 - i) * 85 + Math.random() * 50
+      });
+    }
+    
+    // 演示交易记录
+    investorData.transactions = [
+      { id: 'TRX-001', deal_name: 'Cardi B演唱会', deal_code: 'CARDIB', currency: 'CNY', transaction_date: '2026-01-10', amount: 3000, type: 'invest' },
+      { id: 'TRX-002', deal_name: '茶颜悦色', deal_code: 'CHAYEN', currency: 'CNY', transaction_date: '2026-01-08', amount: 500, type: 'invest' },
+      { id: 'TRX-003', deal_name: '钱大妈', deal_code: 'QIANDA', currency: 'CNY', transaction_date: '2026-01-05', amount: 300, type: 'invest' },
+      { id: 'TRX-004', deal_name: '谦寻MCN', deal_code: 'QIANXU', currency: 'CNY', transaction_date: '2026-01-03', amount: 2000, type: 'invest' },
+      { id: 'TRX-005', deal_name: '锦瑟服饰', deal_code: 'JINSE', currency: 'CNY', transaction_date: '2026-01-01', amount: 800, type: 'invest' },
+    ];
+    
+    // 演示公告
+    investorData.announcements = [
+      { id: 'ANN-001', title: '2026年1月收益分配公告', category: 'distribution', priority: 'high', publish_date: '2026-01-15', content: '本月收益分配将于1月20日完成，请投资人关注账户变动。' },
+      { id: 'ANN-002', title: '新资产上线通知 - 璀璨美妆抖音投流', category: 'asset', priority: 'normal', publish_date: '2026-01-12', content: '美妆赛道新标的已上线，欢迎查看项目详情。' },
+      { id: 'ANN-003', title: '平台规则更新说明', category: 'platform', priority: 'normal', publish_date: '2026-01-10', content: '回款周期调整相关规则已更新，请查阅最新版本。' },
+    ];
+    
+    // 渲染所有组件
+    renderStats();
+    renderDeals();
+    renderCashflowChart();
+    renderTransactions();
+    renderRankings();
+    renderThemeDistribution();
+    renderAnnouncements();
+    renderIndustryLinks();
+  }
+
+  // ============================================
+  // 渲染函数
+  // ============================================
+  
+  // 渲染统计数据
+  function renderStats() {
+    const stats = investorData.stats;
+    
+    document.getElementById('stat-total-cashflow').textContent = '¥' + formatNumber(stats.totalCashflow || 0);
+    document.getElementById('stat-yesterday-cashflow').innerHTML = '<i class="fas fa-calendar-day mr-1"></i>昨日 +¥' + formatNumber(stats.yesterdayCashflow || 0);
+    document.getElementById('stat-invested-deals').textContent = stats.investedDeals || 0;
+    document.getElementById('stat-active-count').textContent = stats.activeDeals || 0;
+    document.getElementById('stat-total-invested').textContent = '¥' + formatNumber(stats.totalInvested || 0);
+    document.getElementById('stat-avg-return').textContent = (stats.avgReturnRate || 0).toFixed(1) + '%';
+    document.getElementById('stat-regions').textContent = stats.cities || 0;
+    document.getElementById('stat-issuer-count').textContent = stats.issuers || 0;
+    
+    // 详细统计
+    document.getElementById('stat-detail-issuers').textContent = stats.issuers || 0;
+    document.getElementById('stat-detail-assets').textContent = stats.assets || 0;
+    document.getElementById('stat-detail-countries').textContent = stats.countries || 0;
+    document.getElementById('stat-detail-cities').textContent = stats.cities || 0;
+    
+    // 图表统计
+    document.getElementById('chart-total-return').textContent = '¥' + formatNumber(stats.totalCashflow || 0);
+    document.getElementById('chart-yesterday-return').textContent = '¥' + formatNumber(stats.yesterdayCashflow || 0);
+    document.getElementById('chart-estimated-return').textContent = '¥' + formatNumber((stats.totalCashflow || 0) * 0.12);
+    
+    // 地区分布
+    if (stats.regions) {
+      const regionContainer = document.getElementById('region-distribution');
+      regionContainer.innerHTML = Object.entries(stats.regions).map(([region, percent]) => \`
+        <div class="flex items-center">
+          <span class="text-xs text-slate-600 w-16">\${region}</span>
+          <div class="flex-1 h-2 bg-slate-100 rounded-full mx-2">
+            <div class="h-2 bg-gradient-to-r from-[#5A7A64] to-[#8B6B4A] rounded-full" style="width: \${percent}%"></div>
+          </div>
+          <span class="text-xs font-medium text-slate-700">\${percent}%</span>
+        </div>
+      \`).join('');
+    }
+  }
+  
+  // 渲染已投资标的列表
+  function renderDeals() {
+    const container = document.getElementById('invested-deals-list');
+    const industryFilter = document.getElementById('filter-deal-industry').value;
+    
+    let deals = investorData.deals;
+    if (industryFilter) {
+      deals = deals.filter(d => d.industry === industryFilter);
+    }
+    
+    const industryMap = {
+      'light-asset': { name: '文娱轻资产', color: '#8B5CF6' },
+      'catering': { name: '餐饮', color: '#F59E0B' },
+      'retail': { name: '零售', color: '#10B981' },
+      'ecommerce': { name: '电商', color: '#3B82F6' },
+      'douyin-ecommerce': { name: '抖音投流', color: '#FE2C55' },
+      'education': { name: '教育培训', color: '#EC4899' },
+      'service': { name: '生活服务', color: '#14B8A6' }
+    };
+    
+    const frequencyMap = {
+      'daily': '每日',
+      'weekly': '每周',
+      'monthly': '每月'
+    };
+    
+    if (deals.length === 0) {
+      container.innerHTML = \`
+        <tr>
+          <td colspan="6" class="text-center py-12 text-slate-400">
+            <i class="fas fa-inbox text-4xl mb-3 block"></i>
+            暂无已投资标的
+          </td>
+        </tr>
+      \`;
+      return;
+    }
+    
+    container.innerHTML = deals.map(deal => {
+      const industry = industryMap[deal.industry] || { name: deal.industry, color: '#6B7280' };
+      return \`
+        <tr class="hover:bg-slate-50 cursor-pointer" onclick="viewDealDetail('\${deal.id}')">
+          <td class="py-3">
+            <div>
+              <p class="font-mono text-xs text-slate-400">\${deal.id}</p>
+              <p class="font-medium text-slate-800">\${deal.company_name}</p>
+            </div>
+          </td>
+          <td>
+            <span class="px-2 py-1 rounded text-xs" style="background: \${industry.color}15; color: \${industry.color}">
+              \${industry.name}
+            </span>
+          </td>
+          <td class="text-right font-medium">¥\${formatNumber(deal.invested_amount)}万</td>
+          <td class="text-right text-[#5A7A64] font-medium">¥\${formatNumber(deal.total_cashflow)}万</td>
+          <td class="text-center">
+            <span class="text-xs text-slate-500">\${frequencyMap[deal.cashflow_frequency] || deal.cashflow_frequency}</span>
+          </td>
+          <td class="text-center">
+            <button onclick="event.stopPropagation(); viewDealDetail('\${deal.id}')" class="text-[#5A7A64] hover:text-[#4A6854]">
+              <i class="fas fa-external-link-alt"></i>
+            </button>
+          </td>
+        </tr>
+      \`;
+    }).join('');
+  }
+  
+  function filterInvestedDeals() {
+    renderDeals();
+  }
+  
+  // 渲染累计收益图表
+  function renderCashflowChart() {
+    const ctx = document.getElementById('cashflow-chart').getContext('2d');
+    
+    // 根据周期筛选数据
+    let data = investorData.cashflows;
+    if (currentCashflowPeriod === 'week') {
+      data = data.slice(-7);
+    } else if (currentCashflowPeriod === 'month') {
+      data = data.slice(-30);
+    }
+    
+    const labels = data.map(d => {
+      const date = new Date(d.date);
+      return (date.getMonth() + 1) + '/' + date.getDate();
+    });
+    
+    const amounts = data.map(d => d.amount);
+    const cumulative = data.map(d => d.cumulative);
+    
+    if (cashflowChart) {
+      cashflowChart.destroy();
+    }
+    
+    cashflowChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: '每日收益',
+            data: amounts,
+            backgroundColor: 'rgba(90, 122, 100, 0.6)',
+            borderColor: 'rgba(90, 122, 100, 1)',
+            borderWidth: 1,
+            yAxisID: 'y',
+            order: 2
+          },
+          {
+            label: '累计收益',
+            data: cumulative,
+            type: 'line',
+            borderColor: '#8B6B4A',
+            backgroundColor: 'rgba(139, 107, 74, 0.1)',
+            fill: true,
+            tension: 0.4,
+            yAxisID: 'y1',
+            order: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              usePointStyle: true,
+              padding: 15
+            }
+          }
+        },
+        scales: {
+          y: {
+            type: 'linear',
+            position: 'left',
+            title: {
+              display: true,
+              text: '每日收益 (万元)'
+            },
+            grid: {
+              color: 'rgba(0,0,0,0.05)'
+            }
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            title: {
+              display: true,
+              text: '累计收益 (万元)'
+            },
+            grid: {
+              drawOnChartArea: false
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  function switchCashflowPeriod(period) {
+    currentCashflowPeriod = period;
+    
+    // 更新按钮样式
+    ['week', 'month', 'year'].forEach(p => {
+      const btn = document.getElementById('btn-period-' + p);
+      if (btn) {
+        btn.className = p === period 
+          ? 'px-3 py-1 text-xs rounded-lg bg-[#5A7A64] text-white'
+          : 'px-3 py-1 text-xs rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200';
+      }
+    });
+    
+    renderCashflowChart();
+  }
+  
+  // 渲染交易记录
+  function renderTransactions() {
+    const container = document.getElementById('transactions-list');
+    
+    const typeMap = {
+      'invest': { name: '投资', color: '#5A7A64' },
+      'divest': { name: '退出', color: '#8B5A5A' },
+      'transfer': { name: '转让', color: '#5A6A7A' }
+    };
+    
+    container.innerHTML = investorData.transactions.map(txn => {
+      const type = typeMap[txn.type] || { name: txn.type, color: '#6B7280' };
+      return \`
+        <tr class="hover:bg-slate-50">
+          <td class="py-3">
+            <div>
+              <p class="font-medium text-slate-800">\${txn.deal_name}</p>
+              <p class="text-xs text-slate-400">\${txn.deal_code}</p>
+            </div>
+          </td>
+          <td>\${txn.currency}</td>
+          <td>\${txn.transaction_date}</td>
+          <td class="text-right font-medium">¥\${formatNumber(txn.amount)}万</td>
+          <td>
+            <span class="px-2 py-1 rounded text-xs" style="background: \${type.color}15; color: \${type.color}">
+              \${type.name}
+            </span>
+          </td>
+        </tr>
+      \`;
+    }).join('');
+  }
+  
+  // 渲染排名
+  function renderRankings() {
+    // 总回报排名
+    const returnRankingContainer = document.getElementById('return-ranking-list');
+    const sortedByReturn = [...investorData.deals].sort((a, b) => b.total_cashflow - a.total_cashflow);
+    
+    returnRankingContainer.innerHTML = sortedByReturn.slice(0, 5).map((deal, index) => \`
+      <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+        <div class="flex items-center">
+          <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 \${index < 3 ? 'bg-gradient-to-br from-[#8B6B4A] to-[#A89A7A] text-white' : 'bg-slate-200 text-slate-600'}">\${index + 1}</span>
+          <div>
+            <p class="font-medium text-slate-800">\${deal.company_name}</p>
+            <p class="text-xs text-slate-400">\${deal.id}</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="font-bold text-[#5A7A64]">¥\${formatNumber(deal.total_cashflow)}万</p>
+          <p class="text-xs text-slate-400">回报率 \${((deal.total_cashflow / deal.invested_amount) * 100).toFixed(1)}%</p>
+        </div>
+      </div>
+    \`).join('');
+    
+    // 交易量排名（按投资金额）
+    const volumeRankingContainer = document.getElementById('volume-ranking-list');
+    const sortedByVolume = [...investorData.deals].sort((a, b) => b.invested_amount - a.invested_amount);
+    
+    volumeRankingContainer.innerHTML = sortedByVolume.slice(0, 5).map((deal, index) => \`
+      <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+        <div class="flex items-center">
+          <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 \${index < 3 ? 'bg-gradient-to-br from-[#5A6A7A] to-[#7A8A9A] text-white' : 'bg-slate-200 text-slate-600'}">\${index + 1}</span>
+          <div>
+            <p class="font-medium text-slate-800">\${deal.company_name}</p>
+            <p class="text-xs text-slate-400">\${deal.id}</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="font-bold text-[#5A6A7A]">¥\${formatNumber(deal.invested_amount)}万</p>
+        </div>
+      </div>
+    \`).join('');
+  }
+  
+  function switchRankingTab(tab) {
+    currentRankingTab = tab;
+    
+    // 更新按钮样式
+    ['transactions', 'return', 'volume'].forEach(t => {
+      const btn = document.getElementById('btn-tab-' + t);
+      if (btn) {
+        btn.className = t === tab 
+          ? 'px-3 py-1 text-xs rounded-lg bg-[#5A6A7A] text-white'
+          : 'px-3 py-1 text-xs rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200';
+      }
+      
+      const content = document.getElementById('ranking-content-' + t);
+      if (content) {
+        content.classList.toggle('hidden', t !== tab);
+      }
+    });
+  }
+  
+  // 渲染主题分布图表
+  function renderThemeDistribution() {
+    const ctx = document.getElementById('theme-distribution-chart').getContext('2d');
+    
+    // 统计行业分布
+    const industryCount = {};
+    investorData.deals.forEach(deal => {
+      industryCount[deal.industry] = (industryCount[deal.industry] || 0) + 1;
+    });
+    
+    const industryMap = {
+      'light-asset': { name: '文娱轻资产', color: '#8B5CF6' },
+      'catering': { name: '餐饮', color: '#F59E0B' },
+      'retail': { name: '零售', color: '#10B981' },
+      'ecommerce': { name: '电商', color: '#3B82F6' },
+      'douyin-ecommerce': { name: '抖音投流', color: '#FE2C55' },
+      'education': { name: '教育培训', color: '#EC4899' },
+      'service': { name: '生活服务', color: '#14B8A6' }
+    };
+    
+    const labels = Object.keys(industryCount).map(k => industryMap[k]?.name || k);
+    const data = Object.values(industryCount);
+    const colors = Object.keys(industryCount).map(k => industryMap[k]?.color || '#6B7280');
+    
+    if (themeChart) {
+      themeChart.destroy();
+    }
+    
+    themeChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: colors,
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        cutout: '65%'
+      }
+    });
+    
+    // 渲染图例
+    const legendContainer = document.getElementById('theme-legend');
+    legendContainer.innerHTML = Object.entries(industryCount).map(([key, count]) => {
+      const industry = industryMap[key] || { name: key, color: '#6B7280' };
+      return \`
+        <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center">
+            <span class="w-3 h-3 rounded-full mr-2" style="background: \${industry.color}"></span>
+            <span class="text-slate-600">\${industry.name}</span>
+          </div>
+          <span class="font-medium">\${count}个</span>
+        </div>
+      \`;
+    }).join('');
+  }
+  
+  // 渲染公告
+  function renderAnnouncements() {
+    const container = document.getElementById('announcements-list');
+    
+    const categoryMap = {
+      'platform': { name: '平台公告', icon: 'fa-building', color: '#5A6A7A' },
+      'asset': { name: '资产通知', icon: 'fa-boxes', color: '#5A7A64' },
+      'distribution': { name: '收益分配', icon: 'fa-coins', color: '#8B6B4A' },
+      'policy': { name: '规则更新', icon: 'fa-gavel', color: '#8B5CF6' }
+    };
+    
+    const priorityMap = {
+      'urgent': { name: '紧急', color: '#EF4444' },
+      'high': { name: '重要', color: '#F59E0B' },
+      'normal': { name: '普通', color: '#6B7280' }
+    };
+    
+    container.innerHTML = investorData.announcements.slice(0, 5).map(ann => {
+      const category = categoryMap[ann.category] || { name: ann.category, icon: 'fa-bell', color: '#6B7280' };
+      const priority = priorityMap[ann.priority] || priorityMap.normal;
+      
+      return \`
+        <div class="p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer" onclick="viewAnnouncement('\${ann.id}')">
+          <div class="flex items-start justify-between mb-2">
+            <div class="flex items-center">
+              <i class="fas \${category.icon} text-sm mr-2" style="color: \${category.color}"></i>
+              <span class="text-xs px-2 py-0.5 rounded" style="background: \${category.color}15; color: \${category.color}">\${category.name}</span>
+            </div>
+            \${ann.priority !== 'normal' ? \`<span class="text-xs px-2 py-0.5 rounded" style="background: \${priority.color}15; color: \${priority.color}">\${priority.name}</span>\` : ''}
+          </div>
+          <h4 class="font-medium text-slate-800 mb-1">\${ann.title}</h4>
+          <p class="text-xs text-slate-500">\${ann.publish_date}</p>
+        </div>
+      \`;
+    }).join('');
+  }
+  
+  // 渲染行业智能体入口
+  function renderIndustryLinks() {
+    const container = document.getElementById('industry-agents-links');
+    
+    const industries = [
+      { id: 'catering', name: '餐饮', icon: 'fa-utensils', color: '#F59E0B' },
+      { id: 'retail', name: '零售', icon: 'fa-store', color: '#10B981' },
+      { id: 'ecommerce', name: '电商', icon: 'fa-shopping-cart', color: '#3B82F6' },
+      { id: 'douyin-ecommerce', name: '抖音投流', icon: 'fab fa-tiktok', color: '#FE2C55' },
+      { id: 'light-asset', name: '文娱轻资产', icon: 'fa-film', color: '#8B5CF6' },
+      { id: 'service', name: '生活服务', icon: 'fa-concierge-bell', color: '#14B8A6' }
+    ];
+    
+    container.innerHTML = industries.map(ind => \`
+      <a href="/agents?track=\${ind.id}" class="flex items-center justify-between p-3 bg-white rounded-lg hover:shadow-md transition">
+        <div class="flex items-center">
+          <i class="\${ind.icon.startsWith('fab') ? ind.icon : 'fas ' + ind.icon} mr-3" style="color: \${ind.color}"></i>
+          <span class="font-medium text-slate-700">\${ind.name}</span>
+        </div>
+        <i class="fas fa-chevron-right text-slate-300"></i>
+      </a>
+    \`).join('');
+  }
+
+  // ============================================
+  // 辅助函数
+  // ============================================
+  
+  function formatNumber(num) {
+    if (num >= 10000) {
+      return (num / 10000).toFixed(2) + '亿';
+    }
+    return num.toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+  
+  function refreshInvestorData() {
+    showToast('正在刷新数据...', 'info');
+    loadInvestorData();
+  }
+  
+  function exportInvestorReport() {
+    showToast('报告导出功能开发中', 'info');
+  }
+  
+  function loadMoreDeals() {
+    showToast('加载更多功能开发中', 'info');
+  }
+  
+  function viewDealDetail(dealId) {
+    // 跳转到标的详情页
+    window.location.href = '/deals/' + dealId;
+  }
+  
+  function closeDealDetailModal() {
+    document.getElementById('deal-detail-modal').classList.add('hidden');
+  }
+  
+  function viewAnnouncement(annId) {
+    const ann = investorData.announcements.find(a => a.id === annId);
+    if (ann) {
+      alert(\`【\${ann.title}】\\n\\n\${ann.content}\\n\\n发布时间: \${ann.publish_date}\`);
+    }
+  }
+  
+  function viewAllAnnouncements() {
+    showToast('全部公告页面开发中', 'info');
+  }
+</script>
+`

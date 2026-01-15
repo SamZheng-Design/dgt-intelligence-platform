@@ -1293,6 +1293,7 @@ export const dealsPageContent = `
       <option value="review">待审核</option>
       <option value="completed">已完成</option>
       <option value="rejected">已拒绝</option>
+      <option value="invested">已投资</option>
     </select>
     <select id="filter-industry" onchange="loadDeals()" class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 border-slate-100">
       <option value="">全部行业</option>
@@ -1457,7 +1458,8 @@ export const dealsPageContent = `
     evaluation: { label: '评估中', class: 'bg-yellow-100 text-yellow-600' },
     review: { label: '待审核', class: 'bg-purple-100 text-purple-600' },
     completed: { label: '已完成', class: 'bg-green-100 text-green-600' },
-    rejected: { label: '已拒绝', class: 'bg-red-100 text-red-600' }
+    rejected: { label: '已拒绝', class: 'bg-red-100 text-red-600' },
+    invested: { label: '已投资', class: 'bg-emerald-100 text-emerald-700' }
   };
 
   const industryMap = {
