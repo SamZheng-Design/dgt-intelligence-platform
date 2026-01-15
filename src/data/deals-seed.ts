@@ -1183,6 +1183,605 @@ export const workflowConfig = {
   avg_duration: 0
 }
 
+// ============================================
+// 抖音电商/投流赛道 - 专属标的项目
+// ============================================
+
+// 抖音投流赛道 - 女装直播电商
+export const douyinWomenFashionDeal = {
+  id: "DGT-2026-0009",
+  company_name: "杭州锦瑟服饰电商有限公司",
+  credit_code: "91330108MA2XYZAB09",
+  industry: "douyin-ecommerce",
+  status: "pending",
+  main_business: `抖音女装直播电商运营，专注于冬季羽绒服品类，为抖音白牌女装头部商家。公司成立于2021年，深耕抖音电商3年，主营羽绒服、棉服、大衣等冬季女装品类。目前抖音店铺评分4.8，粉丝量280万，月均GMV稳定在2000万以上。`,
+  funding_amount: 800,
+  contact_name: "林雅婷",
+  contact_phone: "13800138009",
+  website: "https://jinse-fashion.com",
+  submitted_date: "2026-01-14T10:00:00.000Z",
+  project_documents: `【项目名称】锦瑟服饰抖音投流扩量项目
+
+【合作伙伴推荐评估】
+=====================================
+
+## 合作伙伴类别
+- 品类：女装-冬衣羽绒服
+- 品牌类型：抖音白牌
+- 品牌定位：高性价比冬季女装
+
+## 合作历史
+- 与投流伙伴合作时间：14个月（12+月）
+- 累计投流金额：1200万（1000万+）
+- 目前管理账户数量：5个
+- 账户留存金额：180万
+
+## 未来合作计划
+- 未来投流合作时间：8个月（6+月）
+- 未来投流计划金额：600万（500万+）
+
+## 历史垫资情况
+- 是否历史有垫资合作：是
+- 历史合作金额：300万
+- 履约情况：正常履约，无逾期
+- 资金成本：年化8%
+- 是否有违约记录：否
+
+## 账户权限
+- 是否有账户扣款权限：是
+- 是否有冻结取现权限：是
+- 品类押金：是（已缴纳10万）
+- 排他投流合作：否
+
+【投流评估（历史12个月）】
+=====================================
+
+## 核心投放指标
+- 整体ROI：2.8（行业均值2.2）
+- 累计GMV：2.4亿
+- 平均CPM：35元
+- 平均CTR：4.2%
+- 平均完播率：42%
+- 自然流量增幅：+65%
+
+## 月度投放数据
+| 月份 | 投放金额 | GMV | ROI | CTR | 完播率 |
+|------|----------|-----|-----|-----|--------|
+| 2025-01 | 80万 | 200万 | 2.5 | 3.8% | 38% |
+| 2025-02 | 60万 | 150万 | 2.5 | 3.5% | 35% |
+| 2025-03 | 70万 | 175万 | 2.5 | 3.6% | 36% |
+| 2025-04 | 85万 | 220万 | 2.6 | 3.9% | 39% |
+| 2025-05 | 90万 | 240万 | 2.7 | 4.0% | 40% |
+| 2025-06 | 100万 | 280万 | 2.8 | 4.1% | 41% |
+| 2025-07 | 95万 | 270万 | 2.8 | 4.2% | 42% |
+| 2025-08 | 85万 | 240万 | 2.8 | 4.1% | 41% |
+| 2025-09 | 100万 | 290万 | 2.9 | 4.3% | 43% |
+| 2025-10 | 120万 | 360万 | 3.0 | 4.5% | 45% |
+| 2025-11 | 150万 | 480万 | 3.2 | 4.8% | 48% |
+| 2025-12 | 165万 | 530万 | 3.2 | 4.9% | 49% |
+
+## 流量结构分析
+- 付费流量占比：55%
+- 自然流量占比：30%
+- 粉丝流量占比：15%
+- 流量健康度：良好（付费依赖度适中）
+
+【品牌评估（历史12个月）】
+=====================================
+
+## 店铺基础信息
+- 抖音店铺成立时间：36个月（12+月）
+- 品牌成立时间：42个月（12+月）
+- 抖音店铺评分：4.8（4.5+）
+- 店铺DSR：商品4.9/物流4.8/服务4.7
+
+## 经营数据
+- 抖音店铺收入占销售额比例：75%（50%+）
+- 店铺收入年增率：45%（20%+）
+- 年度GMV：2.4亿
+- 月均GMV：2000万
+
+## 商品与运营
+- SKU数量：320个
+- 动销率：68%
+- 商品毛利率：52%
+- 平均客单价：380元
+- 退货率：12%（行业均值18%）
+- 复购率：28%（行业均值15%）
+
+## 主播矩阵
+- 签约主播：8人
+- 头部主播：2人（月GMV 500万+）
+- 日均直播时长：16小时
+- 直播间在线峰值：5000人
+
+【融资用途】
+=====================================
+本次融资800万元用于：
+1. 投流费用：500万（抖音千川投放）
+2. 供应链备货：200万（羽绒服原料采购）
+3. 流动资金：100万（运营周转）
+
+【利益分配机制】
+=====================================
+1. 收入来源：抖音店铺全部销售收入
+2. 共管账户：招商银行三方监管账户
+3. 分配方式：
+   - 平台扣点：5%
+   - 运营成本（投流+供应链）：55%
+   - 投资方分成：15%
+   - 运营方分成：25%
+4. 投资方保底：12%年化
+5. ROI对赌：ROI<2.5时，运营方补足差额
+
+【风险控制】
+=====================================
+- 账户监管：投资方拥有账户查看权限
+- 资金冻结：异常情况可冻结账户
+- 履约保证金：80万
+- 投流数据：巨量引擎后台实时同步`,
+  financial_data: JSON.stringify({
+    project_type: "douyin_ecommerce",
+    investment_amount: 800,
+    investment_currency: "CNY",
+    investment_unit: "万元",
+    partner_evaluation: {
+      category: "女装-冬衣羽绒服",
+      brand_type: "抖音白牌",
+      cooperation_duration_months: 14,
+      historical_investment: 1200,
+      managed_accounts: 5,
+      account_balance: 180,
+      future_cooperation_months: 8,
+      future_investment_plan: 600,
+      has_advance_payment_history: true,
+      advance_payment_amount: 300,
+      performance_status: "正常履约",
+      has_default_record: false,
+      has_deduction_permission: true,
+      has_freeze_permission: true,
+      has_category_deposit: true,
+      exclusive_cooperation: false
+    },
+    investment_metrics: {
+      period: "历史12个月",
+      overall_roi: 2.8,
+      cumulative_gmv: 24000,
+      avg_cpm: 35,
+      avg_ctr: 0.042,
+      avg_completion_rate: 0.42,
+      organic_traffic_growth: 0.65,
+      traffic_structure: {
+        paid: 0.55,
+        organic: 0.30,
+        follower: 0.15
+      }
+    },
+    brand_evaluation: {
+      shop_age_months: 36,
+      brand_age_months: 42,
+      shop_rating: 4.8,
+      douyin_revenue_ratio: 0.75,
+      annual_growth_rate: 0.45,
+      gross_margin: 0.52,
+      return_rate: 0.12,
+      repurchase_rate: 0.28,
+      avg_order_value: 380
+    },
+    revenue_forecast: {
+      total: 4800,
+      unit: "万元",
+      gmv_target: 16000,
+      target_roi: 3.0
+    },
+    profit_distribution: {
+      platform_fee: 0.05,
+      operating_cost: 0.55,
+      investor_share: 0.15,
+      operator_share: 0.25,
+      guaranteed_return: 0.12,
+      roi_threshold: 2.5
+    },
+    investor_return: {
+      roi: 0.28,
+      irr_estimate: 0.32,
+      payback_months: 12
+    }
+  }),
+  result: "pending"
+}
+
+// 抖音投流赛道 - 美妆品牌代运营
+export const douyinBeautyBrandDeal = {
+  id: "DGT-2026-0010",
+  company_name: "上海璀璨美妆科技有限公司",
+  credit_code: "91310115MA1CDEFG10",
+  industry: "douyin-ecommerce",
+  status: "pending",
+  main_business: `抖音美妆品牌代运营服务商，为国货美妆品牌提供抖音电商全案服务，包括直播代播、短视频内容、投流优化等。公司成立于2020年，是抖音美妆类目头部服务商，累计服务品牌50+，年度代运营GMV超过8亿。`,
+  funding_amount: 1500,
+  contact_name: "陈思琪",
+  contact_phone: "13800138010",
+  website: "https://cuican-beauty.com",
+  submitted_date: "2026-01-13T14:00:00.000Z",
+  project_documents: `【项目名称】璀璨美妆抖音投流合作项目
+
+【合作伙伴推荐评估】
+=====================================
+
+## 合作伙伴类别
+- 品类：美妆护肤
+- 品牌类型：国货美妆代运营
+- 服务模式：全案代运营+投流优化
+
+## 合作历史
+- 与投流伙伴合作时间：18个月（12+月）
+- 累计投流金额：2500万（1000万+）
+- 目前管理账户数量：12个
+- 账户留存金额：350万
+
+## 未来合作计划
+- 未来投流合作时间：12个月（6+月）
+- 未来投流计划金额：1200万（500万+）
+
+## 历史垫资情况
+- 是否历史有垫资合作：是
+- 历史合作金额：500万
+- 履约情况：正常履约，从未逾期
+- 资金成本：年化9%
+- 是否有违约记录：否
+
+## 账户权限
+- 是否有账户扣款权限：是
+- 是否有冻结取现权限：是
+- 品类押金：是（已缴纳20万）
+- 排他投流合作：是（美妆类目独家）
+
+【投流评估（历史12个月）】
+=====================================
+
+## 核心投放指标
+- 整体ROI：3.2（行业均值2.5）
+- 累计GMV：8亿
+- 平均CPM：42元
+- 平均CTR：5.1%
+- 平均完播率：38%
+- 自然流量增幅：+85%
+
+## 品牌服务案例
+| 品牌 | 年度GMV | ROI | 自然流量增幅 |
+|------|---------|-----|--------------|
+| 花西子 | 2.5亿 | 3.5 | +90% |
+| 完美日记 | 2亿 | 3.2 | +80% |
+| 珀莱雅 | 1.8亿 | 3.0 | +75% |
+| 其他品牌 | 1.7亿 | 3.1 | +85% |
+
+## 流量结构分析
+- 付费流量占比：50%
+- 自然流量占比：35%
+- 粉丝流量占比：15%
+- 流量健康度：优秀（自然流量占比高）
+
+【品牌评估（历史12个月）】
+=====================================
+
+## 公司基础信息
+- 抖音服务商资质：钻石级服务商
+- 公司成立时间：48个月（12+月）
+- 服务商评分：4.9（4.5+）
+- 服务品牌数：50+
+
+## 经营数据
+- 抖音业务收入占比：90%（50%+）
+- 收入年增率：60%（20%+）
+- 年度代运营GMV：8亿
+- 服务费收入：8000万
+
+## 团队配置
+- 投流优化师：25人
+- 直播运营：40人
+- 内容创作：15人
+- 数据分析：8人
+
+## 核心竞争力
+- 美妆类目投流经验丰富
+- 人群精准定向能力强
+- 素材产出效率高
+- 品牌方长期合作关系
+
+【融资用途】
+=====================================
+本次融资1500万元用于：
+1. 投流费用：1000万（千川+DOU+）
+2. 内容制作：200万（短视频+直播素材）
+3. 主播培养：200万（签约+培训）
+4. 流动资金：100万
+
+【利益分配机制】
+=====================================
+1. 收入来源：代运营服务费+GMV分成
+2. 共管账户：交通银行三方监管账户
+3. 分配方式：
+   - 平台服务费：8%
+   - 运营成本：45%
+   - 投资方分成：18%
+   - 运营方分成：29%
+4. 投资方保底：14%年化
+5. GMV对赌：年度GMV<10亿时，运营方补足
+6. 超额分配：GMV超10亿部分，投资方30%
+
+【风险控制】
+=====================================
+- 品牌合同：已签约品牌提供履约保障
+- 账户监管：实时数据对接
+- 履约保证金：150万
+- ROI保底：低于2.8时启动补偿机制`,
+  financial_data: JSON.stringify({
+    project_type: "douyin_brand_operation",
+    investment_amount: 1500,
+    investment_currency: "CNY",
+    investment_unit: "万元",
+    partner_evaluation: {
+      category: "美妆护肤",
+      brand_type: "国货美妆代运营",
+      service_level: "钻石级服务商",
+      cooperation_duration_months: 18,
+      historical_investment: 2500,
+      managed_accounts: 12,
+      account_balance: 350,
+      future_cooperation_months: 12,
+      future_investment_plan: 1200,
+      has_advance_payment_history: true,
+      advance_payment_amount: 500,
+      performance_status: "正常履约",
+      has_default_record: false,
+      has_deduction_permission: true,
+      has_freeze_permission: true,
+      has_category_deposit: true,
+      exclusive_cooperation: true
+    },
+    investment_metrics: {
+      period: "历史12个月",
+      overall_roi: 3.2,
+      cumulative_gmv: 80000,
+      avg_cpm: 42,
+      avg_ctr: 0.051,
+      avg_completion_rate: 0.38,
+      organic_traffic_growth: 0.85,
+      traffic_structure: {
+        paid: 0.50,
+        organic: 0.35,
+        follower: 0.15
+      }
+    },
+    brand_evaluation: {
+      company_age_months: 48,
+      service_rating: 4.9,
+      served_brands: 50,
+      douyin_revenue_ratio: 0.90,
+      annual_growth_rate: 0.60,
+      annual_gmv: 80000,
+      service_fee_revenue: 8000
+    },
+    revenue_forecast: {
+      total: 12000,
+      unit: "万元",
+      gmv_target: 100000,
+      target_roi: 3.5
+    },
+    profit_distribution: {
+      platform_fee: 0.08,
+      operating_cost: 0.45,
+      investor_share: 0.18,
+      operator_share: 0.29,
+      guaranteed_return: 0.14,
+      gmv_threshold: 100000
+    },
+    investor_return: {
+      roi: 0.35,
+      irr_estimate: 0.42,
+      payback_months: 14
+    }
+  }),
+  result: "pending"
+}
+
+// 抖音投流赛道 - 食品生鲜直播
+export const douyinFoodLiveDeal = {
+  id: "DGT-2026-0011",
+  company_name: "成都川味源食品电商有限公司",
+  credit_code: "91510100MA6HIJKL11",
+  industry: "douyin-ecommerce",
+  status: "pending",
+  main_business: `抖音食品生鲜直播电商，专注于四川特产、火锅底料、卤味零食等品类。以"川味美食推荐官"为IP定位，通过场景化直播带货，将四川美食销往全国。目前抖音粉丝420万，月均GMV稳定在1500万以上，是抖音食品类目TOP 100商家。`,
+  funding_amount: 500,
+  contact_name: "张小川",
+  contact_phone: "13800138011",
+  website: "https://chuanweiyuan.com",
+  submitted_date: "2026-01-12T16:00:00.000Z",
+  project_documents: `【项目名称】川味源食品抖音投流扩量项目
+
+【合作伙伴推荐评估】
+=====================================
+
+## 合作伙伴类别
+- 品类：食品生鲜-川味特产
+- 品牌类型：抖音原生品牌
+- 主营产品：火锅底料、卤味、特产零食
+
+## 合作历史
+- 与投流伙伴合作时间：16个月（12+月）
+- 累计投流金额：1100万（1000万+）
+- 目前管理账户数量：3个
+- 账户留存金额：120万
+
+## 未来合作计划
+- 未来投流合作时间：10个月（6+月）
+- 未来投流计划金额：600万（500万+）
+
+## 历史垫资情况
+- 是否历史有垫资合作：是
+- 历史合作金额：200万
+- 履约情况：正常履约
+- 资金成本：年化10%
+- 是否有违约记录：否
+
+## 账户权限
+- 是否有账户扣款权限：是
+- 是否有冻结取现权限：否（仅扣款权限）
+- 品类押金：是（已缴纳5万）
+- 排他投流合作：否
+
+【投流评估（历史12个月）】
+=====================================
+
+## 核心投放指标
+- 整体ROI：2.5（行业均值2.0）
+- 累计GMV：1.8亿
+- 平均CPM：28元
+- 平均CTR：3.8%
+- 平均完播率：52%（食品类完播率高）
+- 自然流量增幅：+45%
+
+## 月度投放趋势
+| 季度 | 投放金额 | GMV | ROI | 特殊说明 |
+|------|----------|-----|-----|----------|
+| Q1 | 200万 | 480万 | 2.4 | 春节旺季 |
+| Q2 | 250万 | 600万 | 2.4 | 常规运营 |
+| Q3 | 280万 | 700万 | 2.5 | 火锅季开始 |
+| Q4 | 370万 | 1020万 | 2.75 | 火锅旺季 |
+
+## 流量结构分析
+- 付费流量占比：48%
+- 自然流量占比：32%
+- 粉丝流量占比：20%
+- 流量健康度：良好
+
+【品牌评估（历史12个月）】
+=====================================
+
+## 店铺基础信息
+- 抖音店铺成立时间：28个月（12+月）
+- 品牌成立时间：36个月（12+月）
+- 抖音店铺评分：4.7（4.5+）
+- 店铺DSR：商品4.8/物流4.6/服务4.7
+
+## 经营数据
+- 抖音店铺收入占销售额比例：65%（50%+）
+- 店铺收入年增率：38%（20%+）
+- 年度GMV：1.8亿
+- 月均GMV：1500万
+
+## 商品与运营
+- SKU数量：180个
+- 动销率：72%
+- 商品毛利率：45%
+- 平均客单价：85元
+- 退货率：5%（食品类退货率低）
+- 复购率：35%（食品类复购率高）
+
+## 供应链优势
+- 自有工厂：火锅底料生产线
+- 合作供应商：50+
+- 发货时效：成都仓48小时全国达
+- 品控体系：SC认证齐全
+
+【融资用途】
+=====================================
+本次融资500万元用于：
+1. 投流费用：350万（千川投放）
+2. 供应链备货：100万（原料+库存）
+3. 流动资金：50万
+
+【利益分配机制】
+=====================================
+1. 收入来源：抖音店铺销售收入
+2. 共管账户：成都银行三方监管账户
+3. 分配方式：
+   - 平台扣点：3%
+   - 运营成本（投流+供应链+物流）：58%
+   - 投资方分成：14%
+   - 运营方分成：25%
+4. 投资方保底：11%年化
+5. ROI对赌：ROI<2.2时，运营方补足
+
+【风险控制】
+=====================================
+- 食品资质：SC认证、质检报告齐全
+- 账户监管：抖音后台数据共享
+- 履约保证金：50万
+- 季节性风险：Q4旺季占比60%，需关注淡季运营`,
+  financial_data: JSON.stringify({
+    project_type: "douyin_food_ecommerce",
+    investment_amount: 500,
+    investment_currency: "CNY",
+    investment_unit: "万元",
+    partner_evaluation: {
+      category: "食品生鲜-川味特产",
+      brand_type: "抖音原生品牌",
+      cooperation_duration_months: 16,
+      historical_investment: 1100,
+      managed_accounts: 3,
+      account_balance: 120,
+      future_cooperation_months: 10,
+      future_investment_plan: 600,
+      has_advance_payment_history: true,
+      advance_payment_amount: 200,
+      performance_status: "正常履约",
+      has_default_record: false,
+      has_deduction_permission: true,
+      has_freeze_permission: false,
+      has_category_deposit: true,
+      exclusive_cooperation: false
+    },
+    investment_metrics: {
+      period: "历史12个月",
+      overall_roi: 2.5,
+      cumulative_gmv: 18000,
+      avg_cpm: 28,
+      avg_ctr: 0.038,
+      avg_completion_rate: 0.52,
+      organic_traffic_growth: 0.45,
+      traffic_structure: {
+        paid: 0.48,
+        organic: 0.32,
+        follower: 0.20
+      }
+    },
+    brand_evaluation: {
+      shop_age_months: 28,
+      brand_age_months: 36,
+      shop_rating: 4.7,
+      douyin_revenue_ratio: 0.65,
+      annual_growth_rate: 0.38,
+      gross_margin: 0.45,
+      return_rate: 0.05,
+      repurchase_rate: 0.35,
+      avg_order_value: 85
+    },
+    revenue_forecast: {
+      total: 2400,
+      unit: "万元",
+      gmv_target: 9600,
+      target_roi: 2.8
+    },
+    profit_distribution: {
+      platform_fee: 0.03,
+      operating_cost: 0.58,
+      investor_share: 0.14,
+      operator_share: 0.25,
+      guaranteed_return: 0.11,
+      roi_threshold: 2.2
+    },
+    investor_return: {
+      roi: 0.25,
+      irr_estimate: 0.30,
+      payback_months: 15
+    }
+  }),
+  result: "pending"
+}
+
 // 导出所有标的数据
 export const allDeals = [
   cardiBDeal,
@@ -1193,5 +1792,9 @@ export const allDeals = [
   petServiceDeal,
   fitnessDeal,
   beautyDeal,
-  hotelDeal
+  hotelDeal,
+  // 抖音电商/投流赛道
+  douyinWomenFashionDeal,
+  douyinBeautyBrandDeal,
+  douyinFoodLiveDeal
 ]

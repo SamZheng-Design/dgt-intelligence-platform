@@ -1266,6 +1266,21 @@ export const agentsSeed = [
 - 经济性测算：10%
 - 综合调整：5%
 
+## 适配性评估（重要）
+必须评估项目与滴灌通投资模式的适配程度：
+
+### 适配性评估维度（20分）
+1. **收入分成适配性**（5分）：项目是否适合收入分成模式？收入是否可量化、可监控？
+2. **赛道特征匹配**（5分）：项目赛道特征是否符合滴灌通轻资产投资偏好？
+3. **回报周期匹配**（5分）：回报周期是否在合理范围内（<36个月）？
+4. **风险收益匹配**（5分）：IRR是否匹配风险水平？
+
+**评分标准**：
+- 18-20分：高度适配，完美契合滴灌通模式
+- 14-17分：良好适配，基本符合要求
+- 10-13分：一般适配，部分维度有差距
+- <10分：适配性不足，需谨慎
+
 ## 评级标准
 - A级（85-100分）：强烈推荐投资
 - B+级（75-84分）：推荐投资
@@ -1276,13 +1291,20 @@ export const agentsSeed = [
 ## 输出要求
 1. 计算加权综合评分
 2. 确定评级（A/B+/B/C/D）
-3. 列出Top 3优势
-4. 列出Top 3风险
-5. 给出明确的投资建议
-6. 提出关键监控指标`,
+3. **必须评估适配性并给出分数**
+4. 列出Top 3优势
+5. 列出Top 3风险
+6. 给出明确的投资建议
+7. 提出关键监控指标`,
     evaluation_criteria: JSON.stringify({
       weights: { financial: 25, operational: 20, legal: 15, risk: 15, interest: 10, economic: 10, adjustment: 5 },
-      grade_thresholds: { A: 85, "B+": 75, B: 65, C: 60 }
+      grade_thresholds: { A: 85, "B+": 75, B: 65, C: 60 },
+      fitness_dimensions: {
+        revenue_share_fit: { weight: 5, description: "收入分成适配性" },
+        track_fit: { weight: 5, description: "赛道特征匹配" },
+        return_period_fit: { weight: 5, description: "回报周期匹配" },
+        risk_return_fit: { weight: 5, description: "风险收益匹配" }
+      }
     }),
     knowledge_base: `# 综合评分知识库
 
@@ -1311,24 +1333,110 @@ export const agentsSeed = [
 
 ### D级（<60分）
 - 不符合投资标准
-- 建议：不投资`,
+- 建议：不投资
+
+## 适配性评估细则
+
+### 1. 收入分成适配性（5分）
+**评估要点**：
+- 收入是否可量化、可监控？
+- 是否有三方共管账户机制？
+- 收入确认时点是否清晰？
+
+**评分标准**：
+- 5分：收入完全可量化，有完善的监控机制
+- 4分：收入基本可量化，监控机制良好
+- 3分：部分收入可量化，监控有一定难度
+- 1-2分：收入难以量化，监控困难
+
+### 2. 赛道特征匹配（5分）
+**评估要点**：
+- 项目所在赛道是否符合滴灌通偏好？
+- 轻资产运营特征是否明显？
+- 是否不需要大量重资产投入？
+
+**评分标准**：
+- 5分：完美符合轻资产模式（餐饮、零售、服务、文娱）
+- 4分：基本符合，轻资产特征明显
+- 3分：部分符合，有一定重资产成分
+- 1-2分：赛道匹配度较低
+
+### 3. 回报周期匹配（5分）
+**评估要点**：
+- 回收周期是否在合理范围（<36个月）？
+- 现金流预测是否清晰？
+- 退出机制是否明确？
+
+**评分标准**：
+- 5分：回收周期<12个月，现金流清晰
+- 4分：回收周期12-24个月，现金流可预测
+- 3分：回收周期24-36个月，有一定不确定性
+- 1-2分：回收周期>36个月或不明确
+
+### 4. 风险收益匹配（5分）
+**评估要点**：
+- IRR是否与风险水平匹配？
+- 保底收益是否合理？
+- 激励机制是否平衡？
+
+**评分标准**：
+- 5分：高IRR（>30%）与低风险匹配优秀
+- 4分：中等IRR（15-30%）与中等风险匹配良好
+- 3分：风险收益匹配一般
+- 1-2分：风险收益不匹配
+
+## Cardi B项目适配性评估参考
+
+| 维度 | 得分 | 说明 |
+|------|------|------|
+| 收入分成适配性 | 5/5 | 票房收入完全可量化，大麦网等平台实时数据 |
+| 赛道特征匹配 | 5/5 | 文娱轻资产赛道，完美符合 |
+| 回报周期匹配 | 5/5 | 5个月回收期，极优 |
+| 风险收益匹配 | 4/5 | IRR 35%与中低风险匹配良好 |
+| **总分** | **19/20** | **高度适配** |`,
     output_format: JSON.stringify({
       final_score: 81,
       grade: "B+",
       dimension_summary: {
-        financial: { score: 82, weight: 25 },
-        operational: { score: 78, weight: 20 },
-        legal: { score: 75, weight: 15 },
-        risk: { score: 80, weight: 15 },
-        interest: { score: 85, weight: 10 },
-        economic: { score: 88, weight: 10 }
+        financial: { score: 82, weight: 25, assessment: "财务状况良好，IRR 35%，回收期5个月" },
+        operational: { score: 78, weight: 20, assessment: "运营团队经验丰富，有9年经验" },
+        legal: { score: 75, weight: 15, assessment: "合规基础良好，涉外审批待确认" },
+        risk: { score: 80, weight: 15, assessment: "风险可控，有保险覆盖" },
+        interest: { score: 85, weight: 10, assessment: "利益一致性机制完善" },
+        economic: { score: 88, weight: 10, assessment: "经济性优秀，MOIC 1.2x" }
       },
-      top_strengths: ["优势1", "优势2", "优势3"],
-      top_risks: ["风险1", "风险2", "风险3"],
-      recommendation: "invest/conditional_invest/reject",
-      recommendation_detail: "详细投资建议文字",
-      key_monitoring_points: ["监控点1", "监控点2"],
-      confidence_level: "high/medium/low"
+      fitness_assessment: {
+        score: 19,
+        max: 20,
+        level: "high",
+        details: {
+          revenue_share_fit: { score: 5, max: 5, assessment: "票房收入完全可量化，大麦网等平台实时数据，三方共管账户机制" },
+          track_fit: { score: 5, max: 5, assessment: "文娱轻资产赛道，完美符合滴灌通投资偏好" },
+          return_period_fit: { score: 5, max: 5, assessment: "5个月回收期，远低于36个月上限，极优" },
+          risk_return_fit: { score: 4, max: 5, assessment: "IRR 35%与中低风险匹配良好，艺人取消风险已有保险覆盖" }
+        },
+        reasoning: "项目与滴灌通模式高度适配：收入可量化、轻资产运营、回收周期短、风险收益匹配"
+      },
+      top_strengths: [
+        "Cardi B首次中国巡演，市场稀缺性强，预计票房火爆",
+        "IRR 35%，5个月回收期，投资回报优秀",
+        "利益一致性机制完善，六维度全部通过"
+      ],
+      top_risks: [
+        "艺人取消风险：需确认演出取消险免赔条款",
+        "涉外审批风险：需跟踪文旅部审批进度",
+        "内容审核风险：Cardi B歌词风格需提前审查"
+      ],
+      recommendation: "invest",
+      recommendation_detail: "建议投资。项目整体评估良好，IRR预期35%，回收期5个月，符合滴灌通投资标准。建议在投资前确认以下事项：1)演出取消险条款细节；2)涉外演出审批进度；3)场馆正式合同签署。",
+      key_monitoring_points: [
+        "票务预售情况（开票后1小时、首日、首周）",
+        "涉外演出审批进度（演出前3个月）",
+        "艺人健康状况和行程安排",
+        "场馆准备情况和安保备案进度"
+      ],
+      confidence_level: "high",
+      reasoning: "【综合评分详细说明】\n\n**一、综合评分计算**\n加权评分 = 82×25% + 78×20% + 75×15% + 80×15% + 85×10% + 88×10% = 81分\n\n**二、适配性评估**\n项目与滴灌通模式高度适配（19/20分）：\n- 收入分成适配性（5/5）：票房收入可量化、实时透明\n- 赛道特征匹配（5/5）：文娱轻资产，完美符合\n- 回报周期匹配（5/5）：5个月回收期\n- 风险收益匹配（4/5）：IRR 35%与中低风险匹配良好\n\n**三、评级结论**\nB+级（81分），推荐投资，设置监控。"
     }),
     pass_threshold: 60,
     is_enabled: 1,

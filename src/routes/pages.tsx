@@ -118,26 +118,22 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
           <!-- MIFC Logo -->
           <a href="/" class="flex items-center space-x-3 group">
             <div class="relative">
-              <!-- Logo主体 - 现代几何设计 -->
-              <svg width="42" height="36" viewBox="0 0 42 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-sm">
+              <!-- Logo主体 - 清晰MIFC文字设计 -->
+              <svg width="100" height="40" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-sm">
                 <!-- 背景圆角矩形 -->
-                <rect x="1" y="1" width="40" height="34" rx="6" fill="white" fill-opacity="0.15"/>
-                <rect x="1" y="1" width="40" height="34" rx="6" stroke="white" stroke-opacity="0.3" stroke-width="1"/>
-                <!-- M -->
-                <path d="M6 28V8H9L13 18L17 8H20V28H17V14L13 24L9 14V28H6Z" fill="white"/>
-                <!-- I -->
-                <path d="M22 28V8H25V28H22Z" fill="white"/>
-                <!-- F -->
-                <path d="M28 28V8H37V11H31V16H36V19H31V28H28Z" fill="white"/>
-                <!-- C -->
-                <path d="M42 14C42 10.5 40 8 37 8H36V11H37C38.5 11 39 12 39 14V22C39 24 38.5 25 37 25H36V28H37C40 28 42 25.5 42 22V14Z" fill="white"/>
+                <rect x="2" y="2" width="96" height="36" rx="8" fill="white" fill-opacity="0.2"/>
+                <rect x="2" y="2" width="96" height="36" rx="8" stroke="white" stroke-opacity="0.4" stroke-width="1.5"/>
+                <!-- MIFC文字 - 清晰粗体 -->
+                <text x="50" y="28" text-anchor="middle" font-family="Arial Black, Inter, sans-serif" font-size="22" font-weight="900" fill="white" letter-spacing="3">MIFC</text>
+                <!-- 装饰底线 -->
+                <rect x="20" y="33" width="60" height="2" rx="1" fill="#F3EED9" fill-opacity="0.8"/>
                 <!-- 装饰点 -->
-                <circle cx="38" cy="5" r="2" fill="#F3EED9"/>
+                <circle cx="90" cy="10" r="3" fill="#F3EED9"/>
               </svg>
             </div>
             <div class="hidden sm:flex flex-col border-l border-white/30 pl-3">
               <span class="font-bold text-sm tracking-wide">智能评估</span>
-              <span class="text-[10px] opacity-70 tracking-widest">INTELLIGENT</span>
+              <span class="text-[10px] opacity-70 tracking-widest">INTELLIGENCE</span>
             </div>
           </a>
           <div class="hidden md:flex space-x-1">
@@ -253,10 +249,17 @@ pages.get('/', (c) => {
           <p class="opacity-90">AI驱动的投资标的全流程风险评估解决方案</p>
         </div>
         <div class="hidden md:flex items-center space-x-2">
-          <!-- MIFC大Logo -->
-          <svg width="80" height="48" viewBox="0 0 80 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-90">
-            <text x="0" y="36" font-family="Inter, sans-serif" font-size="32" font-weight="800" fill="white" letter-spacing="2">MIFC</text>
-            <rect x="0" y="42" width="80" height="3" rx="1.5" fill="white" fill-opacity="0.5"/>
+          <!-- MIFC大Logo - 清晰设计 -->
+          <svg width="140" height="56" viewBox="0 0 140 56" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-95">
+            <!-- 外框 -->
+            <rect x="3" y="3" width="134" height="50" rx="10" fill="white" fill-opacity="0.15"/>
+            <rect x="3" y="3" width="134" height="50" rx="10" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+            <!-- MIFC大字 -->
+            <text x="70" y="38" text-anchor="middle" font-family="Arial Black, Inter, sans-serif" font-size="32" font-weight="900" fill="white" letter-spacing="6">MIFC</text>
+            <!-- 装饰底线 -->
+            <rect x="25" y="45" width="90" height="3" rx="1.5" fill="white" fill-opacity="0.6"/>
+            <!-- 装饰点 -->
+            <circle cx="125" cy="14" r="4" fill="#F3EED9"/>
           </svg>
         </div>
       </div>
