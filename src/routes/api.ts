@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import OpenAI from 'openai'
 import { agentsSeed } from '../data/agents-seed'
-import { cardiBDeal, workflowConfig, allDeals } from '../data/deals-seed'
+import { allDeals, workflowConfig, dealsSummary } from '../data/deals-seed-new'
 import { allTrackAgents, industryTracks } from '../data/track-agents-seed'
 
 type Bindings = {
@@ -213,24 +213,27 @@ api.post('/init-db', async (c) => {
       ).run()
     }
     
-    // 插入所有标的数据（包括Cardi B和新增的各赛道标的）
+    // 插入所有标的数据（10个新标的，覆盖不同行业/地区/分成频率）
     for (const deal of allDeals) {
       try {
+        // 类型断言，确保访问新字段
+        const d = deal as any
         await db.prepare(`
           INSERT INTO deals (id, company_name, credit_code, industry, status, main_business,
             funding_amount, contact_name, contact_phone, website, submitted_date, project_documents,
-            financial_data, result)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            financial_data, result, region, city, cashflow_frequency)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
-          deal.id, deal.company_name, deal.credit_code || '', deal.industry,
-          deal.status || 'pending', deal.main_business, deal.funding_amount,
-          deal.contact_name || '', deal.contact_phone || '', deal.website || '',
-          deal.submitted_date || new Date().toISOString(), deal.project_documents || '',
-          typeof deal.financial_data === 'string' ? deal.financial_data : JSON.stringify(deal.financial_data),
-          deal.result || 'pending'
+          d.id, d.company_name, d.credit_code || '', d.industry,
+          d.status || 'pending', d.main_business, d.funding_amount,
+          d.contact_name || '', d.contact_phone || '', d.website || '',
+          d.submitted_date || new Date().toISOString(), d.project_documents || '',
+          typeof d.financial_data === 'string' ? d.financial_data : JSON.stringify(d.financial_data),
+          d.result || 'pending',
+          d.region || '', d.city || '', d.cashflow_frequency || 'monthly'
         ).run()
       } catch (e: any) {
-        console.error(`插入标的 ${deal.id} 失败:`, e.message)
+        console.error(`插入标的失败:`, e.message)
       }
     }
     
