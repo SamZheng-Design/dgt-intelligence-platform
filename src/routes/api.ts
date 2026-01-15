@@ -3,6 +3,7 @@ import OpenAI from 'openai'
 import { agentsSeed } from '../data/agents-seed'
 import { allDeals, workflowConfig, dealsSummary, completeDeals, completeDealsSummary, allDealsWithComplete } from '../data/deals-seed-new'
 import { allTrackAgents, industryTracks } from '../data/track-agents-seed'
+import { generateAllPostInvestmentData, generateCashflowSummary, type CashflowRecord, type Transaction } from '../data/generate-cashflow-data'
 
 type Bindings = {
   DB: D1Database
@@ -402,6 +403,303 @@ api.post('/init-db-all', async (c) => {
         completeDeals: completeDeals.length,
         source: 'allDealsWithComplete (deals-seed-new.ts + deals-seed-complete.ts)',
         errors: errors.slice(0, 10) // 只返回前10个错误
+      }
+    })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// ============================================
+// 初始化投后回款数据 - 为100个标的生成模拟的投资和回款记录
+// ============================================
+api.post('/init-post-investment', async (c) => {
+  const db = c.env.DB
+  const force = c.req.query('force') === 'true'
+  
+  try {
+    // 检查是否已有回款数据
+    const existingCashflows = await db.prepare('SELECT COUNT(*) as count FROM cashflow_records').first<{count: number}>()
+    
+    if (existingCashflows && existingCashflows.count > 0 && !force) {
+      return c.json({ 
+        success: true, 
+        message: '已有投后数据，如需重新生成请添加 ?force=true 参数', 
+        existing: existingCashflows.count 
+      })
+    }
+    
+    // 如果强制重新初始化，先清空现有数据
+    if (force) {
+      await db.prepare('DELETE FROM cashflow_records').run()
+      await db.prepare('DELETE FROM transactions').run()
+    }
+    
+    // 获取所有标的
+    const dealsResult = await db.prepare('SELECT * FROM deals').all()
+    const deals = dealsResult.results || []
+    
+    if (deals.length === 0) {
+      return c.json({ success: false, error: '没有找到标的数据，请先执行 /api/init-db-all' }, 400)
+    }
+    
+    // 生成投后数据
+    const postInvestmentData = generateAllPostInvestmentData(deals)
+    
+    // 批量插入回款记录（分批处理避免超时）
+    let cashflowInserted = 0
+    const batchSize = 100
+    
+    for (let i = 0; i < postInvestmentData.cashflows.length; i += batchSize) {
+      const batch = postInvestmentData.cashflows.slice(i, i + batchSize)
+      
+      for (const cf of batch) {
+        try {
+          await db.prepare(`
+            INSERT INTO cashflow_records (id, deal_id, amount, currency, period_type, 
+              period_start, period_end, payment_date, status, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `).bind(
+            cf.id, cf.deal_id, cf.amount, cf.currency, cf.period_type,
+            cf.period_start, cf.period_end, cf.payment_date, cf.status, cf.notes
+          ).run()
+          cashflowInserted++
+        } catch (e: any) {
+          console.error(`插入回款记录失败: ${cf.id}`, e.message)
+        }
+      }
+    }
+    
+    // 批量插入交易记录
+    let transactionInserted = 0
+    for (const trx of postInvestmentData.transactions) {
+      try {
+        await db.prepare(`
+          INSERT INTO transactions (id, deal_id, investor_id, transaction_type, amount, 
+            currency, transaction_date, price_per_unit, units, fee, status, notes)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          trx.id, trx.deal_id, trx.investor_id, trx.transaction_type, trx.amount,
+          trx.currency, trx.transaction_date, trx.price_per_unit, trx.units, 
+          trx.fee, trx.status, trx.notes
+        ).run()
+        transactionInserted++
+      } catch (e: any) {
+        console.error(`插入交易记录失败: ${trx.id}`, e.message)
+      }
+    }
+    
+    // 更新标的状态和累计回款
+    let dealsUpdated = 0
+    for (const update of postInvestmentData.dealUpdates) {
+      try {
+        await db.prepare(`
+          UPDATE deals SET 
+            status = ?,
+            invested_amount = ?,
+            invested_date = ?,
+            investor_id = ?,
+            total_cashflow = ?,
+            updated_at = ?
+          WHERE id = ?
+        `).bind(
+          update.status,
+          update.invested_amount,
+          update.invested_date,
+          update.investor_id,
+          update.total_cashflow,
+          new Date().toISOString(),
+          update.id
+        ).run()
+        dealsUpdated++
+      } catch (e: any) {
+        console.error(`更新标的失败: ${update.id}`, e.message)
+      }
+    }
+    
+    // 创建默认投资人
+    try {
+      await db.prepare(`
+        INSERT OR REPLACE INTO investors (id, name, type, contact_email, total_invested, total_return, active_deals)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).bind(
+        'INV-DGT-001',
+        '滴灌通DRO基金',
+        'institution',
+        'invest@dgt.com',
+        postInvestmentData.summary.totalInvested,
+        postInvestmentData.summary.totalCashflow,
+        deals.length
+      ).run()
+    } catch (e: any) {
+      console.error('创建投资人失败', e.message)
+    }
+    
+    return c.json({
+      success: true,
+      message: '投后回款数据初始化完成',
+      stats: {
+        dealsProcessed: deals.length,
+        dealsUpdated,
+        cashflowRecordsInserted: cashflowInserted,
+        transactionsInserted: transactionInserted,
+        totalInvested: postInvestmentData.summary.totalInvested,
+        totalCashflow: postInvestmentData.summary.totalCashflow,
+        cashflowByFrequency: postInvestmentData.summary.byFrequency
+      }
+    })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// ============================================
+// 获取回款统计概览
+// ============================================
+api.get('/cashflow-stats', async (c) => {
+  const db = c.env.DB
+  
+  try {
+    // 获取基本统计
+    const totalStats = await db.prepare(`
+      SELECT 
+        COUNT(*) as total_records,
+        SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) as total_paid,
+        SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as total_pending,
+        SUM(CASE WHEN status = 'delayed' THEN amount ELSE 0 END) as total_delayed,
+        COUNT(DISTINCT deal_id) as deals_with_cashflow
+      FROM cashflow_records
+    `).first()
+    
+    // 按频率统计
+    const byFrequency = await db.prepare(`
+      SELECT 
+        period_type,
+        COUNT(*) as count,
+        SUM(amount) as total_amount,
+        AVG(amount) as avg_amount
+      FROM cashflow_records
+      WHERE status = 'paid'
+      GROUP BY period_type
+    `).all()
+    
+    // 最近30天的回款趋势
+    const recentTrend = await db.prepare(`
+      SELECT 
+        payment_date,
+        SUM(amount) as daily_amount,
+        COUNT(*) as record_count
+      FROM cashflow_records
+      WHERE status = 'paid' AND payment_date >= date('now', '-30 days')
+      GROUP BY payment_date
+      ORDER BY payment_date DESC
+      LIMIT 30
+    `).all()
+    
+    // 按月汇总
+    const monthlyStats = await db.prepare(`
+      SELECT 
+        strftime('%Y-%m', payment_date) as month,
+        SUM(amount) as total_amount,
+        COUNT(*) as record_count,
+        COUNT(DISTINCT deal_id) as deal_count
+      FROM cashflow_records
+      WHERE status = 'paid'
+      GROUP BY strftime('%Y-%m', payment_date)
+      ORDER BY month DESC
+      LIMIT 18
+    `).all()
+    
+    // 获取投资总额
+    const investmentStats = await db.prepare(`
+      SELECT 
+        SUM(invested_amount) as total_invested,
+        COUNT(*) as invested_deals
+      FROM deals
+      WHERE status = 'invested'
+    `).first()
+    
+    return c.json({
+      success: true,
+      data: {
+        overview: {
+          totalRecords: totalStats?.total_records || 0,
+          totalPaid: Math.round((totalStats?.total_paid || 0) * 100) / 100,
+          totalPending: Math.round((totalStats?.total_pending || 0) * 100) / 100,
+          totalDelayed: Math.round((totalStats?.total_delayed || 0) * 100) / 100,
+          dealsWithCashflow: totalStats?.deals_with_cashflow || 0,
+          totalInvested: investmentStats?.total_invested || 0,
+          investedDeals: investmentStats?.invested_deals || 0,
+          returnRate: investmentStats?.total_invested 
+            ? ((totalStats?.total_paid || 0) / investmentStats.total_invested * 100).toFixed(2) + '%'
+            : '0%'
+        },
+        byFrequency: byFrequency.results || [],
+        recentTrend: recentTrend.results || [],
+        monthlyStats: monthlyStats.results || []
+      }
+    })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// ============================================
+// 获取单个标的的回款详情
+// ============================================
+api.get('/deals/:id/cashflows', async (c) => {
+  const db = c.env.DB
+  const dealId = c.req.param('id')
+  
+  try {
+    // 获取标的信息
+    const deal = await db.prepare('SELECT * FROM deals WHERE id = ?').bind(dealId).first()
+    if (!deal) {
+      return c.json({ success: false, error: '标的不存在' }, 404)
+    }
+    
+    // 获取回款记录
+    const cashflows = await db.prepare(`
+      SELECT * FROM cashflow_records 
+      WHERE deal_id = ? 
+      ORDER BY payment_date DESC
+    `).bind(dealId).all()
+    
+    // 统计
+    const stats = await db.prepare(`
+      SELECT 
+        COUNT(*) as total_records,
+        SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) as total_paid,
+        SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as total_pending,
+        MIN(payment_date) as first_payment,
+        MAX(payment_date) as last_payment
+      FROM cashflow_records
+      WHERE deal_id = ?
+    `).bind(dealId).first()
+    
+    return c.json({
+      success: true,
+      data: {
+        deal: {
+          id: deal.id,
+          company_name: deal.company_name,
+          industry: deal.industry,
+          invested_amount: deal.invested_amount,
+          invested_date: deal.invested_date,
+          cashflow_frequency: deal.cashflow_frequency,
+          total_cashflow: deal.total_cashflow
+        },
+        stats: {
+          totalRecords: stats?.total_records || 0,
+          totalPaid: stats?.total_paid || 0,
+          totalPending: stats?.total_pending || 0,
+          firstPayment: stats?.first_payment,
+          lastPayment: stats?.last_payment,
+          returnRate: deal.invested_amount 
+            ? ((stats?.total_paid || 0) / (deal.invested_amount as number) * 100).toFixed(2) + '%'
+            : '0%'
+        },
+        cashflows: cashflows.results || []
       }
     })
   } catch (error: any) {
