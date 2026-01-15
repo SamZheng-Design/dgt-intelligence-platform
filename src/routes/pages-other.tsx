@@ -500,16 +500,9 @@ export const submitPageContent = `
             <label class="block text-sm font-medium text-gray-700 mb-1">抖店名称 <span class="text-red-500">*</span></label>
             <input type="text" id="dy_shop_name" class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#5A7A64] border-[#B8B0A0] bg-[#F5F2EA]" placeholder="抖音店铺名称">
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">合作伙伴 <span class="text-red-500">*</span></label>
-            <select id="dy_partner" class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#5A7A64] border-[#B8B0A0] bg-[#F2EEE4]">
-              <option value="良辰美" selected>良辰美</option>
-            </select>
-            <p class="text-xs text-gray-400 mt-1">默认合作伙伴</p>
-          </div>
-          <div>
+          <div class="md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">良辰美联络人名称 <span class="text-red-500">*</span></label>
-            <input type="text" id="dy_partner_contact" class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#5A7A64] border-[#B8B0A0] bg-[#F5F2EA]" placeholder="良辰美对接人姓名">
+            <input type="text" id="dy_partner_contact" class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#5A7A64] border-[#B8B0A0] bg-[#F5F2EA]" placeholder="请输入良辰美对接人姓名">
           </div>
         </div>
       </div>
@@ -718,15 +711,82 @@ export const submitPageContent = `
 
     <!-- Step 3: 项目材料 -->
     <div id="form-step-3" class="step-content hidden">
-      <h3 class="text-lg font-semibold mb-4">项目材料</h3>
-      <div class="space-y-6">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">项目说明文档 *</label>
-          <textarea id="project_documents" rows="10" class="w-full border rounded-lg p-3 font-mono text-sm focus:ring-2 focus:ring-primary-500 border-slate-100" placeholder="请输入或粘贴项目说明文档内容..."></textarea>
+      <h3 class="text-lg font-semibold mb-4 text-[#3A4A3E]">项目材料</h3>
+      
+      <!-- 提示说明卡片 -->
+      <div class="bg-gradient-to-r from-[#F2EEE4] to-[#EAE6DC] rounded-xl p-5 mb-6 border border-[#D0CAC0]">
+        <h4 class="font-medium text-[#3A4A3E] mb-3 flex items-center">
+          <i class="fas fa-lightbulb text-[#8B6B4A] mr-2"></i>上传建议
+        </h4>
+        <p class="text-sm text-[#5A6A5E] mb-3">为了更全面地了解您的项目，建议上传以下材料：</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+          <div class="flex items-center text-[#5A6A5E]">
+            <i class="fas fa-file-pdf text-[#8B5A5A] mr-2"></i>商业计划书
+          </div>
+          <div class="flex items-center text-[#5A6A5E]">
+            <i class="fas fa-file-alt text-[#5A7A64] mr-2"></i>品牌介绍
+          </div>
+          <div class="flex items-center text-[#5A6A5E]">
+            <i class="fas fa-chart-bar text-[#5A6A7A] mr-2"></i>财务报表
+          </div>
+          <div class="flex items-center text-[#5A6A5E]">
+            <i class="fas fa-certificate text-[#8B6B4A] mr-2"></i>资质证书
+          </div>
         </div>
+      </div>
+      
+      <div class="space-y-6">
+        <!-- 文件上传区域 -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">财务数据 (JSON格式)</label>
-          <textarea id="financial_data" rows="8" class="w-full border rounded-lg p-3 font-mono text-sm focus:ring-2 focus:ring-primary-500 border-slate-100" placeholder='{"revenue_forecast": {...}, "cost_structure": {...}}'></textarea>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-cloud-upload-alt mr-1 text-[#5A7A64]"></i>上传项目文件
+          </label>
+          <div id="submit-file-drop-zone" 
+            class="p-8 bg-[#F5F2EA] rounded-xl border-2 border-dashed border-[#B8B0A0] cursor-pointer hover:border-[#8B6B4A] hover:bg-[#F2EEE4] transition-all"
+            onclick="document.getElementById('submit-file-input').click()"
+            ondrop="handleSubmitFileDrop(event)" 
+            ondragover="handleSubmitDragOver(event)" 
+            ondragleave="handleSubmitDragLeave(event)">
+            <div class="text-center">
+              <i class="fas fa-cloud-upload-alt text-5xl text-[#B8B0A0] mb-4"></i>
+              <p class="font-medium text-[#5A6A5E] mb-2">拖拽文件到此处，或点击选择文件</p>
+              <p class="text-xs text-[#7A8A7E]">支持 PDF、Word、Excel、PPT、图片等常见格式，单个文件最大 20MB</p>
+            </div>
+            <input type="file" id="submit-file-input" class="hidden" multiple 
+              accept=".txt,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.md,.csv,.zip,.rar"
+              onchange="handleSubmitFileSelect(event)">
+          </div>
+          
+          <!-- 已选文件列表 -->
+          <div id="submit-selected-files" class="mt-4 hidden">
+            <h5 class="font-medium text-sm text-[#3A4A3E] mb-2 flex items-center">
+              <i class="fas fa-paperclip mr-2 text-[#5A7A64]"></i>已选择文件：
+            </h5>
+            <div id="submit-files-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
+          </div>
+        </div>
+        
+        <!-- 项目说明文档 -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-edit mr-1 text-[#5A7A64]"></i>项目说明（选填）
+          </label>
+          <textarea id="project_documents" rows="6" class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-[#5A7A64] border-[#B8B0A0] bg-[#F5F2EA]" placeholder="如有补充说明，可在此处填写..."></textarea>
+        </div>
+      </div>
+      
+      <!-- 隐私保护声明 -->
+      <div class="mt-6 p-4 bg-[#EAE6DC] rounded-xl border border-[#D0CAC0]">
+        <div class="flex items-start">
+          <i class="fas fa-shield-alt text-[#5A7A64] mt-0.5 mr-3"></i>
+          <div>
+            <h5 class="font-medium text-[#3A4A3E] mb-1">信息安全承诺</h5>
+            <p class="text-xs text-[#5A6A5E] leading-relaxed">
+              我们高度重视您的信息安全。您上传的所有文件和填写的信息仅用于项目评估，
+              不会向任何第三方泄露。所有数据均采用加密存储，严格遵守相关法律法规，
+              确保您的商业秘密和隐私得到充分保护。
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -856,7 +916,6 @@ export const submitPageContent = `
           { id: 'dy_credit_code', name: '社会统一信用代码' },
           { id: 'dy_brand_name', name: '品牌名称' },
           { id: 'dy_shop_name', name: '抖店名称' },
-          { id: 'dy_partner', name: '合作伙伴' },
           { id: 'dy_partner_contact', name: '良辰美联络人名称' }
         ];
         
@@ -923,9 +982,13 @@ export const submitPageContent = `
             <div><span class="text-gray-500">统一信用代码：</span>\${getValue('dy_credit_code')}</div>
             <div><span class="text-gray-500">品牌名称：</span>\${getValue('dy_brand_name')}</div>
             <div><span class="text-gray-500">抖店名称：</span>\${getValue('dy_shop_name')}</div>
-            <div><span class="text-gray-500">合作伙伴：</span>\${getValue('dy_partner')}</div>
-            <div><span class="text-gray-500">良辰美联络人：</span>\${getValue('dy_partner_contact')}</div>
+            <div class="col-span-2"><span class="text-gray-500">良辰美联络人：</span>\${getValue('dy_partner_contact')}</div>
           </div>
+          \${submitSelectedFiles.length > 0 ? \`
+          <div class="mt-3 pt-3 border-t border-[#D0CAC0]">
+            <span class="text-gray-500 text-xs"><i class="fas fa-paperclip mr-1"></i>已上传文件：\${submitSelectedFiles.length} 个</span>
+          </div>
+          \` : ''}
         </div>
         
         <div class="bg-[#DED8CC] rounded-lg p-4 mb-4 border border-[#B8B0A0]">
@@ -1014,7 +1077,6 @@ export const submitPageContent = `
       credit_code: getVal('dy_credit_code'),
       brand_name: getVal('dy_brand_name'),
       shop_name: getVal('dy_shop_name'),
-      partner: getVal('dy_partner'),
       partner_contact: getVal('dy_partner_contact'),
       
       // 品类与合作（推荐）
@@ -1072,7 +1134,6 @@ export const submitPageContent = `
       main_business: \`抖音投流业务
 品牌名称：\${douyinData.brand_name}
 抖店名称：\${douyinData.shop_name}
-合作伙伴：\${douyinData.partner}
 良辰美联络人：\${douyinData.partner_contact}
 品类：\${categoryMap[douyinData.category] || '-'}
 店铺评分：\${douyinData.shop_rating || '-'}
@@ -1084,7 +1145,9 @@ ROI: \${douyinData.roi || '-'}, GMV: \${douyinData.gmv || '-'}万元\`,
       contact_phone: '',
       website: douyinData.shop_link,
       project_documents: document.getElementById('project_documents')?.value || '',
-      financial_data: JSON.stringify(douyinData)
+      financial_data: JSON.stringify(douyinData),
+      // 添加上传文件信息
+      uploaded_files: submitSelectedFiles.map(f => ({ name: f.name, size: f.size, type: f.type }))
     };
 
     try {
@@ -1097,6 +1160,102 @@ ROI: \${douyinData.roi || '-'}, GMV: \${douyinData.gmv || '-'}万元\`,
     } catch (e) {
       showToast('提交失败，请重试', 'error');
     }
+  }
+
+  // ============================================
+  // 文件上传处理函数
+  // ============================================
+  let submitSelectedFiles = [];
+  
+  function handleSubmitDragOver(e) {
+    e.preventDefault();
+    e.target.closest('#submit-file-drop-zone')?.classList.add('border-[#8B6B4A]', 'bg-[#F2EEE4]');
+  }
+  
+  function handleSubmitDragLeave(e) {
+    e.preventDefault();
+    e.target.closest('#submit-file-drop-zone')?.classList.remove('border-[#8B6B4A]', 'bg-[#F2EEE4]');
+  }
+  
+  function handleSubmitFileDrop(e) {
+    e.preventDefault();
+    e.target.closest('#submit-file-drop-zone')?.classList.remove('border-[#8B6B4A]', 'bg-[#F2EEE4]');
+    addSubmitFiles(Array.from(e.dataTransfer.files));
+  }
+  
+  function handleSubmitFileSelect(e) {
+    addSubmitFiles(Array.from(e.target.files));
+    e.target.value = '';
+  }
+  
+  function addSubmitFiles(files) {
+    const maxSize = 20 * 1024 * 1024; // 20MB
+    const validTypes = ['txt', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'png', 'jpg', 'jpeg', 'gif', 'md', 'csv', 'zip', 'rar'];
+    
+    files.forEach(file => {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!validTypes.includes(ext)) {
+        showToast(\`不支持的格式: \${file.name}\`, 'error');
+        return;
+      }
+      if (file.size > maxSize) {
+        showToast(\`文件过大(最大20MB): \${file.name}\`, 'error');
+        return;
+      }
+      if (!submitSelectedFiles.find(f => f.name === file.name)) {
+        submitSelectedFiles.push(file);
+      }
+    });
+    updateSubmitFilesList();
+  }
+  
+  function updateSubmitFilesList() {
+    const section = document.getElementById('submit-selected-files');
+    const list = document.getElementById('submit-files-list');
+    if (!section || !list) return;
+    
+    if (submitSelectedFiles.length > 0) {
+      section.classList.remove('hidden');
+      
+      const getFileIcon = (name) => {
+        const ext = name.split('.').pop().toLowerCase();
+        if (['pdf'].includes(ext)) return 'fa-file-pdf text-red-500';
+        if (['doc', 'docx'].includes(ext)) return 'fa-file-word text-blue-500';
+        if (['xls', 'xlsx', 'csv'].includes(ext)) return 'fa-file-excel text-green-500';
+        if (['ppt', 'pptx'].includes(ext)) return 'fa-file-powerpoint text-orange-500';
+        if (['png', 'jpg', 'jpeg', 'gif'].includes(ext)) return 'fa-file-image text-purple-500';
+        if (['zip', 'rar'].includes(ext)) return 'fa-file-archive text-yellow-600';
+        return 'fa-file text-gray-500';
+      };
+      
+      const formatSize = (bytes) => {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+      };
+      
+      list.innerHTML = submitSelectedFiles.map((f, i) => \`
+        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-[#D0CAC0]">
+          <div class="flex items-center space-x-3">
+            <i class="fas \${getFileIcon(f.name)}"></i>
+            <div>
+              <p class="text-sm font-medium text-[#3A4A3E] truncate max-w-xs">\${f.name}</p>
+              <p class="text-xs text-[#7A8A7E]">\${formatSize(f.size)}</p>
+            </div>
+          </div>
+          <button onclick="removeSubmitFile(\${i})" class="text-[#8B5A5A] hover:text-red-600 p-1">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      \`).join('');
+    } else {
+      section.classList.add('hidden');
+    }
+  }
+  
+  function removeSubmitFile(index) {
+    submitSelectedFiles.splice(index, 1);
+    updateSubmitFilesList();
   }
 
   // 页面加载时检查行业选择

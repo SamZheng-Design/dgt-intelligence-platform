@@ -513,14 +513,31 @@ api.post('/deals', async (c) => {
     const count = await db.prepare('SELECT COUNT(*) as c FROM deals WHERE id LIKE ?').bind(`DGT-${year}-%`).first<{c: number}>()
     const newId = `DGT-${year}-${String((count?.c || 0) + 1).padStart(4, '0')}`
     
+    // 处理上传文件信息 - 转换为supplementary_materials格式存储
+    let supplementaryMaterials = '[]'
+    if (deal.uploaded_files && Array.isArray(deal.uploaded_files) && deal.uploaded_files.length > 0) {
+      const materials = deal.uploaded_files.map((f: any, idx: number) => ({
+        id: `MAT-${Date.now()}-${idx}`,
+        name: f.name,
+        category: f.type?.includes('pdf') ? '商业计划书' : 
+                  f.type?.includes('image') ? '图片资料' : 
+                  f.type?.includes('excel') || f.type?.includes('sheet') ? '财务报表' : '其他材料',
+        size: f.size,
+        type: f.type,
+        uploadedAt: new Date().toISOString()
+      }))
+      supplementaryMaterials = JSON.stringify(materials)
+    }
+    
     await db.prepare(`
       INSERT INTO deals (id, company_name, credit_code, industry, status, main_business,
-        funding_amount, contact_name, contact_phone, website, project_documents, financial_data, result)
-      VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, 'pending')
+        funding_amount, contact_name, contact_phone, website, project_documents, financial_data, 
+        supplementary_materials, result)
+      VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     `).bind(
       newId, deal.company_name, deal.credit_code, deal.industry, deal.main_business,
       deal.funding_amount, deal.contact_name, deal.contact_phone, deal.website,
-      deal.project_documents, deal.financial_data
+      deal.project_documents, deal.financial_data, supplementaryMaterials
     ).run()
     
     const created = await db.prepare('SELECT * FROM deals WHERE id = ?').bind(newId).first()
