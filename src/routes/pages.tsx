@@ -11,6 +11,164 @@ import { investorTransactionsListPageContent } from './pages-investor-transactio
 
 const pages = new Hono()
 
+// 简化页面模板 - 仅用于带行业参数的申请页面（无导航栏）
+const simpleLayout = (title: string, content: string) => html`
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title} - 滴灌投资</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif; }
+    
+    /* 滴灌投资配色方案 - 美拉德深色护眼主题 */
+    :root {
+      --dg-primary: #5A7A64;
+      --dg-primary-light: #6B8B73;
+      --dg-primary-dark: #4A6854;
+      --dg-secondary: #6B7B5C;
+      --dg-accent: #7A8B6A;
+      --dg-caramel: #8B6B4A;
+      --dg-sand: #A89A7A;
+      --dg-camel: #9A8A6A;
+      --dg-success: #5A7A5A;
+      --dg-danger: #8B5A5A;
+      --dg-warning: #8B7A5A;
+      --dg-info: #5A6A7A;
+      --dg-dark: #2A3A2E;
+      --dg-dark-secondary: #354540;
+      --dg-dark-tertiary: #404F45;
+      --dg-light: #EAE6DC;
+      --dg-light-secondary: #DED8CC;
+      --dg-light-tertiary: #D5D0C5;
+      --dg-cream: #F2EEE4;
+      --dg-border: #B8B0A0;
+      --dg-border-light: #D0CAC0;
+      --dg-text-primary: #3A4A3E;
+      --dg-text-secondary: #5A6A5E;
+      --dg-text-muted: #7A8A7E;
+      --dg-card-bg: #F5F2EA;
+      --dg-card-hover: #EFEBE0;
+    }
+    
+    .gs-bg { background-color: var(--dg-light); }
+    .gs-card { 
+      background: var(--dg-card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--dg-border-light);
+      box-shadow: 0 2px 8px rgba(90, 80, 60, 0.06);
+      transition: all 0.2s ease;
+    }
+    .gs-input {
+      border: 1px solid var(--dg-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      transition: all 0.15s ease;
+      background: var(--dg-cream);
+    }
+    .gs-input:focus {
+      outline: none;
+      border-color: var(--dg-primary);
+      box-shadow: 0 0 0 3px rgba(90, 122, 100, 0.15);
+      background: white;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--dg-light-tertiary); }
+    ::-webkit-scrollbar-thumb { background: var(--dg-border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--dg-text-muted); }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { 
+              500: '#5A7A64',
+              600: '#4A6854'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="gs-bg min-h-screen">
+  <!-- 简化顶部标识 -->
+  <div class="bg-gradient-to-r from-[#5A7A64] to-[#6B7B5C] py-4 shadow-md">
+    <div class="max-w-4xl mx-auto px-4 flex items-center">
+      <svg width="140" height="32" viewBox="0 0 140 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 8C12 8 18 14 18 17C18 19.8 15.8 22 13 22C10.2 22 8 19.8 8 17C8 14 12 8 12 8Z" fill="white" fill-opacity="0.95"/>
+        <path d="M10 18L11.5 16.5L13 17.5L14.5 15L16 16.5" stroke="#8B6B4A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="28" y="20" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="white" letter-spacing="0.5">滴灌投资</text>
+      </svg>
+      <span class="ml-3 text-white/70 text-sm">智能评估平台</span>
+    </div>
+  </div>
+
+  <!-- 主内容 -->
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    ${raw(content)}
+  </main>
+
+  <!-- Toast通知 -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-3"></div>
+
+  <script>
+    // Toast通知函数
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const styles = {
+        success: { bg: 'bg-emerald-500', icon: 'fa-check-circle' },
+        error: { bg: 'bg-red-500', icon: 'fa-exclamation-circle' },
+        info: { bg: 'bg-blue-500', icon: 'fa-info-circle' },
+        warning: { bg: 'bg-amber-500', icon: 'fa-exclamation-triangle' }
+      };
+      const style = styles[type] || styles.success;
+      
+      toast.className = style.bg + ' text-white px-5 py-3 rounded-xl shadow-lg flex items-center space-x-3 transform translate-x-full transition-all duration-300 ease-out';
+      toast.innerHTML = '<i class="fas ' + style.icon + ' text-lg"></i><span class="font-medium">' + message + '</span>';
+      
+      container.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.remove('translate-x-full'));
+      setTimeout(() => {
+        toast.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // API调用封装
+    async function apiCall(url, options = {}) {
+      try {
+        const response = await fetch(url, {
+          headers: { 'Content-Type': 'application/json', ...options.headers },
+          ...options
+        });
+        const data = await response.json();
+        if (!data.success) {
+          const errorMsg = data.error || '请求失败';
+          console.error('API错误:', url, errorMsg);
+          throw new Error(errorMsg);
+        }
+        return data;
+      } catch (error) {
+        if (!options.silent) {
+          showToast(error.message, 'error');
+        }
+        throw error;
+      }
+    }
+  </script>
+</body>
+</html>
+`
+
 // 通用页面模板 - GenSpark专业风格设计
 const baseLayout = (title: string, content: string, activeNav: string = '') => html`
 <!DOCTYPE html>
@@ -820,6 +978,14 @@ pages.get('/deals', (c) => {
 
 // 提交申请页面
 pages.get('/submit', (c) => {
+  const industryParam = c.req.query('industry')
+  
+  // 如果有行业参数，使用简化布局（无导航栏）
+  if (industryParam) {
+    return c.html(simpleLayout('提交申请', submitPageContent))
+  }
+  
+  // 否则使用完整布局
   return c.html(baseLayout('提交申请', submitPageContent, 'submit'))
 })
 

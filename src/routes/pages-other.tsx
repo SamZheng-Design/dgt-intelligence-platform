@@ -308,22 +308,22 @@ export const submitPageContent = `
 <div class="gs-card overflow-hidden">
   <!-- 步骤指示器 -->
   <div class="bg-slate-50 px-6 py-5 border-b border-slate-100">
-    <div class="flex items-center justify-center space-x-3">
+    <div class="flex items-center justify-center space-x-3" id="step-indicator">
       <div class="flex items-center" id="submit-step-1">
         <div class="w-9 h-9 rounded-full bg-primary-500 text-white flex items-center justify-center font-semibold text-sm shadow-sm">1</div>
         <span class="ml-2 font-medium text-primary-600">选择行业</span>
       </div>
-      <div class="w-16 h-0.5 bg-slate-200 rounded"></div>
+      <div class="w-16 h-0.5 bg-slate-200 rounded step-divider"></div>
       <div class="flex items-center opacity-50" id="submit-step-2">
         <div class="w-9 h-9 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-semibold text-sm">2</div>
         <span class="ml-2 font-medium text-slate-500">基本信息</span>
       </div>
-      <div class="w-16 h-0.5 bg-slate-200 rounded"></div>
+      <div class="w-16 h-0.5 bg-slate-200 rounded step-divider"></div>
       <div class="flex items-center opacity-50" id="submit-step-3">
         <div class="w-9 h-9 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-semibold text-sm">3</div>
         <span class="ml-2 font-medium text-slate-500">项目材料</span>
       </div>
-      <div class="w-16 h-0.5 bg-slate-200 rounded"></div>
+      <div class="w-16 h-0.5 bg-slate-200 rounded step-divider"></div>
       <div class="flex items-center opacity-50" id="submit-step-4">
         <div class="w-9 h-9 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-semibold text-sm">4</div>
         <span class="ml-2 font-medium text-slate-500">确认提交</span>
@@ -822,6 +822,13 @@ export const submitPageContent = `
   let currentStep = 1;
   const totalSteps = 4;
   let isDouyinMode = false;
+  let presetIndustry = null; // 预设的行业 ID
+
+  // 从 URL 获取预设行业参数
+  function getPresetIndustry() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('industry');
+  }
 
   // 检测是否为抖音投流模式
   function checkDouyinMode() {
@@ -838,12 +845,38 @@ export const submitPageContent = `
   function updateStepUI() {
     checkDouyinMode();
     
+    // 如果有预设行业，隐藏步骤 1
+    const skipStep1 = presetIndustry !== null;
+    
+    // 特殊处理：隐藏步骤 1 和第一个连接线
+    if (skipStep1) {
+      const step1El = document.getElementById('submit-step-1');
+      if (step1El) {
+        step1El.style.display = 'none';
+        // 隐藏步骤 1 后面的连接线
+        const nextSibling = step1El.nextElementSibling;
+        if (nextSibling && nextSibling.classList.contains('step-divider')) {
+          nextSibling.style.display = 'none';
+        }
+      }
+      const formStep1 = document.getElementById('form-step-1');
+      if (formStep1) formStep1.classList.add('hidden');
+    }
+    
     for (let i = 1; i <= totalSteps; i++) {
       const stepEl = document.getElementById(\`submit-step-\${i}\`);
       // 通用表单
       const formEl = document.getElementById(\`form-step-\${i}\`);
       // 抖音专属表单（只有Step 2有专属版）
       const douyinFormEl = document.getElementById(\`form-step-\${i}-douyin\`);
+      
+      // 如果跳过步骤 1，跳过该步骤的处理（已在上面处理）
+      if (i === 1 && skipStep1) {
+        continue;
+      }
+      
+      // 计算显示的步骤编号（如果跳过步骤1，则步骤2显示为1，步骤3显示为2，步骤4显示为3）
+      const displayStepNumber = skipStep1 ? i - 1 : i;
       
       if (i < currentStep) {
         stepEl.classList.remove('opacity-50');
@@ -854,14 +887,14 @@ export const submitPageContent = `
         const activeColor = isDouyinMode ? '#5A7A64' : 'primary-500';
         stepEl.querySelector('div').className = 'w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-sm';
         stepEl.querySelector('div').style.backgroundColor = activeColor;
-        stepEl.querySelector('div').textContent = i;
+        stepEl.querySelector('div').textContent = displayStepNumber;
         stepEl.querySelector('span').className = 'ml-2 font-medium';
         stepEl.querySelector('span').style.color = activeColor;
       } else {
         stepEl.classList.add('opacity-50');
         stepEl.querySelector('div').className = 'w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-sm';
         stepEl.querySelector('div').style.backgroundColor = '';
-        stepEl.querySelector('div').textContent = i;
+        stepEl.querySelector('div').textContent = displayStepNumber;
         stepEl.querySelector('span').className = 'ml-2 font-medium text-gray-600';
         stepEl.querySelector('span').style.color = '';
       }
@@ -880,7 +913,9 @@ export const submitPageContent = `
       }
     }
     
-    document.getElementById('btn-prev').classList.toggle('hidden', currentStep === 1);
+    // 如果有预设行业，步骤 2 就是第一步，不显示返回按钮
+    const isFirstStep = skipStep1 ? currentStep === 2 : currentStep === 1;
+    document.getElementById('btn-prev').classList.toggle('hidden', isFirstStep);
     
     // 更新按钮样式
     const btnNext = document.getElementById('btn-next');
@@ -945,7 +980,8 @@ export const submitPageContent = `
   }
 
   function prevStep() {
-    if (currentStep > 1) {
+    const minStep = presetIndustry !== null ? 2 : 1;
+    if (currentStep > minStep) {
       currentStep--;
       updateStepUI();
     }
@@ -1037,6 +1073,90 @@ export const submitPageContent = `
     }
   }
 
+  // 显示提交成功页面（用于预设行业模式）
+  function showSuccessPage(dealId, companyName) {
+    const mainContent = document.querySelector('main');
+    if (!mainContent) return;
+    
+    const industryMap = { 
+      ecommerce: '电商', overseas: '海外', 'light-asset': '轻资产', retail: '零售',
+      catering: '餐饮', education: '教育培训', healthcare: '医疗健康', entertainment: '文娱', 
+      service: '生活服务', 'douyin-ecommerce': '抖音投流'
+    };
+    const industryName = industryMap[presetIndustry] || presetIndustry;
+    
+    mainContent.innerHTML = \`
+      <div class="min-h-[500px] flex items-center justify-center">
+        <div class="gs-card p-10 max-w-2xl w-full text-center">
+          <!-- 成功图标 -->
+          <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <i class="fas fa-check text-white text-4xl"></i>
+          </div>
+          
+          <!-- 标题 -->
+          <h2 class="text-3xl font-bold text-slate-800 mb-3">
+            提交成功！
+          </h2>
+          <p class="text-slate-500 text-lg mb-8">
+            您的申请已成功提交，我们将尽快与您联系
+          </p>
+          
+          <!-- 信息卡片 -->
+          <div class="bg-gradient-to-r from-[#F2EEE4] to-[#EAE6DC] rounded-xl p-6 mb-8 text-left">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-xs text-slate-500 mb-1">申请单号</p>
+                <p class="text-lg font-semibold text-[#5A7A64]">#\${dealId}</p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500 mb-1">申请行业</p>
+                <p class="text-lg font-semibold text-slate-700">\${industryName}</p>
+              </div>
+              <div class="col-span-2">
+                <p class="text-xs text-slate-500 mb-1">企业名称</p>
+                <p class="text-base font-medium text-slate-700">\${companyName}</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 下一步说明 -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-5 mb-6 text-left">
+            <div class="flex items-start">
+              <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                <i class="fas fa-info-circle text-white text-lg"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-semibold text-blue-900 mb-2">后续流程</h4>
+                <ul class="text-sm text-blue-800 space-y-1.5">
+                  <li class="flex items-start">
+                    <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
+                    <span>我们的团队将在 <strong>1-2 个工作日</strong>内审核您的申请</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
+                    <span>审核通过后，我们会通过电话或邮件与您联系</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
+                    <span>您可以保存此页面或截图作为申请凭证</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 联系方式 -->
+          <div class="border-t border-slate-200 pt-6">
+            <p class="text-sm text-slate-500 mb-3 text-center">如有疑问，请扫码联系我们</p>
+            <div class="flex items-center justify-center">
+              <img src="/static/qr_code.jpg" alt="企业微信二维码" class="w-32 h-32" />
+            </div>
+          </div>
+        </div>
+      </div>
+    \`;
+  }
+
   // 通用提交
   async function submitDeal() {
     const deal = {
@@ -1057,8 +1177,14 @@ export const submitPageContent = `
         method: 'POST',
         body: JSON.stringify(deal)
       });
-      showToast('提交成功！标的ID: ' + result.data.id, 'success');
-      setTimeout(() => window.location.href = '/deals', 2000);
+      
+      // 如果有预设行业，显示成功页面；否则跳转
+      if (presetIndustry) {
+        showSuccessPage(result.data.id, deal.company_name);
+      } else {
+        showToast('提交成功！标的ID: ' + result.data.id, 'success');
+        setTimeout(() => window.location.href = '/deals', 2000);
+      }
     } catch (e) {}
   }
 
@@ -1155,8 +1281,14 @@ ROI: \${douyinData.roi || '-'}, GMV: \${douyinData.gmv || '-'}万元\`,
         method: 'POST',
         body: JSON.stringify(deal)
       });
-      showToast('抖音投流申请提交成功！标的ID: ' + result.data.id, 'success');
-      setTimeout(() => window.location.href = '/deals/' + result.data.id, 2000);
+      
+      // 如果有预设行业，显示成功页面；否则跳转
+      if (presetIndustry) {
+        showSuccessPage(result.data.id, douyinData.company_name);
+      } else {
+        showToast('抖音投流申请提交成功！标的ID: ' + result.data.id, 'success');
+        setTimeout(() => window.location.href = '/deals/' + result.data.id, 2000);
+      }
     } catch (e) {
       showToast('提交失败，请重试', 'error');
     }
@@ -1258,8 +1390,55 @@ ROI: \${douyinData.roi || '-'}, GMV: \${douyinData.gmv || '-'}万元\`,
     updateSubmitFilesList();
   }
 
-  // 页面加载时检查行业选择
+  // 页面加载时检查行业选择和URL参数
   document.addEventListener('DOMContentLoaded', () => {
+    // 获取URL中的预设行业参数
+    presetIndustry = getPresetIndustry();
+    
+    if (presetIndustry) {
+      // 验证行业ID是否有效
+      const validIndustries = ['light-asset', 'retail', 'catering', 'ecommerce', 
+                                'education', 'healthcare', 'entertainment', 'service', 
+                                'douyin-ecommerce', 'overseas'];
+      
+      if (validIndustries.includes(presetIndustry)) {
+        // 自动选中对应的行业
+        const industryRadio = document.querySelector(\`input[name="industry"][value="\${presetIndustry}"]\`);
+        if (industryRadio) {
+          industryRadio.checked = true;
+          handleIndustryChange(presetIndustry);
+        }
+        
+        // 跳到步骤 2
+        currentStep = 2;
+        
+        // 添加提示信息
+        const formStep2 = document.getElementById('form-step-2');
+        const formStep2Douyin = document.getElementById('form-step-2-douyin');
+        const targetForm = presetIndustry === 'douyin-ecommerce' ? formStep2Douyin : formStep2;
+        
+        if (targetForm) {
+          const industryMap = { 
+            ecommerce: '电商', overseas: '海外', 'light-asset': '轻资产', retail: '零售',
+            catering: '餐饮', education: '教育培训', healthcare: '医疗健康', entertainment: '文娱', 
+            service: '生活服务', 'douyin-ecommerce': '抖音投流'
+          };
+          
+          const industryName = industryMap[presetIndustry] || presetIndustry;
+          const hint = document.createElement('div');
+          hint.className = 'mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700';
+          hint.innerHTML = \`<i class="fas fa-info-circle mr-2"></i>已为您预选行业：<strong>\${industryName}</strong>\`;
+          targetForm.insertBefore(hint, targetForm.firstChild);
+        }
+      } else {
+        console.warn('无效的行业ID:', presetIndustry);
+        presetIndustry = null;
+      }
+    }
+    
+    // 更新UI
+    updateStepUI();
+    
     // 监听所有行业选择变化
     document.querySelectorAll('input[name="industry"]').forEach(radio => {
       radio.addEventListener('change', function() {
