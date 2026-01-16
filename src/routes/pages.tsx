@@ -609,7 +609,7 @@ pages.get('/', (c) => {
               <i class="fas fa-file-upload"></i>提交融资申请
             </a>
             <a href="/deals" class="gs-btn gs-btn-secondary w-full py-2.5 text-sm">
-              <i class="fas fa-folder-open"></i>查看我的标的
+              <i class="fas fa-folder-open"></i>标的管理
             </a>
           </div>
         </div>
