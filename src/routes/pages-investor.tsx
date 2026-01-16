@@ -655,14 +655,19 @@ export const investorPortalPageContent = `
       regions: regionPercent
     };
     
-    // 演示回款数据（模拟每日收益）
-    const today = new Date();
+    // 演示回款数据（模拟每日收益）- 修改为更平滑的数据，避免某天突然很高
+    // 使用固定的当前日期，确保数据一致性
+    const currentDate = new Date('2026-01-16');
     investorData.cashflows = [];
     let cumulative = 0;
+    // 基准日均回款：100个标的，平均每个标的每日产生约1.7万回款
+    const baseDaily = 170; // 基准值：170万/天
     for (let i = 30; i >= 0; i--) {
-      const date = new Date(today);
+      const date = new Date(currentDate);
       date.setDate(date.getDate() - i);
-      const dailyAmount = Math.random() * 150 + 80;  // 每日80-230万（100标的收益更多）
+      // 使用较小的随机波动（±15%），确保数据平滑
+      const variation = 0.85 + Math.random() * 0.30; // 波动范围：85%-115%
+      const dailyAmount = baseDaily * variation;
       cumulative += dailyAmount;
       investorData.cashflows.push({
         date: date.toISOString().split('T')[0],

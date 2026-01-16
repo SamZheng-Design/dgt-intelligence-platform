@@ -43,12 +43,12 @@ export interface Transaction {
 // 投资时间分布配置（模拟12个月内陆续投资，从2025年1月开始）
 const INVESTMENT_TIMELINE = {
   startDate: '2025-01-15', // 开始投资日期
-  endDate: '2026-01-15',   // 当前日期
+  endDate: '2026-01-16',   // 当前日期 - 更新到1月16号
   phases: [
-    { name: '初期', months: [0, 1], dealCount: 20, description: '试点阶段' },
-    { name: '扩张期', months: [2, 3, 4], dealCount: 30, description: '快速扩张' },
-    { name: '稳定期', months: [5, 6, 7, 8], dealCount: 30, description: '稳定增长' },
-    { name: '近期', months: [9, 10, 11], dealCount: 20, description: '最新投资' }
+    { name: '初期', months: [0, 1], dealCount: 15, description: '试点阶段' },
+    { name: '扩张期', months: [2, 3, 4, 5], dealCount: 25, description: '快速扩张' },
+    { name: '稳定期', months: [6, 7, 8, 9], dealCount: 35, description: '稳定增长' },
+    { name: '近期', months: [10, 11], dealCount: 25, description: '最新投资' }
   ]
 };
 
@@ -362,7 +362,7 @@ function shuffleWithSeed(array: any[], seed: number): any[] {
 
 // 生成所有标的的投后数据
 export function generateAllPostInvestmentData(deals: any[]) {
-  const currentDate = new Date('2026-01-15'); // 当前日期
+  const currentDate = new Date('2026-01-16'); // 当前日期 - 更新到1月16号
   const allCashflows: CashflowRecord[] = [];
   const allTransactions: Transaction[] = [];
   const dealUpdates: any[] = [];
