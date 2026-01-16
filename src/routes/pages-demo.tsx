@@ -2,20 +2,65 @@
 export const demoPageContent = `
 <!-- 页面标题 -->
 <div class="flex items-center justify-between mb-6">
-  <div>
-    <h1 class="text-2xl font-bold text-[slate-800]">标的评估</h1>
-    <p class="text-gray-500">选择标的项目，进行多智能体评估流程（含详细推理过程）</p>
+  <div class="flex items-center">
+    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mr-4 shadow-lg">
+      <i class="fas fa-clipboard-check text-white text-xl"></i>
+    </div>
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">标的智能评估</h1>
+      <p class="text-gray-500 text-sm">多智能体协作评估流程 · 实时推理过程可视化 · AI辅助投资决策</p>
+    </div>
   </div>
   <div class="flex space-x-2">
-    <button onclick="toggleAllDetails()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+    <button onclick="toggleAllDetails()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
       <i class="fas fa-eye mr-2"></i><span id="toggle-all-text">展开全部</span>
     </button>
-    <button onclick="resetEvaluation()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+    <button onclick="resetEvaluation()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
       <i class="fas fa-redo mr-2"></i>重置
     </button>
-    <button onclick="startEvaluation()" id="btn-start" class="px-6 py-2 bg-gradient-to-r from-[primary-500] to-[violet-500] text-white rounded-lg hover:opacity-90 transition">
+    <button onclick="startEvaluation()" id="btn-start" class="px-6 py-2 bg-gradient-to-r from-[#5A7A64] to-[#4A6854] text-white rounded-lg hover:opacity-90 transition shadow-md">
       <i class="fas fa-play mr-2"></i>开始评估
     </button>
+  </div>
+</div>
+
+<!-- 评估概览统计 -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div class="gs-card p-4 flex items-center space-x-4">
+    <div class="w-10 h-10 rounded-lg bg-violet-50 flex items-center justify-center">
+      <i class="fas fa-robot text-violet-500"></i>
+    </div>
+    <div>
+      <p class="text-xs text-slate-500">智能体数量</p>
+      <p class="text-xl font-bold text-slate-800" id="stat-agent-count">-</p>
+    </div>
+  </div>
+  <div class="gs-card p-4 flex items-center space-x-4">
+    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+      <i class="fas fa-layer-group text-blue-500"></i>
+    </div>
+    <div>
+      <p class="text-xs text-slate-500">待评估标的</p>
+      <p class="text-xl font-bold text-slate-800" id="stat-pending-deals">-</p>
+    </div>
+  </div>
+  <div class="gs-card p-4 flex items-center space-x-4">
+    <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
+      <i class="fas fa-check-circle text-emerald-500"></i>
+    </div>
+    <div>
+      <p class="text-xs text-slate-500">今日通过</p>
+      <p class="text-xl font-bold text-emerald-600" id="stat-today-passed">-</p>
+    </div>
+  </div>
+  <div class="gs-card p-4 flex items-center space-x-4">
+    <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+      <i class="fas fa-clock text-amber-500"></i>
+    </div>
+    <div>
+      <p class="text-xs text-slate-500">平均耗时</p>
+      <p class="text-xl font-bold text-slate-800" id="stat-avg-time">~2.5分</p>
+    </div>
   </div>
 </div>
 
@@ -601,7 +646,8 @@ export const demoPageContent = `
       } catch (e) {}
       
       return \`
-        <div class="deal-card p-3 border rounded-lg hover:shadow-md \${isSelected ? 'selected border-[primary-500]' : 'border-gray-200'}" 
+        <div class="deal-card p-3 border rounded-lg hover:shadow-md transition-all \${isSelected ? 'selected border-[primary-500] bg-[#5A7A64]/5' : 'border-gray-200 hover:border-[#5A7A64]/50'}" 
+             data-deal-id="\${deal.id}"
              onclick="selectDeal('\${deal.id}')">
           <div class="flex items-start justify-between mb-2">
             <div class="flex items-center space-x-2">
@@ -1906,10 +1952,36 @@ export const demoPageContent = `
     }
   });
 
+  // 检查URL参数并预选标的
+  function checkUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dealId = urlParams.get('deal');
+    if (dealId) {
+      // 等待标的列表加载完成后选择对应标的
+      const checkDealsInterval = setInterval(() => {
+        const dealCard = document.querySelector(\`[data-deal-id="\${dealId}"]\`);
+        if (dealCard) {
+          clearInterval(checkDealsInterval);
+          // 模拟点击选择该标的
+          selectDeal(dealId);
+          showToast(\`已预选标的 \${dealId}，可以直接开始评估\`, 'success');
+          // 滚动到标的选择区域
+          dealCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // 高亮效果
+          dealCard.classList.add('ring-2', 'ring-[#5A7A64]', 'ring-offset-2');
+          setTimeout(() => dealCard.classList.remove('ring-2', 'ring-[#5A7A64]', 'ring-offset-2'), 3000);
+        }
+      }, 500);
+      // 最多等待10秒
+      setTimeout(() => clearInterval(checkDealsInterval), 10000);
+    }
+  }
+  
   // 初始化
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(loadAllDeals, 300);
     setTimeout(loadEvaluationAgents, 500);
+    setTimeout(checkUrlParams, 1000);
   });
 </script>
 `

@@ -13,22 +13,36 @@ export const dealDetailPageContent = `
   
   <!-- 内容区域 -->
   <div id="deal-content" class="hidden">
+    <!-- 面包屑导航 -->
+    <nav class="flex items-center text-sm text-slate-500 mb-4">
+      <a href="/" class="hover:text-[#5A7A64] transition">
+        <i class="fas fa-home mr-1"></i>工作台
+      </a>
+      <i class="fas fa-chevron-right mx-2 text-xs text-slate-300"></i>
+      <a href="/deals" class="hover:text-[#5A7A64] transition">标的管理</a>
+      <i class="fas fa-chevron-right mx-2 text-xs text-slate-300"></i>
+      <span id="breadcrumb-deal-name" class="text-slate-800 font-medium">标的详情</span>
+    </nav>
+    
     <!-- 顶部导航 -->
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center space-x-4">
-        <a href="/deals" class="text-gray-500 hover:text-gray-700">
-          <i class="fas fa-arrow-left mr-2"></i>返回列表
+        <a href="/deals" class="text-slate-500 hover:text-[#5A7A64] transition group flex items-center">
+          <div class="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-[#5A7A64]/10 flex items-center justify-center mr-2 transition">
+            <i class="fas fa-arrow-left text-sm"></i>
+          </div>
+          返回列表
         </a>
-        <span class="text-gray-300">|</span>
-        <h1 id="deal-title" class="text-xl font-bold text-[slate-800]"></h1>
+        <span class="text-slate-200">|</span>
+        <h1 id="deal-title" class="text-xl font-bold text-slate-800"></h1>
         <span id="deal-status-badge" class="px-3 py-1 rounded-full text-sm"></span>
       </div>
       <div class="flex items-center space-x-3">
-        <button onclick="openUploadModal()" class="px-4 py-2 bg-[violet-500] text-white rounded-lg hover:bg-[slate-800] transition">
-          <i class="fas fa-upload mr-2"></i>上传材料
+        <button onclick="openUploadModal()" class="gs-btn gs-btn-secondary px-4 py-2 text-sm">
+          <i class="fas fa-upload"></i>上传材料
         </button>
-        <button id="btn-start-eval" onclick="startEvaluation()" class="px-4 py-2 bg-gradient-to-r from-[primary-500] to-[primary-600] text-white rounded-lg hover:opacity-90 transition">
-          <i class="fas fa-play mr-2"></i>开始评估
+        <button id="btn-start-eval" onclick="goToEvaluation()" class="gs-btn gs-btn-primary px-4 py-2 text-sm">
+          <i class="fas fa-clipboard-check"></i>进入评估
         </button>
       </div>
     </div>
@@ -1370,6 +1384,14 @@ export const dealDetailPageContent = `
   // ============================================
   // 评估功能
   // ============================================
+  
+  // 跳转到评估页面（预选当前标的）
+  function goToEvaluation() {
+    // 跳转到评估页面，通过URL参数传递标的ID
+    window.location.href = '/evaluation?deal=' + dealId;
+    showToast('正在跳转到评估页面...', 'info');
+  }
+  
   async function startEvaluation() {
     const btn = document.getElementById('btn-start-eval');
     btn.disabled = true;

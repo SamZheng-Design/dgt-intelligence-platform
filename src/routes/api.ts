@@ -2013,6 +2013,159 @@ api.get('/investor/announcements', async (c) => {
   }
 })
 
+// 获取单个已投资标的详情
+api.get('/investor/deal/:id', async (c) => {
+  const db = c.env.DB
+  const dealId = c.req.param('id')
+  
+  try {
+    // 从数据库查询标的详情
+    const deal = await db.prepare(`
+      SELECT * FROM deals WHERE id = ?
+    `).bind(dealId).first()
+    
+    if (deal) {
+      return c.json({ success: true, data: deal })
+    }
+    
+    // 如果数据库中没有，从演示数据查找
+    const demoData = generateDemoInvestorData()
+    const demoDeal = demoData.deals.find((d: any) => d.id === dealId)
+    
+    if (demoDeal) {
+      return c.json({ success: true, data: demoDeal })
+    }
+    
+    return c.json({ success: false, error: '标的不存在' }, 404)
+  } catch (error: any) {
+    // 从演示数据查找
+    const demoData = generateDemoInvestorData()
+    const demoDeal = demoData.deals.find((d: any) => d.id === dealId)
+    
+    if (demoDeal) {
+      return c.json({ success: true, data: demoDeal })
+    }
+    
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// 获取单个标的的回款记录
+api.get('/investor/deal/:id/cashflows', async (c) => {
+  const db = c.env.DB
+  const dealId = c.req.param('id')
+  
+  try {
+    // 从数据库查询回款记录
+    const result = await db.prepare(`
+      SELECT * FROM cashflow_records 
+      WHERE deal_id = ?
+      ORDER BY payment_date DESC
+    `).bind(dealId).all()
+    
+    if (result.results && result.results.length > 0) {
+      return c.json({ success: true, data: result.results })
+    }
+    
+    // 如果没有真实数据，生成演示数据
+    const demoData = generateDemoInvestorData()
+    const deal = demoData.deals.find((d: any) => d.id === dealId)
+    
+    if (deal) {
+      // 基于标的生成模拟回款记录
+      const cashflows = generateDemoCashflowsForDeal(deal)
+      return c.json({ success: true, data: cashflows })
+    }
+    
+    return c.json({ success: true, data: [] })
+  } catch (error: any) {
+    // 从演示数据生成
+    const demoData = generateDemoInvestorData()
+    const deal = demoData.deals.find((d: any) => d.id === dealId)
+    
+    if (deal) {
+      const cashflows = generateDemoCashflowsForDeal(deal)
+      return c.json({ success: true, data: cashflows })
+    }
+    
+    return c.json({ success: true, data: [] })
+  }
+})
+
+// 为单个标的生成演示回款数据
+function generateDemoCashflowsForDeal(deal: any): any[] {
+  const cashflows: any[] = []
+  const startDate = new Date(deal.start_date || '2025-06-01')
+  const today = new Date('2026-01-16')
+  const frequency = deal.cashflow_frequency || 'daily'
+  
+  let currentDate = new Date(startDate)
+  let cumulative = 0
+  let recordNum = 1
+  
+  // 计算每期回款金额
+  const totalCashflow = deal.total_cashflow || 0
+  let periodsCount = 0
+  
+  // 计算总周期数
+  while (currentDate < today) {
+    periodsCount++
+    if (frequency === 'daily') {
+      currentDate.setDate(currentDate.getDate() + 1)
+    } else if (frequency === 'weekly') {
+      currentDate.setDate(currentDate.getDate() + 7)
+    } else {
+      currentDate.setMonth(currentDate.getMonth() + 1)
+    }
+  }
+  
+  // 重置日期
+  currentDate = new Date(startDate)
+  const avgAmount = periodsCount > 0 ? totalCashflow / periodsCount : 0
+  
+  // 生成回款记录
+  while (currentDate < today && cashflows.length < 100) { // 限制最多100条
+    const periodStart = new Date(currentDate)
+    
+    // 计算周期结束日期
+    let periodEnd = new Date(currentDate)
+    if (frequency === 'daily') {
+      periodEnd.setDate(periodEnd.getDate() + 1)
+    } else if (frequency === 'weekly') {
+      periodEnd.setDate(periodEnd.getDate() + 7)
+    } else {
+      periodEnd.setMonth(periodEnd.getMonth() + 1)
+    }
+    
+    // 添加随机波动
+    const variation = 0.8 + Math.random() * 0.4 // 80% - 120%
+    const amount = parseFloat((avgAmount * variation).toFixed(2))
+    cumulative += amount
+    
+    // 支付日期在周期结束后1-3天
+    const paymentDate = new Date(periodEnd)
+    paymentDate.setDate(paymentDate.getDate() + Math.floor(Math.random() * 3) + 1)
+    
+    cashflows.push({
+      id: `CF-${deal.id}-${String(recordNum).padStart(3, '0')}`,
+      deal_id: deal.id,
+      amount: amount,
+      currency: 'CNY',
+      period_type: frequency,
+      period_start: periodStart.toISOString().split('T')[0],
+      period_end: periodEnd.toISOString().split('T')[0],
+      payment_date: paymentDate.toISOString().split('T')[0],
+      status: paymentDate < today ? 'paid' : 'pending',
+      cumulative: parseFloat(cumulative.toFixed(2))
+    })
+    
+    currentDate = periodEnd
+    recordNum++
+  }
+  
+  return cashflows.reverse() // 最新的在前
+}
+
 // 更新标的为已投资状态
 api.post('/investor/invest/:dealId', async (c) => {
   const db = c.env.DB

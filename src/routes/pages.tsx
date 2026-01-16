@@ -374,25 +374,44 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
           </a>
           <div class="hidden md:flex items-center space-x-1">
             <a href="/" class="nav-item ${activeNav === 'dashboard' ? 'active' : ''}">
-              <i class="fas fa-chart-line mr-2 text-sm"></i>工作台
+              <i class="fas fa-home mr-2 text-sm"></i>首页
             </a>
-            <a href="/agents" class="nav-item ${activeNav === 'agents' ? 'active' : ''}">
-              <i class="fas fa-robot mr-2 text-sm"></i>智能体
-            </a>
-            <a href="/workflow" class="nav-item ${activeNav === 'workflow' ? 'active' : ''}">
-              <i class="fas fa-sitemap mr-2 text-sm"></i>工作流
-            </a>
-            <a href="/deals" class="nav-item ${activeNav === 'deals' ? 'active' : ''}">
-              <i class="fas fa-briefcase mr-2 text-sm"></i>标的管理
-            </a>
-            <a href="/submit" class="nav-item ${activeNav === 'submit' ? 'active' : ''}">
-              <i class="fas fa-file-upload mr-2 text-sm"></i>提交申请
-            </a>
-            <a href="/evaluation" class="nav-item ${activeNav === 'evaluation' ? 'active' : ''}">
-              <i class="fas fa-clipboard-check mr-2 text-sm"></i>标的评估
-            </a>
-            <a href="/investor" class="nav-item ${activeNav === 'investor' ? 'active' : ''}">
-              <i class="fas fa-chart-pie mr-2 text-sm"></i>投资人入口
+            <!-- 融资方入口 -->
+            <div class="relative group">
+              <button class="nav-item flex items-center ${['submit', 'deals'].includes(activeNav) ? 'active' : ''}">
+                <i class="fas fa-building mr-2 text-sm"></i>融资方
+                <i class="fas fa-chevron-down ml-1 text-xs opacity-60"></i>
+              </button>
+              <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <a href="/submit" class="flex items-center px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-t-xl">
+                  <i class="fas fa-file-upload mr-3 text-[#5A7A64]"></i>提交融资申请
+                </a>
+                <a href="/deals" class="flex items-center px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-b-xl">
+                  <i class="fas fa-folder-open mr-3 text-[#8B6B4A]"></i>我的标的
+                </a>
+              </div>
+            </div>
+            <!-- 运营方/分析师入口 -->
+            <div class="relative group">
+              <button class="nav-item flex items-center ${['evaluation', 'agents', 'workflow'].includes(activeNav) ? 'active' : ''}">
+                <i class="fas fa-user-tie mr-2 text-sm"></i>分析师
+                <i class="fas fa-chevron-down ml-1 text-xs opacity-60"></i>
+              </button>
+              <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <a href="/evaluation" class="flex items-center px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-t-xl">
+                  <i class="fas fa-clipboard-check mr-3 text-[#5A7A64]"></i>标的评估
+                </a>
+                <a href="/agents" class="flex items-center px-4 py-3 text-sm text-slate-700 hover:bg-slate-50">
+                  <i class="fas fa-robot mr-3 text-violet-500"></i>智能体配置
+                </a>
+                <a href="/workflow" class="flex items-center px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-b-xl">
+                  <i class="fas fa-sitemap mr-3 text-blue-500"></i>工作流编排
+                </a>
+              </div>
+            </div>
+            <!-- 投资人入口 -->
+            <a href="/investor" class="nav-item ${activeNav === 'investor' ? 'active' : ''}" style="background: ${activeNav === 'investor' ? 'rgba(139,107,74,0.3)' : 'transparent'}; border: 1px solid ${activeNav === 'investor' ? 'rgba(139,107,74,0.5)' : 'transparent'};">
+              <i class="fas fa-landmark mr-2 text-sm"></i>投资人入口
             </a>
           </div>
         </div>
@@ -569,41 +588,100 @@ pages.get('/', (c) => {
       </div>
     </div>
 
-    <!-- 快速操作和智能体状态 -->
+    <!-- 角色入口卡片 - 按用户类型分组 -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
-      <!-- 快速操作 -->
-      <div class="gs-card p-6">
-        <h3 class="text-base font-semibold mb-5 flex items-center text-slate-800">
-          <div class="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center mr-3">
-            <i class="fas fa-bolt text-primary-500 text-sm"></i>
+      <!-- 融资方入口 -->
+      <div class="gs-card p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#5A7A64]/10 to-transparent rounded-bl-full"></div>
+        <div class="relative">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5A7A64] to-[#4A6854] flex items-center justify-center shadow-md">
+              <i class="fas fa-building text-white text-lg"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-bold text-slate-800">融资方入口</h3>
+              <p class="text-xs text-slate-500">企业融资申请</p>
+            </div>
           </div>
-          快速操作
-        </h3>
-        <div class="space-y-3">
-          <a href="/submit" class="gs-btn gs-btn-primary w-full py-3">
-            <i class="fas fa-plus"></i>提交新标的
-          </a>
-          <a href="/evaluation" class="gs-btn gs-btn-warm w-full py-3">
-            <i class="fas fa-clipboard-check"></i>进入标的评估
-          </a>
-          <a href="/agents" class="gs-btn gs-btn-secondary w-full py-3">
-            <i class="fas fa-cog"></i>配置智能体
-          </a>
+          <p class="text-sm text-slate-600 mb-4 leading-relaxed">提交融资申请，上传商业计划书和财务报表，跟踪评估进度</p>
+          <div class="space-y-2">
+            <a href="/submit" class="gs-btn gs-btn-primary w-full py-2.5 text-sm">
+              <i class="fas fa-file-upload"></i>提交融资申请
+            </a>
+            <a href="/deals" class="gs-btn gs-btn-secondary w-full py-2.5 text-sm">
+              <i class="fas fa-folder-open"></i>查看我的标的
+            </a>
+          </div>
         </div>
       </div>
 
-      <!-- 智能体状态 -->
-      <div class="lg:col-span-2 gs-card p-6">
-        <h3 class="text-base font-semibold mb-5 flex items-center text-slate-800">
-          <div class="w-8 h-8 bg-violet-50 rounded-lg flex items-center justify-center mr-3">
-            <i class="fas fa-robot text-violet-500 text-sm"></i>
+      <!-- 分析师入口 -->
+      <div class="gs-card p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-violet-500/10 to-transparent rounded-bl-full"></div>
+        <div class="relative">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-md">
+              <i class="fas fa-user-tie text-white text-lg"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-bold text-slate-800">分析师工作台</h3>
+              <p class="text-xs text-slate-500">智能评估系统</p>
+            </div>
           </div>
-          智能体状态
-          <span class="ml-auto text-xs font-normal text-slate-400">全部正常运行</span>
-        </h3>
-        <div id="agents-status" class="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <!-- 动态加载 -->
+          <p class="text-sm text-slate-600 mb-4 leading-relaxed">运行AI智能体进行标的评估，配置评估流程和阈值参数</p>
+          <div class="space-y-2">
+            <a href="/evaluation" class="gs-btn gs-btn-warm w-full py-2.5 text-sm">
+              <i class="fas fa-clipboard-check"></i>进入标的评估
+            </a>
+            <a href="/agents" class="gs-btn gs-btn-secondary w-full py-2.5 text-sm">
+              <i class="fas fa-robot"></i>智能体配置
+            </a>
+          </div>
         </div>
+      </div>
+
+      <!-- 投资人入口 -->
+      <div class="gs-card p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-2 border-[#8B6B4A]/20">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#8B6B4A]/15 to-transparent rounded-bl-full"></div>
+        <div class="absolute top-3 right-3">
+          <span class="text-[10px] font-bold text-[#8B6B4A] bg-[#8B6B4A]/10 px-2 py-0.5 rounded-full">VIP</span>
+        </div>
+        <div class="relative">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#8B6B4A] to-[#A89A7A] flex items-center justify-center shadow-md">
+              <i class="fas fa-landmark text-white text-lg"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-bold text-slate-800">投资人门户</h3>
+              <p class="text-xs text-slate-500">投后管理看板</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-600 mb-4 leading-relaxed">查看投资组合、收益分成、回款记录，进行投后资产管理</p>
+          <div class="space-y-2">
+            <a href="/investor" class="gs-btn w-full py-2.5 text-sm text-white" style="background: linear-gradient(135deg, #8B6B4A 0%, #A89A7A 100%);">
+              <i class="fas fa-chart-pie"></i>进入投资人门户
+            </a>
+            <a href="/investor/deals" class="gs-btn gs-btn-secondary w-full py-2.5 text-sm">
+              <i class="fas fa-briefcase"></i>已投资标的
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 智能体状态 -->
+    <div class="gs-card p-6 mb-8">
+      <h3 class="text-base font-semibold mb-5 flex items-center text-slate-800">
+        <div class="w-8 h-8 bg-violet-50 rounded-lg flex items-center justify-center mr-3">
+          <i class="fas fa-robot text-violet-500 text-sm"></i>
+        </div>
+        智能体运行状态
+        <span class="ml-auto text-xs font-normal text-slate-400 flex items-center">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 pulse-dot"></span>全部正常运行
+        </span>
+      </h3>
+      <div id="agents-status" class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-3">
+        <!-- 动态加载 -->
       </div>
     </div>
 

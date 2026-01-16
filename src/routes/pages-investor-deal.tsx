@@ -3,13 +3,29 @@
 
 export const investorDealDetailPageContent = `
 <div class="mb-6">
+  <!-- 面包屑导航 -->
+  <nav class="flex items-center text-sm text-slate-500 mb-4">
+    <a href="/" class="hover:text-[#5A7A64] transition">
+      <i class="fas fa-home mr-1"></i>工作台
+    </a>
+    <i class="fas fa-chevron-right mx-2 text-xs text-slate-300"></i>
+    <a href="/investor" class="hover:text-[#5A7A64] transition">投资人入口</a>
+    <i class="fas fa-chevron-right mx-2 text-xs text-slate-300"></i>
+    <a href="/investor/deals" class="hover:text-[#5A7A64] transition">已投资标的</a>
+    <i class="fas fa-chevron-right mx-2 text-xs text-slate-300"></i>
+    <span id="breadcrumb-deal-name" class="text-slate-800 font-medium">标的详情</span>
+  </nav>
+  
   <!-- 顶部导航 -->
   <div class="flex items-center justify-between mb-6">
     <div class="flex items-center space-x-4">
-      <a href="/investor" class="text-slate-500 hover:text-slate-700 flex items-center">
-        <i class="fas fa-arrow-left mr-2"></i>返回投资人入口
+      <a href="/investor" class="text-slate-500 hover:text-[#8B6B4A] transition group flex items-center">
+        <div class="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-[#8B6B4A]/10 flex items-center justify-center mr-2 transition">
+          <i class="fas fa-arrow-left text-sm"></i>
+        </div>
+        返回投资人入口
       </a>
-      <span class="text-slate-300">|</span>
+      <span class="text-slate-200">|</span>
       <div class="flex items-center">
         <h1 id="deal-title" class="text-xl font-bold text-slate-800">加载中...</h1>
         <span id="deal-status-badge" class="ml-3 px-3 py-1 rounded-full text-sm bg-emerald-100 text-emerald-700">
@@ -18,10 +34,13 @@ export const investorDealDetailPageContent = `
       </div>
     </div>
     <div class="flex items-center space-x-3">
-      <button onclick="exportDealReport()" class="gs-btn gs-btn-secondary px-4 py-2">
+      <button onclick="viewDealManagement()" class="gs-btn gs-btn-secondary px-4 py-2 text-sm">
+        <i class="fas fa-file-alt mr-2"></i>查看标的详情
+      </button>
+      <button onclick="exportDealReport()" class="gs-btn gs-btn-secondary px-4 py-2 text-sm">
         <i class="fas fa-download mr-2"></i>导出报告
       </button>
-      <button onclick="refreshDealData()" class="gs-btn gs-btn-warm px-4 py-2">
+      <button onclick="refreshDealData()" class="gs-btn gs-btn-warm px-4 py-2 text-sm">
         <i class="fas fa-sync-alt mr-2"></i>刷新数据
       </button>
     </div>
@@ -330,54 +349,54 @@ export const investorDealDetailPageContent = `
       'DGT-2026-009': { id: 'DGT-2026-009', company_name: '途虎养车工场店（重庆渝北龙湖店）', industry: 'service', invested_amount: 180, total_cashflow: 51, cashflow_frequency: 'monthly', region: '重庆', city: '重庆', issuer: '途虎养车', description: '汽车后市场头部品牌，线上线下一体化服务，月均服务车辆1200+台次，客单价580元。', start_date: '2025-08-25', total_score: 77.9 },
       'DGT-2026-010': { id: 'DGT-2026-010', company_name: '海底捞（西安大雁塔店）', industry: 'catering', invested_amount: 300, total_cashflow: 135, cashflow_frequency: 'monthly', region: '陕西', city: '西安', issuer: '海底捞国际', description: '火锅头部品牌西安核心景区旗舰店，旅游+本地双客流叠加，月均翻台率4.5次，节假日排队平均2小时。', start_date: '2025-05-20', total_score: 88.6 },
       // 扩展20个门店标的
-      'DGT-2026-011': { id: 'DGT-2026-011', company_name: '鲍师傅糕点（苏州观前街店）', industry: 'catering', invested_amount: 45, total_cashflow: 22, cashflow_frequency: 'daily', region: '江苏', city: '苏州', issuer: '鲍师傅糕点', description: '中式糕点头部品牌，以肉松小贝为爆款产品，常年排队，日均销售1.5-2万元。', start_date: '2026-01-11', total_score: 81.2 },
-      'DGT-2026-012': { id: 'DGT-2026-012', company_name: '孩子王（郑州正弘城店）', industry: 'retail', invested_amount: 150, total_cashflow: 61, cashflow_frequency: 'daily', region: '河南', city: '郑州', issuer: '孩子王', description: '母婴零售龙头品牌A股上市公司，800平米区域旗舰店，会员消费占比90%以上。', start_date: '2026-01-11', total_score: 79.5 },
-      'DGT-2026-013': { id: 'DGT-2026-013', company_name: '通策医疗口腔（长沙五一广场店）', industry: 'service', invested_amount: 200, total_cashflow: 72, cashflow_frequency: 'weekly', region: '湖南', city: '长沙', issuer: '通策医疗', description: '口腔医疗上市公司旗下门诊，配备进口牙椅12台，专业口腔医师8人，日均接诊40-60人次。', start_date: '2026-01-12', total_score: 83.7 },
-      'DGT-2026-014': { id: 'DGT-2026-014', company_name: '宝岛眼镜（青岛万象城店）', industry: 'service', invested_amount: 65, total_cashflow: 32, cashflow_frequency: 'weekly', region: '山东', city: '青岛', issuer: '宝岛眼镜', description: '眼镜零售连锁头部品牌，提供专业验光与配镜服务，客单价450元，月均服务800+人次。', start_date: '2026-01-13', total_score: 75.8 },
-      'DGT-2026-015': { id: 'DGT-2026-015', company_name: '福奈特洗衣（天津滨江道店）', industry: 'service', invested_amount: 40, total_cashflow: 11, cashflow_frequency: 'weekly', region: '天津', city: '天津', issuer: '福奈特洗衣', description: '干洗连锁品牌核心商圈店，主打高端洗护服务，日均收件量120件，会员复购率85%。', start_date: '2026-01-13', total_score: 72.3 },
-      'DGT-2026-016': { id: 'DGT-2026-016', company_name: '瑞幸咖啡（厦门中山路店）', industry: 'catering', invested_amount: 50, total_cashflow: 16, cashflow_frequency: 'daily', region: '福建', city: '厦门', issuer: '瑞幸咖啡', description: '国产咖啡头部品牌景区旗舰店，日均杯量800+杯，旅游旺季可达1200杯以上。', start_date: '2026-01-14', total_score: 80.1 },
-      'DGT-2026-017': { id: 'DGT-2026-017', company_name: '大参林药店（合肥政务区店）', industry: 'retail', invested_amount: 80, total_cashflow: 19, cashflow_frequency: 'daily', region: '安徽', city: '合肥', issuer: '大参林', description: '连锁药店头部品牌上市公司，社区旗舰店，日均客流500+人次，医保定点药房。', start_date: '2026-01-14', total_score: 76.4 },
-      'DGT-2026-018': { id: 'DGT-2026-018', company_name: '金宝贝早教（济南恒隆广场店）', industry: 'education', invested_amount: 120, total_cashflow: 41, cashflow_frequency: 'monthly', region: '山东', city: '济南', issuer: '金宝贝早教', description: '国际早教品牌商场旗舰店，在册学员300+名，续费率75%，客单价1.8万元/年。', start_date: '2026-01-15', total_score: 74.9 },
-      'DGT-2026-019': { id: 'DGT-2026-019', company_name: '木屋烧烤（沈阳中街店）', industry: 'catering', invested_amount: 100, total_cashflow: 32, cashflow_frequency: 'monthly', region: '辽宁', city: '沈阳', issuer: '木屋烧烤', description: '连锁烧烤品牌核心商圈店，180座位，月均营收约80万元，夜间经济主力业态。', start_date: '2026-01-15', total_score: 77.6 },
-      'DGT-2026-020': { id: 'DGT-2026-020', company_name: '百果园（昆明南屏街店）', industry: 'retail', invested_amount: 55, total_cashflow: 13, cashflow_frequency: 'daily', region: '云南', city: '昆明', issuer: '百果园', description: '水果零售连锁头部品牌上市公司，云南本地水果供应优势明显，日均销售额1.2万元。', start_date: '2026-01-15', total_score: 78.2 },
-      'DGT-2026-021': { id: 'DGT-2026-021', company_name: '驰加汽车服务（石家庄万达店）', industry: 'service', invested_amount: 75, total_cashflow: 32, cashflow_frequency: 'weekly', region: '河北', city: '石家庄', issuer: '驰加汽服', description: '米其林旗下汽车养护品牌，8个工位，月均服务车辆800+台次，客单价320元。', start_date: '2026-01-15', total_score: 75.1 },
-      'DGT-2026-022': { id: 'DGT-2026-022', company_name: '马子禄牛肉面（兰州正宁路店）', industry: 'catering', invested_amount: 30, total_cashflow: 43, cashflow_frequency: 'daily', region: '甘肃', city: '兰州', issuer: '马子禄', description: '兰州拉面百年老字号，日均销售1200+碗，本地人与游客双客流，客单价18元。', start_date: '2026-01-15', total_score: 86.5 },
-      'DGT-2026-023': { id: 'DGT-2026-023', company_name: '良品铺子（长春欧亚卖场店）', industry: 'retail', invested_amount: 48, total_cashflow: 16, cashflow_frequency: 'daily', region: '吉林', city: '长春', issuer: '良品铺子', description: '零食连锁上市公司门店，日均销售额1.5万元，会员占比70%，礼盒销售占比高。', start_date: '2026-01-15', total_score: 77.8 },
-      'DGT-2026-024': { id: 'DGT-2026-024', company_name: '爱帝宫月子中心（无锡太湖新城店）', industry: 'service', invested_amount: 250, total_cashflow: 65, cashflow_frequency: 'monthly', region: '江苏', city: '无锡', issuer: '爱帝宫', description: '高端月子中心上市公司，30间月子房，入住率85%+，客单价5-15万元/月。', start_date: '2026-01-15', total_score: 82.4 },
-      'DGT-2026-025': { id: 'DGT-2026-025', company_name: '太兴餐厅（东莞松山湖店）', industry: 'catering', invested_amount: 90, total_cashflow: 14, cashflow_frequency: 'daily', region: '广东', city: '东莞', issuer: '太兴餐饮', description: '港式茶餐厅连锁品牌上市公司，科技园商务客流为主，日均营收约2万元。', start_date: '2026-01-15', total_score: 74.2 },
-      'DGT-2026-026': { id: 'DGT-2026-026', company_name: '梵音瑜伽（佛山千灯湖店）', industry: 'service', invested_amount: 70, total_cashflow: 30, cashflow_frequency: 'weekly', region: '广东', city: '佛山', issuer: '梵音瑜伽', description: '高端瑜伽连锁品牌，会员1500+人，年卡均价8000元，私教课客单价350元。', start_date: '2026-01-15', total_score: 76.9 },
-      'DGT-2026-027': { id: 'DGT-2026-027', company_name: '名创优品（南宁万象城店）', industry: 'retail', invested_amount: 60, total_cashflow: 13, cashflow_frequency: 'daily', region: '广西', city: '南宁', issuer: '名创优品', description: '生活好物零售上市公司，日均客流2000+人次，客单价35元，IP联名产品畅销。', start_date: '2026-01-15', total_score: 78.6 },
-      'DGT-2026-028': { id: 'DGT-2026-028', company_name: '宠物家（哈尔滨中央大街店）', industry: 'service', invested_amount: 50, total_cashflow: 15, cashflow_frequency: 'weekly', region: '黑龙江', city: '哈尔滨', issuer: '宠物家', description: '宠物服务连锁品牌，提供宠物洗护、寄养、用品销售，月均服务宠物600+只。', start_date: '2026-01-15', total_score: 73.5 },
-      'DGT-2026-029': { id: 'DGT-2026-029', company_name: '巴奴毛肚火锅（贵阳花果园店）', industry: 'catering', invested_amount: 180, total_cashflow: 45, cashflow_frequency: 'monthly', region: '贵州', city: '贵阳', issuer: '巴奴火锅', description: '毛肚火锅头部品牌，以产品主义著称，200座位，月均翻台率3.8次，客单价130元。', start_date: '2026-01-15', total_score: 81.7 },
-      'DGT-2026-030': { id: 'DGT-2026-030', company_name: '谜探剧本杀（武汉楚河汉街店）', industry: 'entertainment', invested_amount: 85, total_cashflow: 26, cashflow_frequency: 'monthly', region: '湖北', city: '武汉', issuer: '谜探文娱', description: '沉浸式剧本杀连锁品牌，12个主题房间，周末出租率95%+，客单价150元/人。', start_date: '2026-01-15', total_score: 72.8 },
+      'DGT-2026-011': { id: 'DGT-2026-011', company_name: '鲍师傅糕点（苏州观前街店）', industry: 'catering', invested_amount: 45, total_cashflow: 22, cashflow_frequency: 'daily', region: '江苏', city: '苏州', issuer: '鲍师傅糕点', description: '中式糕点头部品牌，以肉松小贝为爆款产品，常年排队，日均销售1.5-2万元。', start_date: '2025-09-15', total_score: 81.2 },
+      'DGT-2026-012': { id: 'DGT-2026-012', company_name: '孩子王（郑州正弘城店）', industry: 'retail', invested_amount: 150, total_cashflow: 61, cashflow_frequency: 'daily', region: '河南', city: '郑州', issuer: '孩子王', description: '母婴零售龙头品牌A股上市公司，800平米区域旗舰店，会员消费占比90%以上。', start_date: '2025-09-15', total_score: 79.5 },
+      'DGT-2026-013': { id: 'DGT-2026-013', company_name: '通策医疗口腔（长沙五一广场店）', industry: 'service', invested_amount: 200, total_cashflow: 72, cashflow_frequency: 'weekly', region: '湖南', city: '长沙', issuer: '通策医疗', description: '口腔医疗上市公司旗下门诊，配备进口牙椅12台，专业口腔医师8人，日均接诊40-60人次。', start_date: '2025-09-20', total_score: 83.7 },
+      'DGT-2026-014': { id: 'DGT-2026-014', company_name: '宝岛眼镜（青岛万象城店）', industry: 'service', invested_amount: 65, total_cashflow: 32, cashflow_frequency: 'weekly', region: '山东', city: '青岛', issuer: '宝岛眼镜', description: '眼镜零售连锁头部品牌，提供专业验光与配镜服务，客单价450元，月均服务800+人次。', start_date: '2025-09-25', total_score: 75.8 },
+      'DGT-2026-015': { id: 'DGT-2026-015', company_name: '福奈特洗衣（天津滨江道店）', industry: 'service', invested_amount: 40, total_cashflow: 11, cashflow_frequency: 'weekly', region: '天津', city: '天津', issuer: '福奈特洗衣', description: '干洗连锁品牌核心商圈店，主打高端洗护服务，日均收件量120件，会员复购率85%。', start_date: '2025-09-25', total_score: 72.3 },
+      'DGT-2026-016': { id: 'DGT-2026-016', company_name: '瑞幸咖啡（厦门中山路店）', industry: 'catering', invested_amount: 50, total_cashflow: 16, cashflow_frequency: 'daily', region: '福建', city: '厦门', issuer: '瑞幸咖啡', description: '国产咖啡头部品牌景区旗舰店，日均杯量800+杯，旅游旺季可达1200杯以上。', start_date: '2025-10-01', total_score: 80.1 },
+      'DGT-2026-017': { id: 'DGT-2026-017', company_name: '大参林药店（合肥政务区店）', industry: 'retail', invested_amount: 80, total_cashflow: 19, cashflow_frequency: 'daily', region: '安徽', city: '合肥', issuer: '大参林', description: '连锁药店头部品牌上市公司，社区旗舰店，日均客流500+人次，医保定点药房。', start_date: '2025-10-01', total_score: 76.4 },
+      'DGT-2026-018': { id: 'DGT-2026-018', company_name: '金宝贝早教（济南恒隆广场店）', industry: 'education', invested_amount: 120, total_cashflow: 41, cashflow_frequency: 'monthly', region: '山东', city: '济南', issuer: '金宝贝早教', description: '国际早教品牌商场旗舰店，在册学员300+名，续费率75%，客单价1.8万元/年。', start_date: '2025-10-05', total_score: 74.9 },
+      'DGT-2026-019': { id: 'DGT-2026-019', company_name: '木屋烧烤（沈阳中街店）', industry: 'catering', invested_amount: 100, total_cashflow: 32, cashflow_frequency: 'monthly', region: '辽宁', city: '沈阳', issuer: '木屋烧烤', description: '连锁烧烤品牌核心商圈店，180座位，月均营收约80万元，夜间经济主力业态。', start_date: '2025-10-05', total_score: 77.6 },
+      'DGT-2026-020': { id: 'DGT-2026-020', company_name: '百果园（昆明南屏街店）', industry: 'retail', invested_amount: 55, total_cashflow: 13, cashflow_frequency: 'daily', region: '云南', city: '昆明', issuer: '百果园', description: '水果零售连锁头部品牌上市公司，云南本地水果供应优势明显，日均销售额1.2万元。', start_date: '2025-10-05', total_score: 78.2 },
+      'DGT-2026-021': { id: 'DGT-2026-021', company_name: '驰加汽车服务（石家庄万达店）', industry: 'service', invested_amount: 75, total_cashflow: 32, cashflow_frequency: 'weekly', region: '河北', city: '石家庄', issuer: '驰加汽服', description: '米其林旗下汽车养护品牌，8个工位，月均服务车辆800+台次，客单价320元。', start_date: '2025-10-05', total_score: 75.1 },
+      'DGT-2026-022': { id: 'DGT-2026-022', company_name: '马子禄牛肉面（兰州正宁路店）', industry: 'catering', invested_amount: 30, total_cashflow: 43, cashflow_frequency: 'daily', region: '甘肃', city: '兰州', issuer: '马子禄', description: '兰州拉面百年老字号，日均销售1200+碗，本地人与游客双客流，客单价18元。', start_date: '2025-10-05', total_score: 86.5 },
+      'DGT-2026-023': { id: 'DGT-2026-023', company_name: '良品铺子（长春欧亚卖场店）', industry: 'retail', invested_amount: 48, total_cashflow: 16, cashflow_frequency: 'daily', region: '吉林', city: '长春', issuer: '良品铺子', description: '零食连锁上市公司门店，日均销售额1.5万元，会员占比70%，礼盒销售占比高。', start_date: '2025-10-05', total_score: 77.8 },
+      'DGT-2026-024': { id: 'DGT-2026-024', company_name: '爱帝宫月子中心（无锡太湖新城店）', industry: 'service', invested_amount: 250, total_cashflow: 65, cashflow_frequency: 'monthly', region: '江苏', city: '无锡', issuer: '爱帝宫', description: '高端月子中心上市公司，30间月子房，入住率85%+，客单价5-15万元/月。', start_date: '2025-10-05', total_score: 82.4 },
+      'DGT-2026-025': { id: 'DGT-2026-025', company_name: '太兴餐厅（东莞松山湖店）', industry: 'catering', invested_amount: 90, total_cashflow: 14, cashflow_frequency: 'daily', region: '广东', city: '东莞', issuer: '太兴餐饮', description: '港式茶餐厅连锁品牌上市公司，科技园商务客流为主，日均营收约2万元。', start_date: '2025-10-05', total_score: 74.2 },
+      'DGT-2026-026': { id: 'DGT-2026-026', company_name: '梵音瑜伽（佛山千灯湖店）', industry: 'service', invested_amount: 70, total_cashflow: 30, cashflow_frequency: 'weekly', region: '广东', city: '佛山', issuer: '梵音瑜伽', description: '高端瑜伽连锁品牌，会员1500+人，年卡均价8000元，私教课客单价350元。', start_date: '2025-10-05', total_score: 76.9 },
+      'DGT-2026-027': { id: 'DGT-2026-027', company_name: '名创优品（南宁万象城店）', industry: 'retail', invested_amount: 60, total_cashflow: 13, cashflow_frequency: 'daily', region: '广西', city: '南宁', issuer: '名创优品', description: '生活好物零售上市公司，日均客流2000+人次，客单价35元，IP联名产品畅销。', start_date: '2025-10-05', total_score: 78.6 },
+      'DGT-2026-028': { id: 'DGT-2026-028', company_name: '宠物家（哈尔滨中央大街店）', industry: 'service', invested_amount: 50, total_cashflow: 15, cashflow_frequency: 'weekly', region: '黑龙江', city: '哈尔滨', issuer: '宠物家', description: '宠物服务连锁品牌，提供宠物洗护、寄养、用品销售，月均服务宠物600+只。', start_date: '2025-10-05', total_score: 73.5 },
+      'DGT-2026-029': { id: 'DGT-2026-029', company_name: '巴奴毛肚火锅（贵阳花果园店）', industry: 'catering', invested_amount: 180, total_cashflow: 45, cashflow_frequency: 'monthly', region: '贵州', city: '贵阳', issuer: '巴奴火锅', description: '毛肚火锅头部品牌，以产品主义著称，200座位，月均翻台率3.8次，客单价130元。', start_date: '2025-10-05', total_score: 81.7 },
+      'DGT-2026-030': { id: 'DGT-2026-030', company_name: '谜探剧本杀（武汉楚河汉街店）', industry: 'entertainment', invested_amount: 85, total_cashflow: 26, cashflow_frequency: 'monthly', region: '湖北', city: '武汉', issuer: '谜探文娱', description: '沉浸式剧本杀连锁品牌，12个主题房间，周末出租率95%+，客单价150元/人。', start_date: '2025-10-05', total_score: 72.8 },
       // ========== 创新领域标的（20个）==========
       // 票务/演出
-      'DGT-2026-031': { id: 'DGT-2026-031', company_name: '薛之谦2026巡回演唱会（华东站）', industry: 'concert', invested_amount: 500, total_cashflow: 342, cashflow_frequency: 'weekly', region: '华东', city: '上海', issuer: '大麦网', description: '顶流歌手华东三城（上海、杭州、南京）巡演，预计6场演出，单场票房3800万+，大麦网实时结算。', start_date: '2026-01-16', total_score: 85.5 },
-      'DGT-2026-041': { id: 'DGT-2026-041', company_name: '草莓音乐节2026成都站', industry: 'concert', invested_amount: 200, total_cashflow: 111, cashflow_frequency: 'weekly', region: '四川', city: '成都', issuer: '摩登天空', description: '中国最大户外音乐节品牌，3天10万人次，票房+赞助+周边多元收入。', start_date: '2026-01-17', total_score: 82.3 },
+      'DGT-2026-031': { id: 'DGT-2026-031', company_name: '薛之谦2026巡回演唱会（华东站）', industry: 'concert', invested_amount: 500, total_cashflow: 342, cashflow_frequency: 'weekly', region: '华东', city: '上海', issuer: '大麦网', description: '顶流歌手华东三城（上海、杭州、南京）巡演，预计6场演出，单场票房3800万+，大麦网实时结算。', start_date: '2025-10-10', total_score: 85.5 },
+      'DGT-2026-041': { id: 'DGT-2026-041', company_name: '草莓音乐节2026成都站', industry: 'concert', invested_amount: 200, total_cashflow: 111, cashflow_frequency: 'weekly', region: '四川', city: '成都', issuer: '摩登天空', description: '中国最大户外音乐节品牌，3天10万人次，票房+赞助+周边多元收入。', start_date: '2025-10-15', total_score: 82.3 },
       // 抖音投流
-      'DGT-2026-032': { id: 'DGT-2026-032', company_name: 'UR快时尚抖音投流项目', industry: 'douyin-ads', invested_amount: 200, total_cashflow: 131, cashflow_frequency: 'weekly', region: '广东', city: '广州', issuer: 'UR品牌', description: '本土快时尚头部品牌2026春夏系列抖音投流，巨量引擎数据监控，目标ROI 3.5+。', start_date: '2026-01-16', total_score: 79.8 },
-      'DGT-2026-042': { id: 'DGT-2026-042', company_name: '三只松鼠抖音年货节投流', industry: 'douyin-ads', invested_amount: 120, total_cashflow: 58, cashflow_frequency: 'weekly', region: '安徽', city: '芜湖', issuer: '三只松鼠', description: '休闲零食A股头部品牌，年货节千川投放，目标ROI 4.0+。', start_date: '2026-01-17', total_score: 84.2 },
+      'DGT-2026-032': { id: 'DGT-2026-032', company_name: 'UR快时尚抖音投流项目', industry: 'douyin-ads', invested_amount: 200, total_cashflow: 131, cashflow_frequency: 'weekly', region: '广东', city: '广州', issuer: 'UR品牌', description: '本土快时尚头部品牌2026春夏系列抖音投流，巨量引擎数据监控，目标ROI 3.5+。', start_date: '2025-10-10', total_score: 79.8 },
+      'DGT-2026-042': { id: 'DGT-2026-042', company_name: '三只松鼠抖音年货节投流', industry: 'douyin-ads', invested_amount: 120, total_cashflow: 58, cashflow_frequency: 'weekly', region: '安徽', city: '芜湖', issuer: '三只松鼠', description: '休闲零食A股头部品牌，年货节千川投放，目标ROI 4.0+。', start_date: '2025-10-15', total_score: 84.2 },
       // 充电桩/新能源
-      'DGT-2026-033': { id: 'DGT-2026-033', company_name: '特来电京沪高速充电站（10站）', industry: 'new-energy', invested_amount: 300, total_cashflow: 31, cashflow_frequency: 'daily', region: '华东', city: '京沪沿线', issuer: '特来电', description: '充电桩运营龙头A股上市，京沪高速10个服务区充电站打包，80个快充桩，国网实时结算。', start_date: '2026-01-16', total_score: 77.5 },
-      'DGT-2026-039': { id: 'DGT-2026-039', company_name: '正泰分布式光伏（浙江10厂房）', industry: 'new-energy', invested_amount: 350, total_cashflow: 49, cashflow_frequency: 'monthly', region: '浙江', city: '嘉兴', issuer: '正泰新能源', description: '光伏龙头A股上市企业，浙江10个工业厂房屋顶5MW装机，自发自用+余电上网。', start_date: '2026-01-16', total_score: 76.8 },
-      'DGT-2026-043': { id: 'DGT-2026-043', company_name: '宁德时代工商业储能（苏州3站）', industry: 'new-energy', invested_amount: 280, total_cashflow: 17, cashflow_frequency: 'daily', region: '江苏', city: '苏州', issuer: '宁德时代', description: '动力电池全球龙头，苏州3个工业园区储能电站3MWh，峰谷套利+需量管理。', start_date: '2026-01-17', total_score: 75.2 },
-      'DGT-2026-045': { id: 'DGT-2026-045', company_name: '哈啰两轮车换电站（20站）', industry: 'new-energy', invested_amount: 160, total_cashflow: 27, cashflow_frequency: 'daily', region: '浙江', city: '杭州', issuer: '哈啰出行', description: '两轮车换电龙头，杭州宁波20个骑手聚集社区换电站，刚需场景稳定收益。', start_date: '2026-01-17', total_score: 78.9 },
-      'DGT-2026-047': { id: 'DGT-2026-047', company_name: '星星充电目的地充电桩（北京20酒店）', industry: 'new-energy', invested_amount: 120, total_cashflow: 16, cashflow_frequency: 'weekly', region: '北京', city: '北京', issuer: '星星充电', description: '民营充电龙头，北京20家高端酒店目的地充电桩80个，服务高端车主。', start_date: '2026-01-17', total_score: 74.5 },
+      'DGT-2026-033': { id: 'DGT-2026-033', company_name: '特来电京沪高速充电站（10站）', industry: 'new-energy', invested_amount: 300, total_cashflow: 31, cashflow_frequency: 'daily', region: '华东', city: '京沪沿线', issuer: '特来电', description: '充电桩运营龙头A股上市，京沪高速10个服务区充电站打包，80个快充桩，国网实时结算。', start_date: '2025-10-10', total_score: 77.5 },
+      'DGT-2026-039': { id: 'DGT-2026-039', company_name: '正泰分布式光伏（浙江10厂房）', industry: 'new-energy', invested_amount: 350, total_cashflow: 49, cashflow_frequency: 'monthly', region: '浙江', city: '嘉兴', issuer: '正泰新能源', description: '光伏龙头A股上市企业，浙江10个工业厂房屋顶5MW装机，自发自用+余电上网。', start_date: '2025-10-10', total_score: 76.8 },
+      'DGT-2026-043': { id: 'DGT-2026-043', company_name: '宁德时代工商业储能（苏州3站）', industry: 'new-energy', invested_amount: 280, total_cashflow: 17, cashflow_frequency: 'daily', region: '江苏', city: '苏州', issuer: '宁德时代', description: '动力电池全球龙头，苏州3个工业园区储能电站3MWh，峰谷套利+需量管理。', start_date: '2025-10-15', total_score: 75.2 },
+      'DGT-2026-045': { id: 'DGT-2026-045', company_name: '哈啰两轮车换电站（20站）', industry: 'new-energy', invested_amount: 160, total_cashflow: 27, cashflow_frequency: 'daily', region: '浙江', city: '杭州', issuer: '哈啰出行', description: '两轮车换电龙头，杭州宁波20个骑手聚集社区换电站，刚需场景稳定收益。', start_date: '2025-10-15', total_score: 78.9 },
+      'DGT-2026-047': { id: 'DGT-2026-047', company_name: '星星充电目的地充电桩（北京20酒店）', industry: 'new-energy', invested_amount: 120, total_cashflow: 16, cashflow_frequency: 'weekly', region: '北京', city: '北京', issuer: '星星充电', description: '民营充电龙头，北京20家高端酒店目的地充电桩80个，服务高端车主。', start_date: '2025-10-15', total_score: 74.5 },
       // SaaS/科技
-      'DGT-2026-034': { id: 'DGT-2026-034', company_name: '有赞电商SaaS订阅收入分成', industry: 'tech', invested_amount: 400, total_cashflow: 20, cashflow_frequency: 'monthly', region: '浙江', city: '杭州', issuer: '有赞', description: '电商SaaS港股上市公司，按500家新签约商户ARR分成，参考国际Pipe模式。', start_date: '2026-01-16', total_score: 71.3 },
-      'DGT-2026-040': { id: 'DGT-2026-040', company_name: '三七互娱小程序游戏联运', industry: 'tech', invested_amount: 180, total_cashflow: 30, cashflow_frequency: 'weekly', region: '广东', city: '深圳', issuer: '三七互娱', description: '游戏发行A股头部公司，3款微信小程序游戏联运买量投放，按游戏流水分成。', start_date: '2026-01-17', total_score: 79.6 },
+      'DGT-2026-034': { id: 'DGT-2026-034', company_name: '有赞电商SaaS订阅收入分成', industry: 'tech', invested_amount: 400, total_cashflow: 20, cashflow_frequency: 'monthly', region: '浙江', city: '杭州', issuer: '有赞', description: '电商SaaS港股上市公司，按500家新签约商户ARR分成，参考国际Pipe模式。', start_date: '2025-10-10', total_score: 71.3 },
+      'DGT-2026-040': { id: 'DGT-2026-040', company_name: '三七互娱小程序游戏联运', industry: 'tech', invested_amount: 180, total_cashflow: 30, cashflow_frequency: 'weekly', region: '广东', city: '深圳', issuer: '三七互娱', description: '游戏发行A股头部公司，3款微信小程序游戏联运买量投放，按游戏流水分成。', start_date: '2025-10-15', total_score: 79.6 },
       // MCN/娱乐
-      'DGT-2026-035': { id: 'DGT-2026-035', company_name: '无忧传媒达人孵化计划（10人）', industry: 'mcn', invested_amount: 150, total_cashflow: 72, cashflow_frequency: 'monthly', region: '浙江', city: '杭州', issuer: '无忧传媒', description: '头部MCN机构，10名潜力达人孵化计划，按直播带货GMV+广告收入分成。', start_date: '2026-01-16', total_score: 77.2 },
-      'DGT-2026-044': { id: 'DGT-2026-044', company_name: 'BLG电竞战队收入分成', industry: 'esports', invested_amount: 300, total_cashflow: 200, cashflow_frequency: 'monthly', region: '上海', city: '上海', issuer: 'B站电竞', description: 'LPL顶级战队（2024 MSI冠军），联盟分成+赞助+直播+周边多元收入。', start_date: '2026-01-17', total_score: 80.8 },
-      'DGT-2026-050': { id: 'DGT-2026-050', company_name: 'A-SOUL虚拟偶像运营分成', industry: 'vtuber', invested_amount: 200, total_cashflow: 125, cashflow_frequency: 'monthly', region: '上海', city: '上海', issuer: '乐华娱乐', description: '中国最成功虚拟偶像团体，B站粉丝400万+，直播打赏+演出+周边分成。', start_date: '2026-01-18', total_score: 78.4 },
+      'DGT-2026-035': { id: 'DGT-2026-035', company_name: '无忧传媒达人孵化计划（10人）', industry: 'mcn', invested_amount: 150, total_cashflow: 72, cashflow_frequency: 'monthly', region: '浙江', city: '杭州', issuer: '无忧传媒', description: '头部MCN机构，10名潜力达人孵化计划，按直播带货GMV+广告收入分成。', start_date: '2025-10-10', total_score: 77.2 },
+      'DGT-2026-044': { id: 'DGT-2026-044', company_name: 'BLG电竞战队收入分成', industry: 'esports', invested_amount: 300, total_cashflow: 200, cashflow_frequency: 'monthly', region: '上海', city: '上海', issuer: 'B站电竞', description: 'LPL顶级战队（2024 MSI冠军），联盟分成+赞助+直播+周边多元收入。', start_date: '2025-10-15', total_score: 80.8 },
+      'DGT-2026-050': { id: 'DGT-2026-050', company_name: 'A-SOUL虚拟偶像运营分成', industry: 'vtuber', invested_amount: 200, total_cashflow: 125, cashflow_frequency: 'monthly', region: '上海', city: '上海', issuer: '乐华娱乐', description: '中国最成功虚拟偶像团体，B站粉丝400万+，直播打赏+演出+周边分成。', start_date: '2025-10-20', total_score: 78.4 },
       // 知识付费/内容
-      'DGT-2026-036': { id: 'DGT-2026-036', company_name: '得到App《商业洞察力》课程', industry: 'education', invested_amount: 80, total_cashflow: 75, cashflow_frequency: 'monthly', region: '北京', city: '北京', issuer: '得到', description: '知识付费头部平台5000万用户，知名商业导师专栏课程199元，预期5万份销量。', start_date: '2026-01-16', total_score: 83.6 },
-      'DGT-2026-037': { id: 'DGT-2026-037', company_name: '华语经典金曲版税分成基金', industry: 'music-royalty', invested_amount: 600, total_cashflow: 30, cashflow_frequency: 'monthly', region: '全国', city: '北京', issuer: '音著协', description: '参考国际Royalty Exchange，50首2000-2015年经典金曲版税权益，音著协统一结算。', start_date: '2026-01-16', total_score: 70.5 },
-      'DGT-2026-046': { id: 'DGT-2026-046', company_name: '爱奇艺分账剧《重生之都市修仙》', industry: 'media', invested_amount: 180, total_cashflow: 160, cashflow_frequency: 'monthly', region: '浙江', city: '横店', issuer: '爱奇艺', description: '都市玄幻网剧24集，爱奇艺A级分账，按有效播放量2元/次分成，预期800万播放。', start_date: '2026-01-17', total_score: 81.9 },
-      'DGT-2026-048': { id: 'DGT-2026-048', company_name: '小宇宙播客广告分成（10档）', industry: 'media', invested_amount: 100, total_cashflow: 60, cashflow_frequency: 'monthly', region: '北京', city: '北京', issuer: '小宇宙', description: '中国最大播客平台1500万月活，10档头部播客（含《随机波动》《忽左忽右》）广告分成。', start_date: '2026-01-18', total_score: 76.3 },
+      'DGT-2026-036': { id: 'DGT-2026-036', company_name: '得到App《商业洞察力》课程', industry: 'education', invested_amount: 80, total_cashflow: 75, cashflow_frequency: 'monthly', region: '北京', city: '北京', issuer: '得到', description: '知识付费头部平台5000万用户，知名商业导师专栏课程199元，预期5万份销量。', start_date: '2025-10-10', total_score: 83.6 },
+      'DGT-2026-037': { id: 'DGT-2026-037', company_name: '华语经典金曲版税分成基金', industry: 'music-royalty', invested_amount: 600, total_cashflow: 30, cashflow_frequency: 'monthly', region: '全国', city: '北京', issuer: '音著协', description: '参考国际Royalty Exchange，50首2000-2015年经典金曲版税权益，音著协统一结算。', start_date: '2025-10-10', total_score: 70.5 },
+      'DGT-2026-046': { id: 'DGT-2026-046', company_name: '爱奇艺分账剧《重生之都市修仙》', industry: 'media', invested_amount: 180, total_cashflow: 160, cashflow_frequency: 'monthly', region: '浙江', city: '横店', issuer: '爱奇艺', description: '都市玄幻网剧24集，爱奇艺A级分账，按有效播放量2元/次分成，预期800万播放。', start_date: '2025-10-15', total_score: 81.9 },
+      'DGT-2026-048': { id: 'DGT-2026-048', company_name: '小宇宙播客广告分成（10档）', industry: 'media', invested_amount: 100, total_cashflow: 60, cashflow_frequency: 'monthly', region: '北京', city: '北京', issuer: '小宇宙', description: '中国最大播客平台1500万月活，10档头部播客（含《随机波动》《忽左忽右》）广告分成。', start_date: '2025-10-20', total_score: 76.3 },
       // 电商
-      'DGT-2026-038': { id: 'DGT-2026-038', company_name: '宝尊电商代运营（3品牌）', industry: 'ecommerce', invested_amount: 250, total_cashflow: 200, cashflow_frequency: 'monthly', region: '上海', city: '上海', issuer: '宝尊电商', description: '品牌电商代运营美股龙头，3个国际美妆品牌天猫旗舰店代运营，按GMV分成。', start_date: '2026-01-16', total_score: 84.7 },
-      'DGT-2026-049': { id: 'DGT-2026-049', company_name: '完美日记私域小程序GMV分成', industry: 'ecommerce', invested_amount: 150, total_cashflow: 90, cashflow_frequency: 'weekly', region: '广东', city: '广州', issuer: '逸仙电商', description: '新锐美妆美股上市品牌，私域用户3000万+，微信小程序商城复购率40%。', start_date: '2026-01-18', total_score: 77.8 }
+      'DGT-2026-038': { id: 'DGT-2026-038', company_name: '宝尊电商代运营（3品牌）', industry: 'ecommerce', invested_amount: 250, total_cashflow: 200, cashflow_frequency: 'monthly', region: '上海', city: '上海', issuer: '宝尊电商', description: '品牌电商代运营美股龙头，3个国际美妆品牌天猫旗舰店代运营，按GMV分成。', start_date: '2025-10-10', total_score: 84.7 },
+      'DGT-2026-049': { id: 'DGT-2026-049', company_name: '完美日记私域小程序GMV分成', industry: 'ecommerce', invested_amount: 150, total_cashflow: 90, cashflow_frequency: 'weekly', region: '广东', city: '广州', issuer: '逸仙电商', description: '新锐美妆美股上市品牌，私域用户3000万+，微信小程序商城复购率40%。', start_date: '2025-10-20', total_score: 77.8 }
     };
     
     currentDeal = demoDeals[currentDealId] || demoDeals['DGT-2026-001'];
@@ -568,10 +587,10 @@ export const investorDealDetailPageContent = `
     
     container.innerHTML = sortedCashflows.slice(0, 20).map(record => \`
       <tr class="hover:bg-slate-50">
-        <td class="py-2 text-sm text-slate-600">\${record.date}</td>
-        <td class="text-right text-sm font-medium text-[#5A7A64]">+¥\${record.amount.toFixed(2)}万</td>
-        <td class="text-right text-sm text-slate-700">¥\${record.cumulative.toFixed(2)}万</td>
-        <td class="text-sm text-slate-400">\${record.note || '-'}</td>
+        <td class="py-2 text-sm text-slate-600">\${record.date || record.payment_date || '-'}</td>
+        <td class="text-right text-sm font-medium text-[#5A7A64]">+¥\${(parseFloat(record.amount) || 0).toFixed(2)}万</td>
+        <td class="text-right text-sm text-slate-700">¥\${(parseFloat(record.cumulative) || 0).toFixed(2)}万</td>
+        <td class="text-sm text-slate-400">\${record.note || record.description || '-'}</td>
       </tr>
     \`).join('');
   }
@@ -609,7 +628,7 @@ export const investorDealDetailPageContent = `
     \`).join('');
     
     // 综合评分
-    const score = currentDeal.total_score || 75;
+    const score = parseFloat(currentDeal.total_score) || 75;
     document.getElementById('sieve-total-score').textContent = score.toFixed(1) + '分';
     document.getElementById('sieve-score-bar').style.width = score + '%';
   }
@@ -698,12 +717,67 @@ export const investorDealDetailPageContent = `
     }
   }
   
+  // 跳转到标的管理详情页
+  function viewDealManagement() {
+    if (dealId) {
+      window.location.href = '/deals/' + dealId;
+    }
+  }
+  
   function exportDealReport() {
-    showToast('报告导出功能开发中', 'info');
+    showToast('正在生成标的报告...', 'info');
+    // 模拟导出过程
+    setTimeout(() => {
+      if (currentDeal) {
+        const reportContent = \`
+滴灌通智能投资平台 - 标的投后报告
+================================
+生成时间: \${new Date().toLocaleString('zh-CN')}
+标的ID: \${currentDeal.id}
+
+一、基本信息
+- 企业名称: \${currentDeal.company_name}
+- 所属行业: \${currentDeal.industry}
+- 发行方: \${currentDeal.issuer || '-'}
+- 所在地区: \${currentDeal.region} \${currentDeal.city}
+
+二、投资概况
+- 投资金额: ¥\${currentDeal.invested_amount}万
+- 投资日期: \${currentDeal.start_date || '-'}
+- 分成频率: \${currentDeal.cashflow_frequency === 'daily' ? '每日' : currentDeal.cashflow_frequency === 'weekly' ? '每周' : '每月'}
+
+三、收益表现
+- 累计回款: ¥\${currentDeal.total_cashflow}万
+- 回报率: \${((currentDeal.total_cashflow / currentDeal.invested_amount) * 100).toFixed(1)}%
+
+---
+本报告由滴灌通智能投资平台自动生成
+        \`.trim();
+        
+        // 创建并下载文件
+        const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = \`标的报告_\${currentDeal.id}_\${new Date().toISOString().split('T')[0]}.txt\`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showToast('报告已下载', 'success');
+      }
+    }, 800);
   }
   
   function refreshDealData() {
     showToast('正在刷新数据...', 'info');
+    // 添加刷新动画
+    const refreshBtn = document.querySelector('[onclick="refreshDealData()"] i');
+    if (refreshBtn) {
+      refreshBtn.classList.add('fa-spin');
+      setTimeout(() => refreshBtn.classList.remove('fa-spin'), 1500);
+    }
     loadDealData();
   }
 

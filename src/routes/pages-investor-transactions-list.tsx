@@ -3,12 +3,26 @@
 
 export const investorTransactionsListPageContent = `
 <div class="mb-6">
+  <!-- 面包屑导航 -->
+  <nav class="flex items-center text-sm text-slate-500 mb-4">
+    <a href="/" class="hover:text-[#5A7A64] transition">
+      <i class="fas fa-home mr-1"></i>工作台
+    </a>
+    <i class="fas fa-chevron-right mx-2 text-xs text-slate-300"></i>
+    <a href="/investor" class="hover:text-[#5A7A64] transition">投资人入口</a>
+    <i class="fas fa-chevron-right mx-2 text-xs text-slate-300"></i>
+    <span class="text-slate-800 font-medium">交易记录</span>
+  </nav>
+  
   <!-- 页面标题区 -->
   <div class="flex items-center justify-between mb-6">
     <div>
       <div class="flex items-center mb-2">
-        <a href="/investor" class="text-sm text-slate-500 hover:text-[#5A7A64] mr-2">
-          <i class="fas fa-arrow-left mr-1"></i>返回投资人入口
+        <a href="/investor" class="text-sm text-slate-500 hover:text-[#5A6A7A] transition flex items-center group">
+          <div class="w-6 h-6 rounded bg-slate-100 group-hover:bg-[#5A6A7A]/10 flex items-center justify-center mr-2 transition">
+            <i class="fas fa-arrow-left text-xs"></i>
+          </div>
+          返回投资人入口
         </a>
       </div>
       <h1 class="text-2xl font-bold text-slate-800 flex items-center">
