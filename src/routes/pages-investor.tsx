@@ -655,26 +655,55 @@ export const investorPortalPageContent = `
       regions: regionPercent
     };
     
-    // 演示回款数据（模拟每日收益）- 修改为更平滑的数据，避免某天突然很高
-    // 使用固定的当前日期，确保数据一致性
-    const currentDate = new Date('2026-01-16');
+    // 演示回款数据（固定数据，不再使用随机生成）
+    // 100个标的，日均回款约170万元（每标的约1.7万/天），数据固定到2026-01-16
+    // 使用预定义的固定数据，确保每次刷新显示一致
+    const fixedDailyCashflows = [
+      // 2025-12-17 到 2026-01-16，共31天的固定日回款数据（单位：万元）
+      // 基准170万/天，波动±15%（145-195万），数据经过人工平滑处理
+      { date: '2025-12-17', amount: 168.5 },
+      { date: '2025-12-18', amount: 172.3 },
+      { date: '2025-12-19', amount: 165.8 },
+      { date: '2025-12-20', amount: 178.2 },
+      { date: '2025-12-21', amount: 169.4 },
+      { date: '2025-12-22', amount: 174.6 },
+      { date: '2025-12-23', amount: 171.2 },
+      { date: '2025-12-24', amount: 167.9 },
+      { date: '2025-12-25', amount: 182.5 }, // 圣诞节略高
+      { date: '2025-12-26', amount: 175.3 },
+      { date: '2025-12-27', amount: 168.7 },
+      { date: '2025-12-28', amount: 173.1 },
+      { date: '2025-12-29', amount: 170.8 },
+      { date: '2025-12-30', amount: 176.4 },
+      { date: '2025-12-31', amount: 185.2 }, // 元旦前夕略高
+      { date: '2026-01-01', amount: 188.6 }, // 元旦当日高
+      { date: '2026-01-02', amount: 172.4 },
+      { date: '2026-01-03', amount: 169.3 },
+      { date: '2026-01-04', amount: 174.8 },
+      { date: '2026-01-05', amount: 171.6 },
+      { date: '2026-01-06', amount: 168.2 },
+      { date: '2026-01-07', amount: 173.5 },
+      { date: '2026-01-08', amount: 170.1 },
+      { date: '2026-01-09', amount: 175.7 },
+      { date: '2026-01-10', amount: 172.9 },
+      { date: '2026-01-11', amount: 169.8 },
+      { date: '2026-01-12', amount: 174.2 }, // 原来这里有异常高峰，现在已平滑
+      { date: '2026-01-13', amount: 171.4 },
+      { date: '2026-01-14', amount: 176.8 },
+      { date: '2026-01-15', amount: 173.6 },
+      { date: '2026-01-16', amount: 170.5 }  // 当日数据
+    ];
+    
     investorData.cashflows = [];
     let cumulative = 0;
-    // 基准日均回款：100个标的，平均每个标的每日产生约1.7万回款
-    const baseDaily = 170; // 基准值：170万/天
-    for (let i = 30; i >= 0; i--) {
-      const date = new Date(currentDate);
-      date.setDate(date.getDate() - i);
-      // 使用较小的随机波动（±15%），确保数据平滑
-      const variation = 0.85 + Math.random() * 0.30; // 波动范围：85%-115%
-      const dailyAmount = baseDaily * variation;
-      cumulative += dailyAmount;
+    fixedDailyCashflows.forEach(day => {
+      cumulative += day.amount;
       investorData.cashflows.push({
-        date: date.toISOString().split('T')[0],
-        amount: parseFloat(dailyAmount.toFixed(2)),
+        date: day.date,
+        amount: day.amount,
         cumulative: parseFloat(cumulative.toFixed(2))
       });
-    }
+    });
     
     // 基于100个标的生成交易记录（动态生成）
     investorData.transactions = investorData.deals.map((deal, index) => ({
