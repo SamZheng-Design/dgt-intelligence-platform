@@ -1053,7 +1053,7 @@ api.post('/agents', async (c) => {
       agent.output_format || '{}',
       agent.pass_threshold || 60,
       newOrder,
-      agent.model_config || JSON.stringify({ model: 'gpt-5-mini', temperature: 0.2, max_tokens: 2000 }),
+      agent.model_config || JSON.stringify({ model: 'gpt-5-mini', max_tokens: 2000 }),
       agent.icon || 'fas fa-robot',
       agent.icon_color || '#6366F1'
     ).run()
@@ -1518,7 +1518,6 @@ ${JSON.stringify(dealData, null, 2)}
           { role: 'system', content: agent.system_prompt },
           { role: 'user', content: fullPrompt }
         ],
-        temperature: modelConfig.temperature || 0.2,
         max_completion_tokens: modelConfig.max_tokens || 4000,
       })
       aiResponse = completion.choices[0]?.message?.content || ''
@@ -1830,7 +1829,6 @@ ${JSON.stringify(dealData, null, 2)}
       { role: 'system', content: agent.system_prompt },
       { role: 'user', content: fullPrompt }
     ],
-    temperature: modelConfig.temperature || 0.2,
     max_completion_tokens: modelConfig.max_tokens || 2000,
   })
   
@@ -2605,7 +2603,6 @@ api.post('/ai/chat', async (c) => {
     const completion = await client.chat.completions.create({
       model: 'gpt-5-mini',
       messages,
-      temperature: 0.7,
       max_completion_tokens: 1000,
     })
     
