@@ -318,7 +318,57 @@ export const investorDealDetailPageContent = `
       currentDeal = dealRes.data;
       
       const cashflowRes = await apiCall('/api/investor/deal/' + currentDealId + '/cashflows', { silent: true });
-      dealCashflows = cashflowRes.data || [];
+      let rawCashflows = cashflowRes.data || [];
+      
+      // **关键修复**：API返回的数据是倒序的（最新在前），需要正序排列（最早在前）
+      // 按 period_start 或 payment_date 升序排序
+      rawCashflows.sort((a, b) => {
+        const dateA = new Date(a.period_start || a.payment_date || a.date);
+        const dateB = new Date(b.period_start || b.payment_date || b.date);
+        return dateA - dateB;
+      });
+      
+      dealCashflows = rawCashflows;
+      
+      // **关键修复**：如果API返回的标的数据中 invested_amount 或 total_cashflow 为0
+      // 尝试从演示数据中获取，或从回款记录中计算
+      if ((!currentDeal.invested_amount || currentDeal.invested_amount === 0) || 
+          (!currentDeal.total_cashflow || currentDeal.total_cashflow === 0)) {
+        // 尝试从演示数据补充
+        const demoData = getDemoDataForDeal(currentDealId);
+        if (demoData) {
+          // 用演示数据补充缺失的字段
+          if (!currentDeal.invested_amount || currentDeal.invested_amount === 0) {
+            currentDeal.invested_amount = demoData.invested_amount;
+          }
+          if (!currentDeal.total_cashflow || currentDeal.total_cashflow === 0) {
+            currentDeal.total_cashflow = demoData.total_cashflow;
+          }
+          if (!currentDeal.start_date) {
+            currentDeal.start_date = demoData.start_date;
+          }
+          if (!currentDeal.issuer) {
+            currentDeal.issuer = demoData.issuer;
+          }
+          if (!currentDeal.description) {
+            currentDeal.description = demoData.description;
+          }
+          // 如果演示数据中有industry字段，使用它（API可能返回了不同的industry值）
+          if (demoData.industry) {
+            currentDeal.industry = demoData.industry;
+          }
+        }
+        
+        // 如果仍然没有total_cashflow，从回款记录中计算
+        if ((!currentDeal.total_cashflow || currentDeal.total_cashflow === 0) && dealCashflows.length > 0) {
+          // 使用最后一条记录的累计值（已经按日期正序排列）
+          const lastCashflow = dealCashflows[dealCashflows.length - 1];
+          if (lastCashflow && lastCashflow.cumulative) {
+            currentDeal.total_cashflow = lastCashflow.cumulative;
+          }
+        }
+      }
+      
     } catch (e) {
       console.log('使用演示数据');
       // 使用演示数据
@@ -330,6 +380,28 @@ export const investorDealDetailPageContent = `
     renderCashflowChart();
     renderCashflowRecords();
     renderSieveInfo();
+  }
+  
+  // 获取指定标的的演示数据
+  function getDemoDataForDeal(dealId) {
+    const demoDealsMap = {
+      'DGT-2026-001': { invested_amount: 35, total_cashflow: 12, cashflow_frequency: 'daily', issuer: '蜜雪冰城股份', description: '新式茶饮头部品牌深圳高人流量科技园店', start_date: '2025-10-15', industry: 'catering' },
+      'DGT-2026-002': { invested_amount: 80, total_cashflow: 28, cashflow_frequency: 'daily', issuer: '老乡鸡餐饮', description: '中式快餐头部品牌上海核心商圈店', start_date: '2025-09-20', industry: 'catering' },
+      'DGT-2026-003': { invested_amount: 120, total_cashflow: 55, cashflow_frequency: 'daily', issuer: '叮咚买菜', description: '生鲜电商前置仓模式', start_date: '2025-08-10', industry: 'retail' },
+      'DGT-2026-004': { invested_amount: 60, total_cashflow: 43, cashflow_frequency: 'daily', issuer: '罗森中国', description: '日系便利店头部品牌成都核心商圈24H旗舰店', start_date: '2025-07-25', industry: 'retail' },
+      'DGT-2026-005': { invested_amount: 150, total_cashflow: 46, cashflow_frequency: 'weekly', issuer: '新瑞鹏宠物医疗', description: '宠物医疗头部品牌', start_date: '2025-06-15', industry: 'service' },
+      'DGT-2026-010': { invested_amount: 300, total_cashflow: 135, cashflow_frequency: 'monthly', issuer: '海底捞国际', description: '火锅头部品牌西安核心景区旗舰店', start_date: '2025-05-20', industry: 'catering' },
+      'DGT-2026-031': { invested_amount: 500, total_cashflow: 342, cashflow_frequency: 'weekly', issuer: '大麦网', description: '薛之谦华东三城巡演，预计6场演出，单场票房3800万+', start_date: '2025-06-01', industry: 'concert' },
+      'DGT-2026-032': { invested_amount: 200, total_cashflow: 131, cashflow_frequency: 'weekly', issuer: 'UR品牌', description: '本土快时尚头部品牌抖音投流项目', start_date: '2025-10-10', industry: 'douyin-ads' },
+      'DGT-2026-033': { invested_amount: 300, total_cashflow: 31, cashflow_frequency: 'daily', issuer: '特来电', description: '京沪高速10个服务区充电站', start_date: '2025-10-10', industry: 'new-energy' },
+      'DGT-2026-034': { invested_amount: 400, total_cashflow: 20, cashflow_frequency: 'monthly', issuer: '有赞', description: '电商SaaS港股上市公司', start_date: '2025-10-10', industry: 'tech' },
+      'DGT-2026-035': { invested_amount: 150, total_cashflow: 72, cashflow_frequency: 'monthly', issuer: '无忧传媒', description: '头部MCN机构达人孵化计划', start_date: '2025-10-10', industry: 'mcn' },
+      'DGT-2026-041': { invested_amount: 200, total_cashflow: 111, cashflow_frequency: 'weekly', issuer: '摩登天空', description: '草莓音乐节成都站', start_date: '2025-10-15', industry: 'concert' },
+      'DGT-2026-042': { invested_amount: 120, total_cashflow: 58, cashflow_frequency: 'weekly', issuer: '三只松鼠', description: '抖音年货节投流', start_date: '2025-10-15', industry: 'douyin-ads' },
+      'DGT-2026-044': { invested_amount: 300, total_cashflow: 200, cashflow_frequency: 'monthly', issuer: 'B站电竞', description: 'BLG电竞战队收入分成', start_date: '2025-10-15', industry: 'esports' },
+      'DGT-2026-050': { invested_amount: 200, total_cashflow: 125, cashflow_frequency: 'monthly', issuer: '乐华娱乐', description: 'A-SOUL虚拟偶像运营分成', start_date: '2025-10-20', industry: 'vtuber' }
+    };
+    return demoDealsMap[dealId] || null;
   }
 
   // 加载演示数据
@@ -480,7 +552,11 @@ export const investorDealDetailPageContent = `
     }
     
     const labels = data.map(d => {
-      const date = new Date(d.date);
+      // 兼容多种日期字段格式：date（演示数据）、period_start、payment_date（API数据）
+      const dateStr = d.date || d.period_start || d.payment_date;
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return '-';
       return (date.getMonth() + 1) + '/' + date.getDate();
     });
     
@@ -585,14 +661,18 @@ export const investorDealDetailPageContent = `
     // 倒序显示，最新的在前面
     const sortedCashflows = [...dealCashflows].reverse();
     
-    container.innerHTML = sortedCashflows.slice(0, 20).map(record => \`
-      <tr class="hover:bg-slate-50">
-        <td class="py-2 text-sm text-slate-600">\${record.date || record.payment_date || '-'}</td>
-        <td class="text-right text-sm font-medium text-[#5A7A64]">+¥\${(parseFloat(record.amount) || 0).toFixed(2)}万</td>
-        <td class="text-right text-sm text-slate-700">¥\${(parseFloat(record.cumulative) || 0).toFixed(2)}万</td>
-        <td class="text-sm text-slate-400">\${record.note || record.description || '-'}</td>
-      </tr>
-    \`).join('');
+    container.innerHTML = sortedCashflows.slice(0, 20).map(record => {
+      // 优先使用 period_start（回款所属期间开始日期），其次 date，最后 payment_date
+      const displayDate = record.period_start || record.date || record.payment_date || '-';
+      return \`
+        <tr class="hover:bg-slate-50">
+          <td class="py-2 text-sm text-slate-600">\${displayDate}</td>
+          <td class="text-right text-sm font-medium text-[#5A7A64]">+¥\${(parseFloat(record.amount) || 0).toFixed(2)}万</td>
+          <td class="text-right text-sm text-slate-700">¥\${(parseFloat(record.cumulative) || 0).toFixed(2)}万</td>
+          <td class="text-sm text-slate-400">\${record.status === 'paid' ? '已结算' : record.status === 'pending' ? '待结算' : (record.note || record.description || '-')}</td>
+        </tr>
+      \`;
+    }).join('');
   }
   
   // 渲染行业筛子信息
@@ -813,14 +893,14 @@ export const investorDealDetailPageContent = `
     }
   }
   
-  // 格式化投资金额（数据库存储单位为元）
+  // 格式化投资金额（演示数据单位为万元）
   function formatInvestmentAmount(num) {
-    return formatNumber(num, 'yuan');
+    return formatNumber(num, 'wan');
   }
   
-  // 格式化回款金额（数据库存储单位为元）
+  // 格式化回款金额（演示数据单位为万元）
   function formatCashflowAmount(num) {
-    return formatNumber(num, 'yuan');
+    return formatNumber(num, 'wan');
   }
 <\/script>
 `

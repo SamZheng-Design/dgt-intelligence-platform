@@ -8,13 +8,20 @@
  * 3. 波动模拟：营收有季节性和随机波动
  * 4. 状态多样：包含已完成、进行中、部分延迟等状态
  * 5. 频率分布：70% daily, 20% weekly, 10% monthly - 使图表数据更稳定连续
+ * 
+ * 【重要】单位规范：
+ * - funding_amount: 万元（种子数据中的融资金额）
+ * - invested_amount: 元（转换后存入数据库）
+ * - cashflow_records.amount: 元（回款金额）
+ * - transactions.amount: 元（交易金额）
+ * - revenue_data.*_revenue: 元（营收数据）
  */
 
 // 回款记录类型
 export interface CashflowRecord {
   id: string;
   deal_id: string;
-  amount: number;
+  amount: number;           // 单位：元
   currency: string;
   period_type: string;
   period_start: string;
@@ -30,12 +37,12 @@ export interface Transaction {
   deal_id: string;
   investor_id: string;
   transaction_type: 'invest' | 'divest' | 'transfer';
-  amount: number;
+  amount: number;           // 单位：元
   currency: string;
   transaction_date: string;
   price_per_unit: number | null;
   units: number | null;
-  fee: number;
+  fee: number;              // 单位：元
   status: string;
   notes: string;
 }
@@ -175,7 +182,17 @@ function getNextPeriodStart(currentStart: Date, frequency: string): Date {
   return next;
 }
 
-// 计算单期预期回款金额
+/**
+ * 计算单期预期回款金额
+ * @param deal - 标的数据
+ * @param frequency - 回款频率 daily/weekly/monthly
+ * @returns 单期回款金额（元）
+ * 
+ * 注意：
+ * - monthlyRevenue 单位是「元」（来自 revenue_data.monthly_revenue）
+ * - 如果没有 revenue_data，则用 funding_amount（万元）* 10000 * 2 估算年营收
+ * - 返回值单位是「元」
+ */
 function calculateExpectedCashflow(
   deal: any,
   frequency: string
@@ -189,13 +206,16 @@ function calculateExpectedCashflow(
     // 使用默认值
   }
   
+  // monthlyRevenue 单位：元
+  // financial_data.revenue_data 中的金额都是元
+  // deal.funding_amount 是万元，需要 * 10000 转为元
   const monthlyRevenue = financialData.revenue_data?.monthly_revenue || 
                          financialData.revenue_data?.annual_revenue / 12 ||
-                         deal.funding_amount * 10000 * 2; // 默认年营收为投资额的2倍
+                         (deal.funding_amount || 50) * 10000 * 2 / 12; // 默认年营收为投资额的2倍，除12得月营收
   
   const shareRatio = financialData.revenue_share_ratio || deal.revenue_share_ratio || 0.05;
   
-  // 计算单期回款
+  // 计算单期回款（元）
   switch (frequency) {
     case 'daily':
       return (monthlyRevenue * shareRatio) / 30;
@@ -286,29 +306,42 @@ export function generateCashflowRecords(
   return records;
 }
 
-// 为单个标的生成投资交易记录
+/**
+ * 为单个标的生成投资交易记录
+ * @param deal - 标的数据（funding_amount 单位：万元）
+ * @param investmentDate - 投资日期
+ * @param investorId - 投资人ID
+ * @returns Transaction（amount 单位：元）
+ */
 export function generateInvestmentTransaction(
   deal: any,
   investmentDate: Date,
   investorId: string
 ): Transaction {
+  const fundingAmountWan = deal.funding_amount || 50; // 万元
+  const fundingAmountYuan = fundingAmountWan * 10000; // 转换为元
+  
   return {
     id: generateId('TRX'),
     deal_id: deal.id,
     investor_id: investorId,
     transaction_type: 'invest',
-    amount: (deal.funding_amount || 50) * 10000, // 转换为元
+    amount: fundingAmountYuan,           // 元
     currency: 'CNY',
     transaction_date: formatDate(investmentDate),
     price_per_unit: 1,
-    units: (deal.funding_amount || 50) * 10000,
-    fee: Math.round((deal.funding_amount || 50) * 100), // 1%手续费
+    units: fundingAmountYuan,
+    fee: Math.round(fundingAmountYuan * 0.01), // 1%手续费（元）
     status: 'completed',
-    notes: `投资 ${deal.company_name}`
+    notes: `投资 ${deal.company_name}（${fundingAmountWan}万元）`
   };
 }
 
-// 计算标的的累计回款
+/**
+ * 计算标的的累计回款
+ * @param records - 回款记录数组
+ * @returns 累计回款金额（元）
+ */
 export function calculateTotalCashflow(records: CashflowRecord[]): number {
   return records
     .filter(r => r.status === 'paid')
@@ -410,15 +443,22 @@ export function generateAllPostInvestmentData(deals: any[]) {
     // 计算累计回款
     const totalCashflow = calculateTotalCashflow(cashflows);
     
-    // 标的更新信息
+    // 标的更新信息（金额单位：元）
+    const fundingAmountWan = deal.funding_amount || 50;
     dealUpdates.push({
       id: deal.id,
+      company_name: deal.company_name,
+      industry: deal.industry,
       status: 'invested',
-      invested_amount: (deal.funding_amount || 50) * 10000,
+      invested_amount: fundingAmountWan * 10000,     // 元（从万元转换）
+      invested_amount_wan: fundingAmountWan,          // 万元（方便显示）
       invested_date: formatDate(investmentDate),
       investor_id: defaultInvestorId,
-      total_cashflow: Math.round(totalCashflow * 100) / 100,
-      cashflow_frequency: assignedFrequency // 保存分配的频率
+      total_cashflow: Math.round(totalCashflow * 100) / 100,  // 元
+      total_cashflow_wan: Math.round(totalCashflow / 100) / 100, // 万元（方便显示）
+      cashflow_frequency: assignedFrequency,
+      region: deal.region || '',
+      city: deal.city || ''
     });
   });
   

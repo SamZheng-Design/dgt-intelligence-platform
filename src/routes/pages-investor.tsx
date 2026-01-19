@@ -475,17 +475,28 @@ export const investorPortalPageContent = `
     try {
       // 加载已投资标的
       const dealsRes = await apiCall('/api/investor/deals');
-      // 转换数据库数据的单位（元→万元），与演示数据保持一致
+      // 数据库数据单位是"元"，前端统一转换为"万元"进行展示
       investorData.deals = (dealsRes.data || []).map(deal => ({
         ...deal,
-        // 如果 invested_amount 大于 1000，认为是元单位，需要转换为万元
+        // 投资金额：元 → 万元
         invested_amount: deal.invested_amount > 1000 ? deal.invested_amount / 10000 : deal.invested_amount,
+        // 累计回款：元 → 万元
         total_cashflow: deal.total_cashflow > 1000 ? deal.total_cashflow / 10000 : deal.total_cashflow
       }));
       
       // 加载统计数据
       const statsRes = await apiCall('/api/investor/stats');
-      investorData.stats = statsRes.data || {};
+      const rawStats = statsRes.data || {};
+      // 统计数据单位也是"元"，转换为"万元"
+      investorData.stats = {
+        ...rawStats,
+        // 累计回款：元 → 万元
+        totalCashflow: rawStats.totalCashflow > 1000 ? rawStats.totalCashflow / 10000 : rawStats.totalCashflow,
+        // 昨日回款：元 → 万元
+        yesterdayCashflow: rawStats.yesterdayCashflow > 1000 ? rawStats.yesterdayCashflow / 10000 : rawStats.yesterdayCashflow,
+        // 总投资：元 → 万元
+        totalInvested: rawStats.totalInvested > 1000 ? rawStats.totalInvested / 10000 : rawStats.totalInvested
+      };
       
       // 加载回款记录并转换为图表格式（按日期汇总）
       const cashflowsRes = await apiCall('/api/investor/cashflows');
@@ -1547,11 +1558,19 @@ export const investorPortalPageContent = `
   // 辅助函数
   // ============================================
   
-  // 格式化金额显示
-  // 参数unit表示输入数据的单位：'yuan'=元, 'wan'=万元
-  // 返回适合显示的字符串，自动选择万元或亿元
+  /**
+   * 格式化金额显示
+   * @param {number} num - 金额数值
+   * @param {string} unit - 输入单位：'yuan'=元, 'wan'=万元
+   * @returns {string} 格式化后的字符串，自动选择合适的单位
+   * 
+   * 【单位规范说明】
+   * - 演示数据中的 invested_amount、total_cashflow 单位是「万元」
+   * - 数据库中的 invested_amount、total_cashflow 单位是「元」
+   * - API返回时会同时提供两种单位的值，前端根据需要选择
+   */
   function formatNumber(num, unit = 'yuan') {
-    if (!num || num === 0) return '0';
+    if (num === null || num === undefined || num === 0) return '0';
     
     // 统一转换为元
     let valueInYuan = num;
@@ -1565,23 +1584,37 @@ export const investorPortalPageContent = `
     // 根据金额大小选择显示单位
     if (valueInWan >= 10000) {
       // >= 1亿，显示亿元
-      return (valueInWan / 10000).toFixed(2) + '亿';
+      const yi = (valueInWan / 10000);
+      return yi.toFixed(yi >= 10 ? 1 : 2) + '亿';
     } else if (valueInWan >= 1) {
       // >= 1万，显示万元
-      return valueInWan.toFixed(2) + '万';
+      return valueInWan.toFixed(valueInWan >= 100 ? 1 : 2).replace(/\.?0+$/, '') + '万';
     } else {
       // < 1万，显示元
-      return valueInYuan.toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + '元';
+      return valueInYuan.toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
   }
   
-  // 格式化投资金额（数据库存储单位为元）
+  /**
+   * 格式化投资金额
+   * 演示数据单位为「万元」，直接传入万元值
+   */
   function formatInvestmentAmount(num) {
-    return formatNumber(num, 'yuan');
+    return formatNumber(num, 'wan');
   }
   
-  // 格式化回款金额（数据库存储单位为元）
+  /**
+   * 格式化回款金额
+   * 演示数据单位为「万元」，直接传入万元值
+   */
   function formatCashflowAmount(num) {
+    return formatNumber(num, 'wan');
+  }
+  
+  /**
+   * 格式化真实数据库数据（单位为元）
+   */
+  function formatRealAmount(num) {
     return formatNumber(num, 'yuan');
   }
   

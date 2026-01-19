@@ -624,20 +624,39 @@ api.get('/cashflow-stats', async (c) => {
       WHERE status = 'invested'
     `).first()
     
+    // 计算各项数值（单位：元）
+    const totalPaid = Math.round((totalStats?.total_paid || 0) * 100) / 100
+    const totalPending = Math.round((totalStats?.total_pending || 0) * 100) / 100
+    const totalDelayed = Math.round((totalStats?.total_delayed || 0) * 100) / 100
+    const totalInvested = investmentStats?.total_invested || 0
+    
     return c.json({
       success: true,
       data: {
+        // 数据单位说明
+        _units: {
+          currency: 'CNY',
+          amountUnit: '元',
+          note: '所有金额字段均为人民币元（CNY），包括 totalPaid/totalPending/totalDelayed/totalInvested 及各频率统计中的金额'
+        },
         overview: {
           totalRecords: totalStats?.total_records || 0,
-          totalPaid: Math.round((totalStats?.total_paid || 0) * 100) / 100,
-          totalPending: Math.round((totalStats?.total_pending || 0) * 100) / 100,
-          totalDelayed: Math.round((totalStats?.total_delayed || 0) * 100) / 100,
+          totalPaid,  // 单位：元
+          totalPending,  // 单位：元
+          totalDelayed,  // 单位：元
           dealsWithCashflow: totalStats?.deals_with_cashflow || 0,
-          totalInvested: investmentStats?.total_invested || 0,
+          totalInvested,  // 单位：元
           investedDeals: investmentStats?.invested_deals || 0,
-          returnRate: investmentStats?.total_invested 
-            ? ((totalStats?.total_paid || 0) / investmentStats.total_invested * 100).toFixed(2) + '%'
-            : '0%'
+          returnRate: totalInvested > 0
+            ? (totalPaid / totalInvested * 100).toFixed(2) + '%'
+            : '0%',
+          // 便于展示的格式化数据（万元）
+          formatted: {
+            totalPaid_wan: (totalPaid / 10000).toFixed(2) + ' 万元',
+            totalPending_wan: (totalPending / 10000).toFixed(2) + ' 万元',
+            totalDelayed_wan: (totalDelayed / 10000).toFixed(2) + ' 万元',
+            totalInvested_wan: (totalInvested / 10000).toFixed(2) + ' 万元'
+          }
         },
         byFrequency: byFrequency.results || [],
         recentTrend: recentTrend.results || [],
@@ -682,27 +701,48 @@ api.get('/deals/:id/cashflows', async (c) => {
       WHERE deal_id = ?
     `).bind(dealId).first()
     
+    const investedAmount = deal.invested_amount as number || 0
+    const totalPaid = stats?.total_paid || 0
+    const totalPending = stats?.total_pending || 0
+    const totalCashflow = deal.total_cashflow as number || 0
+    
     return c.json({
       success: true,
       data: {
+        // 数据单位说明
+        _units: {
+          currency: 'CNY',
+          amountUnit: '元',
+          note: 'invested_amount/total_cashflow/totalPaid/totalPending 均为人民币元（CNY）'
+        },
         deal: {
           id: deal.id,
           company_name: deal.company_name,
           industry: deal.industry,
-          invested_amount: deal.invested_amount,
+          invested_amount: investedAmount,  // 单位：元
           invested_date: deal.invested_date,
           cashflow_frequency: deal.cashflow_frequency,
-          total_cashflow: deal.total_cashflow
+          total_cashflow: totalCashflow,  // 单位：元
+          // 便于展示的格式化数据
+          formatted: {
+            invested_amount_wan: (investedAmount / 10000).toFixed(2) + ' 万元',
+            total_cashflow_wan: (totalCashflow / 10000).toFixed(2) + ' 万元'
+          }
         },
         stats: {
           totalRecords: stats?.total_records || 0,
-          totalPaid: stats?.total_paid || 0,
-          totalPending: stats?.total_pending || 0,
+          totalPaid,  // 单位：元
+          totalPending,  // 单位：元
           firstPayment: stats?.first_payment,
           lastPayment: stats?.last_payment,
-          returnRate: deal.invested_amount 
-            ? ((stats?.total_paid || 0) / (deal.invested_amount as number) * 100).toFixed(2) + '%'
-            : '0%'
+          returnRate: investedAmount > 0
+            ? (totalPaid / investedAmount * 100).toFixed(2) + '%'
+            : '0%',
+          // 便于展示的格式化数据
+          formatted: {
+            totalPaid_wan: (totalPaid / 10000).toFixed(2) + ' 万元',
+            totalPending_wan: (totalPending / 10000).toFixed(2) + ' 万元'
+          }
         },
         cashflows: cashflows.results || []
       }
@@ -737,6 +777,182 @@ api.get('/data-overview', async (c) => {
     }
   })
 })
+
+// ============================================
+// 获取平台汇总统计（带单位标注）
+// ============================================
+api.get('/platform-summary', async (c) => {
+  const db = c.env.DB
+  
+  try {
+    // 获取投资汇总
+    const investmentStats = await db.prepare(`
+      SELECT 
+        COUNT(*) as total_deals,
+        SUM(funding_amount) as total_funding_wan,
+        SUM(invested_amount) as total_invested_yuan,
+        SUM(total_cashflow) as total_cashflow_yuan,
+        COUNT(CASE WHEN status = 'invested' THEN 1 END) as invested_deals,
+        COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_deals,
+        COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_deals
+      FROM deals
+    `).first()
+    
+    // 行业分布
+    const industryStats = await db.prepare(`
+      SELECT 
+        industry,
+        COUNT(*) as deal_count,
+        SUM(funding_amount) as funding_wan,
+        SUM(invested_amount) as invested_yuan,
+        SUM(total_cashflow) as cashflow_yuan
+      FROM deals
+      GROUP BY industry
+      ORDER BY deal_count DESC
+    `).all()
+    
+    // 地区分布
+    const regionStats = await db.prepare(`
+      SELECT 
+        region,
+        city,
+        COUNT(*) as deal_count,
+        SUM(funding_amount) as funding_wan,
+        SUM(invested_amount) as invested_yuan
+      FROM deals
+      WHERE region IS NOT NULL AND region != ''
+      GROUP BY region, city
+      ORDER BY deal_count DESC
+      LIMIT 20
+    `).all()
+    
+    // 回款频率分布
+    const frequencyStats = await db.prepare(`
+      SELECT 
+        cashflow_frequency,
+        COUNT(*) as deal_count,
+        SUM(invested_amount) as invested_yuan,
+        SUM(total_cashflow) as cashflow_yuan
+      FROM deals
+      WHERE status = 'invested'
+      GROUP BY cashflow_frequency
+    `).all()
+    
+    const totalFundingWan = investmentStats?.total_funding_wan || 0
+    const totalInvestedYuan = investmentStats?.total_invested_yuan || 0
+    const totalCashflowYuan = investmentStats?.total_cashflow_yuan || 0
+    
+    return c.json({
+      success: true,
+      data: {
+        overview: {
+          totalDeals: investmentStats?.total_deals || 0,
+          investedDeals: investmentStats?.invested_deals || 0,
+          pendingDeals: investmentStats?.pending_deals || 0,
+          completedDeals: investmentStats?.completed_deals || 0,
+          // 融资需求金额（万元）
+          totalFunding: {
+            value: totalFundingWan,
+            unit: '万元',
+            display: totalFundingWan >= 10000 
+              ? (totalFundingWan / 10000).toFixed(2) + '亿元'
+              : totalFundingWan.toFixed(2) + '万元'
+          },
+          // 实际投资金额（元 → 显示为万元/亿元）
+          totalInvested: {
+            value: totalInvestedYuan,
+            unit: '元',
+            valueWan: totalInvestedYuan / 10000,
+            display: totalInvestedYuan >= 100000000 
+              ? (totalInvestedYuan / 100000000).toFixed(2) + '亿元'
+              : (totalInvestedYuan / 10000).toFixed(2) + '万元'
+          },
+          // 累计回款（元 → 显示为万元/亿元）
+          totalCashflow: {
+            value: totalCashflowYuan,
+            unit: '元',
+            valueWan: totalCashflowYuan / 10000,
+            display: totalCashflowYuan >= 100000000 
+              ? (totalCashflowYuan / 100000000).toFixed(2) + '亿元'
+              : (totalCashflowYuan / 10000).toFixed(2) + '万元'
+          },
+          // 回报率
+          returnRate: totalInvestedYuan > 0 
+            ? {
+                value: totalCashflowYuan / totalInvestedYuan,
+                percent: (totalCashflowYuan / totalInvestedYuan * 100).toFixed(2) + '%'
+              }
+            : { value: 0, percent: '0%' }
+        },
+        byIndustry: (industryStats.results || []).map((item: any) => ({
+          industry: item.industry,
+          industryName: getIndustryName(item.industry),
+          dealCount: item.deal_count,
+          funding: {
+            value: item.funding_wan,
+            unit: '万元'
+          },
+          invested: {
+            value: item.invested_yuan || 0,
+            unit: '元',
+            displayWan: ((item.invested_yuan || 0) / 10000).toFixed(2) + '万'
+          },
+          cashflow: {
+            value: item.cashflow_yuan || 0,
+            unit: '元',
+            displayWan: ((item.cashflow_yuan || 0) / 10000).toFixed(2) + '万'
+          }
+        })),
+        byRegion: regionStats.results || [],
+        byFrequency: (frequencyStats.results || []).map((item: any) => ({
+          frequency: item.cashflow_frequency,
+          frequencyName: item.cashflow_frequency === 'daily' ? '每日' 
+            : item.cashflow_frequency === 'weekly' ? '每周' : '每月',
+          dealCount: item.deal_count,
+          invested: {
+            value: item.invested_yuan || 0,
+            unit: '元',
+            displayWan: ((item.invested_yuan || 0) / 10000).toFixed(2) + '万'
+          },
+          cashflow: {
+            value: item.cashflow_yuan || 0,
+            unit: '元',
+            displayWan: ((item.cashflow_yuan || 0) / 10000).toFixed(2) + '万'
+          }
+        })),
+        meta: {
+          currency: 'CNY',
+          unitNotes: {
+            funding_amount: '万元（种子数据存储单位）',
+            invested_amount: '元（数据库存储单位）',
+            total_cashflow: '元（数据库存储单位）',
+            cashflow_records_amount: '元'
+          },
+          lastUpdated: new Date().toISOString()
+        }
+      }
+    })
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500)
+  }
+})
+
+// 行业名称映射
+function getIndustryName(code: string): string {
+  const map: Record<string, string> = {
+    'catering': '餐饮',
+    'retail': '零售',
+    'service': '生活服务',
+    'ecommerce': '电商',
+    'douyin-ecommerce': '抖音投流',
+    'education': '教育培训',
+    'light-asset': '文娱轻资产',
+    'entertainment': '文娱',
+    'healthcare': '医疗健康',
+    'new-energy': '新能源'
+  }
+  return map[code] || code
+}
 
 // ============================================
 // 智能体 CRUD API
@@ -1804,8 +2020,9 @@ function generateDemoInvestorData() {
   ]
   
   // 统计数据
-  const totalCashflow = demoDeals.reduce((sum, d) => sum + d.total_cashflow, 0)
-  const totalInvested = demoDeals.reduce((sum, d) => sum + d.invested_amount, 0)
+  // 注意：演示数据中 invested_amount 和 total_cashflow 单位都是「万元」
+  const totalCashflowWan = demoDeals.reduce((sum, d) => sum + d.total_cashflow, 0)
+  const totalInvestedWan = demoDeals.reduce((sum, d) => sum + d.invested_amount, 0)
   const cities = [...new Set(demoDeals.map(d => d.city))]
   
   // 计算地区分布
@@ -1815,16 +2032,26 @@ function generateDemoInvestorData() {
   })
   const regionPercent: Record<string, number> = {}
   Object.entries(regionStats).forEach(([k, v]) => {
-    regionPercent[k] = Math.round((v / totalInvested) * 100)
+    regionPercent[k] = Math.round((v / totalInvestedWan) * 100)
   })
   
   const stats = {
-    totalCashflow: totalCashflow,
+    // 金额单位说明
+    _unit_note: '所有金额单位为「万元」',
+    amountUnit: '万元',
+    // 累计回款（万元）
+    totalCashflow: totalCashflowWan,
+    totalCashflowYuan: totalCashflowWan * 10000,  // 转换为元，方便前端统一处理
+    // 昨日回款（万元）
     yesterdayCashflow: 28.5,
-    totalInvested: totalInvested,
+    yesterdayCashflowYuan: 285000,
+    // 总投资（万元）
+    totalInvested: totalInvestedWan,
+    totalInvestedYuan: totalInvestedWan * 10000,  // 转换为元
+    // 其他统计
     investedDeals: demoDeals.length,
     activeDeals: demoDeals.length,
-    avgReturnRate: (totalCashflow / totalInvested * 100).toFixed(1),
+    avgReturnRate: (totalCashflowWan / totalInvestedWan * 100).toFixed(1),
     issuers: demoDeals.length,
     assets: demoDeals.length,
     countries: 1,
@@ -1914,20 +2141,65 @@ api.get('/investor/stats', async (c) => {
         SELECT COALESCE(SUM(invested_amount), 0) as total FROM deals WHERE status = 'invested'
       `).first<{total: number}>()
       
+      // 获取昨日回款
+      const yesterdayCashflow = await db.prepare(`
+        SELECT COALESCE(SUM(amount), 0) as total 
+        FROM cashflow_records 
+        WHERE date(payment_date) = date('now', '-1 day') AND status = 'paid'
+      `).first<{total: number}>()
+      
+      // 获取地区分布
+      const regionDistribution = await db.prepare(`
+        SELECT region, COUNT(*) as count 
+        FROM deals 
+        WHERE status = 'invested' AND region IS NOT NULL AND region != ''
+        GROUP BY region
+        ORDER BY count DESC
+      `).all()
+      
+      // 获取城市数量
+      const cityCount = await db.prepare(`
+        SELECT COUNT(DISTINCT city) as count FROM deals WHERE status = 'invested' AND city IS NOT NULL
+      `).first<{count: number}>()
+      
+      const totalCashflowYuan = totalCashflow?.total || 0
+      const totalInvestedYuan = totalInvested?.total || 0
+      const yesterdayCashflowYuan = yesterdayCashflow?.total || 0
+      
+      const regions: Record<string, number> = {}
+      for (const r of (regionDistribution.results || []) as any[]) {
+        regions[r.region] = r.count
+      }
+      
       return c.json({
         success: true,
         data: {
-          totalCashflow: totalCashflow?.total || 0,
-          yesterdayCashflow: 45.8,
-          totalInvested: totalInvested?.total || 0,
+          // 数据单位说明
+          _units: {
+            currency: 'CNY',
+            amountUnit: '元',
+            note: 'totalCashflow/yesterdayCashflow/totalInvested 均为人民币元（CNY）'
+          },
+          // 回款金额（单位：元）
+          totalCashflow: totalCashflowYuan,
+          yesterdayCashflow: yesterdayCashflowYuan,
+          totalInvested: totalInvestedYuan,
           investedDeals: investedDeals?.count || 0,
           activeDeals: investedDeals?.count || 0,
-          avgReturnRate: totalInvested?.total ? ((totalCashflow?.total || 0) / totalInvested.total * 100).toFixed(1) : '0',
+          avgReturnRate: totalInvestedYuan > 0 
+            ? ((totalCashflowYuan / totalInvestedYuan) * 100).toFixed(1) 
+            : '0',
           issuers: investedDeals?.count || 0,
           assets: investedDeals?.count || 0,
           countries: 1,
-          cities: 5,
-          regions: { '浙江': 43, '广东': 28, '北京': 14, '上海': 15 }
+          cities: cityCount?.count || 0,
+          regions,
+          // 便于展示的格式化数据（万元）
+          formatted: {
+            totalCashflow_wan: (totalCashflowYuan / 10000).toFixed(2) + ' 万元',
+            yesterdayCashflow_wan: (yesterdayCashflowYuan / 10000).toFixed(2) + ' 万元',
+            totalInvested_wan: (totalInvestedYuan / 10000).toFixed(2) + ' 万元'
+          }
         }
       })
     }

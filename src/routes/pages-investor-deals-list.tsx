@@ -437,14 +437,14 @@ export const investorDealsListPageContent = `
     }
   }
   
-  // 格式化投资金额（数据库存储单位为元）
+  // 格式化投资金额（演示数据单位为万元）
   function formatInvestmentAmount(num) {
-    return formatNumber(num, 'yuan');
+    return formatNumber(num, 'wan');
   }
   
-  // 格式化回款金额（数据库存储单位为元）
+  // 格式化回款金额（演示数据单位为万元）
   function formatCashflowAmount(num) {
-    return formatNumber(num, 'yuan');
+    return formatNumber(num, 'wan');
   }
 <\/script>
 `
