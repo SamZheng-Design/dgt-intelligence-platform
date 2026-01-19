@@ -1519,7 +1519,7 @@ ${JSON.stringify(dealData, null, 2)}
           { role: 'user', content: fullPrompt }
         ],
         temperature: modelConfig.temperature || 0.2,
-        max_tokens: modelConfig.max_tokens || 4000,
+        max_completion_tokens: modelConfig.max_tokens || 4000,
       })
       aiResponse = completion.choices[0]?.message?.content || ''
     } catch (apiError: any) {
@@ -1831,7 +1831,7 @@ ${JSON.stringify(dealData, null, 2)}
       { role: 'user', content: fullPrompt }
     ],
     temperature: modelConfig.temperature || 0.2,
-    max_tokens: modelConfig.max_tokens || 2000,
+    max_completion_tokens: modelConfig.max_tokens || 2000,
   })
   
   const executionTime = Date.now() - startTime
@@ -2606,7 +2606,7 @@ api.post('/ai/chat', async (c) => {
       model: 'gpt-5-mini',
       messages,
       temperature: 0.7,
-      max_tokens: 1000,
+      max_completion_tokens: 1000,
     })
     
     const reply = completion.choices[0]?.message?.content || '抱歉，我暂时无法回答这个问题。'
