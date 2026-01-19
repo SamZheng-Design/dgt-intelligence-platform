@@ -2536,4 +2536,112 @@ api.post('/investor/announcements', async (c) => {
   }
 })
 
+// ============================================
+// AI 客服系统 API
+// ============================================
+
+// AI客服系统提示词
+const AI_CUSTOMER_SERVICE_PROMPT = `你是滴灌通智能投资平台的AI客服助手，名叫"小滴"。你的职责是帮助用户了解平台功能、解答投资相关问题。
+
+## 平台介绍
+滴灌通是一个基于DRO（Daily Revenue Obligation，每日收入义务）收入分成模式的投资平台，专注于实体门店和创新领域的投资。
+
+## 核心功能
+1. **智能体筛选系统**：采用双层漏斗模型，外环快速筛选，内环深度评估
+2. **8大行业赛道**：餐饮、零售、生活服务、教育培训、文娱轻资产、新能源、电商、抖音投流
+3. **30个专业智能体**：覆盖负面清单、财务健康、运营能力、法律合规、风险控制等维度
+4. **投后管理**：支持每日/每周/每月三种分成频率的回款追踪
+
+## 平台数据概览
+- 当前共有100个投资标的
+- 覆盖42个城市
+- 总投资额约1.43亿元
+- 累计回款约2500万元
+
+## 主要页面功能
+- **/deals** - 标的管理：查看和管理所有投资标的
+- **/agents** - 智能体配置：查看和配置30个评估智能体
+- **/workflow** - 工作流监控：查看双层漏斗评估流程
+- **/evaluation** - 评估演示：选择标的进行AI智能评估
+- **/investor** - 投资人门户：查看投后数据、回款记录、资产分布
+- **/submit** - 项目申报：提交新的投资标的
+
+## 回答原则
+1. 友好、专业、简洁
+2. 如果用户问题超出平台范围，礼貌引导
+3. 涉及具体投资建议时，提醒用户自行判断风险
+4. 可以引导用户去相应页面查看详情
+
+请用中文回答用户问题。`
+
+// AI客服对话API
+api.post('/ai/chat', async (c) => {
+  const { message, history = [] } = await c.req.json()
+  
+  if (!message || typeof message !== 'string') {
+    return c.json({ success: false, error: '请输入有效的消息' }, 400)
+  }
+  
+  try {
+    const client = getOpenAIClient(c.env)
+    
+    // 构建消息历史
+    const messages: any[] = [
+      { role: 'system', content: AI_CUSTOMER_SERVICE_PROMPT }
+    ]
+    
+    // 添加历史对话（最多保留10轮）
+    const recentHistory = history.slice(-20) // 保留最近20条消息（10轮对话）
+    for (const msg of recentHistory) {
+      messages.push({
+        role: msg.role === 'user' ? 'user' : 'assistant',
+        content: msg.content
+      })
+    }
+    
+    // 添加当前用户消息
+    messages.push({ role: 'user', content: message })
+    
+    const completion = await client.chat.completions.create({
+      model: 'gpt-5-mini',
+      messages,
+      temperature: 0.7,
+      max_tokens: 1000,
+    })
+    
+    const reply = completion.choices[0]?.message?.content || '抱歉，我暂时无法回答这个问题。'
+    
+    return c.json({
+      success: true,
+      data: {
+        reply,
+        timestamp: new Date().toISOString()
+      }
+    })
+  } catch (error: any) {
+    console.error('AI客服调用失败:', error.message)
+    return c.json({
+      success: false,
+      error: 'AI服务暂时不可用，请稍后再试',
+      fallbackReply: '您好！我是小滴，滴灌通的AI客服。目前AI服务正在维护中，您可以先浏览平台功能，或稍后再来咨询。'
+    }, 500)
+  }
+})
+
+// 获取AI客服快捷问题
+api.get('/ai/chat/suggestions', (c) => {
+  const suggestions = [
+    '平台是做什么的？',
+    '如何提交投资标的？',
+    '什么是DRO模式？',
+    '智能体评估是如何工作的？',
+    '如何查看我的投资回款？',
+    '平台支持哪些行业？',
+    '评估流程需要多长时间？',
+    '如何联系人工客服？'
+  ]
+  
+  return c.json({ success: true, data: suggestions })
+})
+
 export default api

@@ -656,6 +656,9 @@ const baseLayout = (title: string, content: string, activeNav: string = '') => h
     // 页面加载时初始化
     document.addEventListener('DOMContentLoaded', initDB);
   </script>
+
+  <!-- AI客服浮动窗口 -->
+  <script src="/static/ai-chat.js"></script>
 </body>
 </html>
 `
