@@ -245,6 +245,9 @@ export const investorPortalPageContent = `
             <button onclick="switchRankingTab('hot')" id="btn-tab-hot" class="px-3 py-1 text-xs rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">
               <i class="fas fa-fire mr-1"></i>热门标的
             </button>
+            <button onclick="switchRankingTab('alpha')" id="btn-tab-alpha" class="px-3 py-1 text-xs rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">
+              <i class="fas fa-sort-alpha-down mr-1"></i>名称A-Z
+            </button>
           </div>
         </div>
         
@@ -272,6 +275,13 @@ export const investorPortalPageContent = `
         <!-- 热门标的排名 -->
         <div id="ranking-content-hot" class="ranking-content hidden">
           <div id="hot-ranking-list" class="space-y-3">
+            <!-- 动态加载 -->
+          </div>
+        </div>
+        
+        <!-- 名称A-Z排名 -->
+        <div id="ranking-content-alpha" class="ranking-content hidden">
+          <div id="alpha-ranking-list" class="space-y-3">
             <!-- 动态加载 -->
           </div>
         </div>
@@ -1409,6 +1419,41 @@ export const investorPortalPageContent = `
         </div>
       </div>
     \`}).join('');
+    
+    // 5. 名称A-Z排名 - 按标的名称字母顺序排序
+    const alphaRankingContainer = document.getElementById('alpha-ranking-list');
+    if (!alphaRankingContainer) return;
+    
+    // 使用 localeCompare 进行中文拼音排序
+    const sortedByAlpha = [...investorData.deals].sort((a, b) => 
+      a.company_name.localeCompare(b.company_name, 'zh-CN', { sensitivity: 'base' })
+    );
+    
+    alphaRankingContainer.innerHTML = sortedByAlpha.slice(0, 10).map((deal, index) => {
+      const industry = industryMap[deal.industry] || { name: deal.industry, color: '#6B7280' };
+      const roi = ((deal.total_cashflow / deal.invested_amount) * 100).toFixed(1);
+      // 获取首字母（中文取拼音首字母，英文取首字母）
+      const firstChar = deal.company_name.charAt(0).toUpperCase();
+      return \`
+      <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer" onclick="viewInvestmentDetail('\${deal.id}')">
+        <div class="flex items-center">
+          <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mr-3 bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-md">
+            \${firstChar}
+          </span>
+          <div>
+            <p class="font-medium text-slate-800">\${deal.company_name}</p>
+            <div class="flex items-center mt-1">
+              <span class="text-xs px-1.5 py-0.5 rounded mr-2" style="background: \${industry.color}15; color: \${industry.color}">\${industry.name}</span>
+              <span class="text-xs text-slate-400">\${deal.id}</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="font-bold text-indigo-600">¥\${formatCashflowAmount(deal.total_cashflow)}</p>
+          <p class="text-xs text-emerald-600"><i class="fas fa-arrow-up mr-1"></i>\${roi}%</p>
+        </div>
+      </div>
+    \`}).join('');
   }
   
   function switchRankingTab(tab) {
@@ -1419,11 +1464,12 @@ export const investorPortalPageContent = `
       'return': '#8B6B4A',
       'volume': '#5A6A7A', 
       'roi': '#10B981',
-      'hot': '#F97316'
+      'hot': '#F97316',
+      'alpha': '#6366F1'
     };
     
     // 更新按钮样式
-    ['return', 'volume', 'roi', 'hot'].forEach(t => {
+    ['return', 'volume', 'roi', 'hot', 'alpha'].forEach(t => {
       const btn = document.getElementById('btn-tab-' + t);
       if (btn) {
         if (t === tab) {
